@@ -1,0 +1,153 @@
+
+        <!-- Main content -->
+        <section class='content'>
+        <div class="container-fluid">
+          <div class='row'>
+            <div class='col-12'>
+              <div class='card'>
+                <div class='card-header'>
+                    <div class="row">
+                    <div class="col-md-6">
+                  <h3 class='card-title'>DELIVERY LIST <?php echo anchor('index.php/delivery/create/','Create',array('class'=>'btn btn-primary btn-sm','style'=>'margin-left: 10px;'));?>
+        <?php //echo anchor(site_url('delivery/excel'), ' <i class="fa fa-file-excel-o"></i> Excel', 'class="btn btn-success btn-sm"'); ?></h3>
+                    </div>
+                    <div class="col-md-6">
+                    <div class="input-group">
+                        <label style="margin-right: 15px;">Period:</label>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                        <i class="far fa-calendar-alt"></i>
+                      </span>
+                    </div>
+                    <input type="text" class="form-control float-right" id="reservation">
+                  </div>
+                  <!-- /.input group -->
+                </div>
+                <!-- /.form group -->
+                </div>
+            </div>
+
+                <div class='card-body'>
+            <table class="table table-bordered table-striped" id="mytable">
+            <thead>
+                <tr>
+                <th>Date</th>
+                <th>Kode</th>
+                <th>Name Pengirim</th>
+                <th>Address Pengirim</th>
+                <th>Telephone Pengirim</th>
+                <th>Name Penerima</th>
+                <th>Address Penerima</th>
+                <th>Telephone Penerima</th>
+                <th>Create by</th>
+                <th>Driver</th>
+                <th>Nopol</th>
+                <th>Price</th>
+                <th>Action</th>
+                </tr>
+            </thead>
+        </table>
+        <!-- jQuery -->
+        <script src="<?php echo base_url() ?>template/adminlte/plugins/jquery/jquery.min.js"></script>
+        <!-- jQuery UI 1.11.4 -->
+        <script src="<?php echo base_url() ?>template/adminlte/plugins/jquery-ui/jquery-ui.min.js"></script>
+        <script src="<?php echo base_url() ?>template/adminlte/plugins/datatables/jquery.dataTables.js"></script>
+        <script src="<?php echo base_url() ?>template/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+        <script src="<?php echo base_url() ?>assets/bootstrap/js/moment.js"></script>
+        
+        <script type="text/javascript">
+            $(function() {
+                data_range(moment().format('YYYY-MM-DD'),moment().format('YYYY-MM-DD'));
+              $('input[id="reservation"]').daterangepicker({
+                opens: 'left',
+                locale: {
+                  format: 'D MMM YYYY'
+                }
+              }, function(start, end, label) {
+                data_range(start.format('YYYY-MM-DD'),end.format('YYYY-MM-DD'));
+
+              });
+            });
+
+        </script>
+        <script type="text/javascript">
+        function data_range(first,last){
+              var table = $('#mytable').DataTable( {
+                  scrollY: "400px",
+                  scrollX: true,
+                  scrollCollapse: true,
+                  destroy: true,
+                  paging: true,
+                  searching: true,
+                  "ajax": {
+                    "url": "<?php echo base_url()?>index.php/delivery/range/",
+                    "dataSrc": "",
+                    "data": function(data) {
+                      data.first = first;
+                      data.last = last;
+                    },
+                  },
+                  "columns": [
+                      { "data": "create_at" },
+                      { "data": "kode" },
+                      { "data": "name_pengirim" },
+                      { "data": "address_pengirim" },
+                      { "data": "telephone_pengirim" },
+                      { "data": "name_penerima" },
+                      { "data": "address_penerima" },
+                      { "data": "telephone_penerima" },
+                      { "data": "user_id" },
+                      { "data": "driver" },
+                      { "data": "nopol" },
+                      { "data": "price" },
+                      { "data": null,
+                        render: function ( data, type, row ) {
+                          // console.log(data.sv_no);
+                          return '<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">'+
+                          '<div class="btn-group" role="group" aria-label="First group">'+
+                            '<button id="info" style="margin-left: 5px;" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button></div>'+
+                          '<div class="btn-group" role="group" aria-label="Second group">'+
+                            '<button id="update" style="margin-left: 5px;" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button></div>'+
+                            '<div class="btn-group" role="group" aria-label="Third group">'+
+                            '<button id="print" style="margin-left: 5px;" class="btn btn-primary btn-sm"><i class="fas fa-print"></i></i></button></div>'+
+                        '</div>';
+                      } }
+                  ],
+                  "columnDefs": [
+                      { targets: 0, "width": "90", render: function(data){return moment(data).format('D MMM YYYY'); }},
+                      { targets: [2,3,5,6], "width": "150"},
+                      { targets: 11, render: function(data){return new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(data); }},
+                      { targets: -1, "width": "100px" },
+                  ]
+              } );
+
+              $('#mytable').on( 'click', '#info', function (e) {
+                e.preventDefault();
+                  var data = table.row( $(this).parents('tr') ).data();
+                  if (data != null) {
+                    window.location = '<?php echo base_url()?>index.php/delivery/read/'+data.kode;
+                  }
+              } );
+              $('#mytable').on( 'click', '#update', function (e) {
+                e.preventDefault();
+                  var data = table.row( $(this).parents('tr') ).data();
+                  if (data != null) {
+                    window.location = '<?php echo base_url()?>index.php/delivery/update/'+data.kode;
+                  }
+              } );
+              $('#mytable').on( 'click', '#print', function (e) {
+                e.preventDefault();
+                  var data = table.row( $(this).parents('tr') ).data();
+                  if (data != null) {
+                    window.open('<?php echo base_url()?>index.php/delivery/pdfTerima/'+data.kode,'_blank');
+                  }
+              } );
+            
+            }
+            </script>
+                    </div><!-- /.box-body -->
+              </div><!-- /.box -->
+            </div><!-- /.col -->
+          </div><!-- /.row -->
+      </div>
+        </section><!-- /.content -->
