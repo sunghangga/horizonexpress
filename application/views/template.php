@@ -34,6 +34,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
    <link rel="stylesheet" href="<?php echo base_url() ?>assets/css/style.css">
    <link rel="stylesheet" href="<?php echo base_url() ?>template/adminlte/jquery-ui/jquery-ui.css">
    <link rel="stylesheet" href="<?php echo base_url() ?>template/adminlte/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css">
+     <!-- Select2 -->
+  <link rel="stylesheet" href="<?php echo base_url() ?>template/adminlte/plugins/select2/css/select2.min.css">
+  <link rel="stylesheet" href="<?php echo base_url() ?>template/adminlte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
    <!-- <link rel="stylesheet" href="<?php echo base_url() ?>template/adminlte/datepicker/css/bootstrap-datepicker.css"> -->
    
   <!-- <link rel="stylesheet" href="<?php echo base_url() ?>template/plugins/datatables/dataTables.bootstrap.css"> -->
@@ -119,7 +122,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <a href="<?php echo base_url('index.php/beranda') ?>" class="nav-link">
               <i class="nav-icon fas fa-home"></i>
               <p>
-                Beranda
+                Home
               </p>
             </a>
           </li>
@@ -148,9 +151,38 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </a>
               </li>
               <li class="nav-item">
+                <a href="<?php echo base_url('index.php/receive') ?>" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Receive</p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="<?php echo base_url('index.php/road_money') ?>" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Road Money</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?php echo base_url('index.php/check') ?>" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Check</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-warehouse"></i>
+              <p>
+                Warehouse
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="<?php echo base_url('index.php/warehouse') ?>" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Warehouse</p>
                 </a>
               </li>
             </ul>
@@ -353,6 +385,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="<?php echo base_url() ?>template/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <script src="<?php echo base_url() ?>template/adminlte/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
 <script src="<?php echo base_url() ?>template/adminlte/dist/js/adminlte.min.js"></script>
+<script src="<?php echo base_url('template/adminlte/plugins/select2/js/select2.full.min.js')?>"></script>
 <!-- <script src="<?php echo base_url() ?>template/adminlte/datepicker/js/bootstrap-datepicker.min.js"></script> -->
 
 <!-- <script src="<?php echo base_url() ?>template/plugins/datatables/jquery.dataTables.min.js"></script>

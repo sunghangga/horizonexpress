@@ -7,12 +7,12 @@
 <body>
 	<table class="form-p-all">
 		<tr>
-			<td>
+			<td style="padding-bottom: 18px;">
 				<p class="form-p"><b>PT. Horison Nusa Jaya Transport</b></p>
-				<p class="form-p">Jl. Pohgading Timur Lingk. Perarudan</p>
-				<p class="form-p">Jimbaran - Kuta Selatan</p>
+				<!-- <p class="form-p">Jl. Pohgading Timur Lingk. Perarudan</p>
+				<p class="form-p">Jimbaran - Kuta Selatan</p> -->
 				<p class="form-p">Telp. 085253703818</p>
-				<p class="form-p">NPWP 94.206.799.2-905.000</p>
+				<!-- <p class="form-p">NPWP 94.206.799.2-905.000</p> -->
 			</td>
 			<td class="center-text" width="350px">
 				<p class="form-p"><b>BUKTI TANDA TERIMA PENGIRIMAN</b></p>
@@ -28,12 +28,12 @@
 	  <div class="column" style="border-style: solid; width: 150px">
 	    <p class="form-p" style="margin-left: 3px;" id="create_at"><b>TGL :</b> <?php echo $create_at?></p>
 	  </div>
-	  <div class="column" style="border-style: solid; width: 200px; margin-left: 125px;">
+	  <!-- <div class="column" style="border-style: solid; width: 200px; margin-left: 125px;">
 	    <p class="form-p" style="margin-left: 3px;"><b>Supir :</b> <?php echo $driver?></p>
 	  </div>
 	  <div class="column" style="border-style: solid; width: 200px; margin-left: 20px;">
 	    <p class="form-p" style="margin-left: 3px;"><b>Nopol :</b> <?php echo $nopol?></p>
-	  </div>
+	  </div> -->
 	</div>
 
 	<div class="row form-p-all">
@@ -250,14 +250,5 @@
 	  	</table>
 	  </div>
 	</div>
-	<script src="<?php echo base_url() ?>template/adminlte/plugins/jquery/jquery.min.js"></script>
-        <!-- jQuery UI 1.11.4 -->
-        <script src="<?php echo base_url() ?>template/adminlte/plugins/jquery-ui/jquery-ui.min.js"></script>
-        <script src="<?php echo base_url() ?>assets/bootstrap/js/moment.js"></script>
-      <script type="text/javascript">
-        document.getElementById("create_at").value = moment(document.getElementById("create_at").value).format('D MMM YYYY');
-        
-      	document.getElementById("price").innerHTML = new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(<?php echo $price; ?>);
-      </script>
 </body>
 </html>

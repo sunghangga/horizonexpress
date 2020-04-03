@@ -42,7 +42,7 @@
                              </div> 
                           </div>
                           <div style='text-align: right;'>
-                              <a href="<?php echo site_url('customer') ?>" class="btn btn-default">Cancel</a>
+                              <a href="<?php echo site_url('index.php/customer') ?>" class="btn btn-default">Cancel</a>
                           </div>
                     </div><!-- /.box-body -->
                   </div>

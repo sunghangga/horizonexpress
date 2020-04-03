@@ -13,6 +13,7 @@ class Customer_model extends CI_Model
     function __construct()
     {
         parent::__construct();
+        $this->load->helper(array('form', 'url'));
     }
 
     function get_count()
@@ -92,6 +93,25 @@ class Customer_model extends CI_Model
     {
         $this->db->where($this->id, $id);
         $this->db->delete($this->table);
+    }
+
+    function _uploadImage($name)
+    {
+        $config['upload_path']          = './assets/img';
+        $config['allowed_types']        = 'gif|jpg|png';
+        $config['file_name']            = $this->id;
+        $config['overwrite']            = true;
+        $config['max_size']             = 1024; // 1MB
+        // $config['max_width']            = 1024;
+        // $config['max_height']           = 768;
+
+        $this->load->library('upload', $config);
+
+        if ($this->upload->do_upload('photo')) {
+            return $this->upload->data("file_name");
+        }
+        
+        return $name;
     }
 
 }

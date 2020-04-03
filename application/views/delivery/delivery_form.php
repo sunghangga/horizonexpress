@@ -16,11 +16,15 @@
                           <li class="nav-item">
                             <a class="nav-link" id="custom-content-below-profile-tab" data-toggle="pill" href="#custom-content-below-profile" role="tab" aria-controls="custom-content-below-profile" aria-selected="false">Items</a>
                           </li>
+                          <li class="nav-item">
+                            <a class="nav-link" id="custom-content-below-profile-tab" data-toggle="pill" href="#custom-content-below-driver" role="tab" aria-controls="custom-content-below-driver" aria-selected="false">Accept Driver</a>
+                          </li>
                         </ul>
                         <div class="tab-content" id="custom-content-below-tabContent">
                           <div class="tab-pane fade show active" id="custom-content-below-home" role="tabpanel" aria-labelledby="custom-content-below-home-tab">
                             <div class="row">
-                              <div class="col-md-6">
+                              <div class="col-md-12">
+                                <h4 class="mt-6 ">Data Pengirim</h4>
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Name Pengirim <?php echo form_error('name_pengirim') ?></label>
                                   <div class="col-sm">
@@ -39,24 +43,32 @@
                                    <input type="text" class="form-control" name="telephone_pengirim" id="telephone_pengirim" placeholder="Telephone Pengirim" value="<?php echo $telephone_pengirim; ?>" />
                                   </div>
                                 </div>
-
                                 <div class="form-group">
-                                  <label for="staticEmail" class="col-12 col-form-label">Driver<?php echo form_error('driver') ?></label>
+                                  <label for="staticEmail" class="col-12 col-form-label">Warehouse Pengirim <?php echo form_error('telephone_driver') ?></label>
                                   <div class="col-sm">
-                                   <input type="text" class="form-control" autocomplete="off" spellcheck="false" name="driver" id="driver" placeholder="driver" value="<?php echo $driver; ?>" />
+                                   <select class="form-control select2bs4" id="wr_pengirim_id" name="wr_pengirim_id">
+                                        <?php if($wr_pengirim_id != null){ 
+                                             echo '<option value="'.$wr_pengirim_id.'" selected>'.$wr_pengirim_name.'</option>';
+                                         } 
+                                        foreach ($get_wr as $row)
+                                            {
+                                              if($wr_pengirim_id != $row->id){
+                                                if ($row->name == "RUTENG" && $wr_pengirim_id == null) {
+                                                  echo '<option value="'.$row->id.'" selected>'.$row->name.'</option>';
+                                                }
+                                                else {
+                                                  echo '<option value="'.$row->id.'">'.$row->name.'</option>';
+                                                }
+                                              }
+                                            } ?>
+                                        >
+                                      </select>
                                   </div>
                                 </div>
-                                <div class="form-group">
-                                  <label for="staticEmail" class="col-12 col-form-label">Nopol <?php echo form_error('nopol') ?></label>
-                                  <div class="col-sm">
-                                   <input type="text" class="form-control" name="nopol" id="nopol" placeholder="nopol" value="<?php echo $nopol; ?>" />
-                                  </div>
-                                </div>
-
-                                
                               </div>
 
-                              <div class="col-md-6">
+                              <div class="col-md-12">
+                                <h4 class="mt-6 ">Data Penerima</h4>
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Name Penerima <?php echo form_error('name_penerima') ?></label>
                                   <div class="col-sm">
@@ -76,21 +88,25 @@
                                   </div>
                                 </div>
                                 <div class="form-group">
-                                  <label for="staticEmail" class="col-12 col-form-label">Regencies <?php echo form_error('regencies_id') ?></label>
+                                  <label for="staticEmail" class="col-12 col-form-label">Warehouse Penerima <?php echo form_error('telephone_driver') ?></label>
                                   <div class="col-sm">
-                                   <select class="form-control" onchange="districts_list()" name="regencies_id" id="regencies_id" placeholder="Regencies" value="<?php echo $regencies_id; ?>" /></select>
-                                  </div>
-                                </div>
-                                <div class="form-group">
-                                  <label for="staticEmail" class="col-12 col-form-label">Districts <?php echo form_error('districts_id') ?></label>
-                                  <div class="col-sm">
-                                   <select class="form-control" onchange="villages_list()" name="districts_id" id="districts_id" placeholder="Districts" value="<?php echo $districts_id; ?>" /></select>
-                                  </div>
-                                </div>
-                                <div class="form-group">
-                                  <label for="staticEmail" class="col-12 col-form-label">Villages <?php echo form_error('villages_id') ?></label>
-                                  <div class="col-sm">
-                                   <select class="form-control" name="villages_id" id="villages_id" placeholder="Villages" value="<?php echo $villages_id; ?>" /></select>
+                                   <select class="form-control select2bs4" id="wr_penerima_id" name="wr_penerima_id">
+                                        <?php if($wr_penerima_id != null){ 
+                                             echo '<option value="'.$wr_penerima_id.'">'.$wr_penerima_name.'</option>';
+                                         } 
+                                        foreach ($get_wr as $row)
+                                            {
+                                              if($wr_penerima_id != $row->id){
+                                                if ($row->name == "GDG POH GADING" && $wr_penerima_id == null) {
+                                                  echo '<option value="'.$row->id.'" selected>'.$row->name.'</option>';
+                                                }
+                                                else {
+                                                  echo '<option value="'.$row->id.'">'.$row->name.'</option>';
+                                                }
+                                              }
+                                            } ?>
+                                        >
+                                      </select>
                                   </div>
                                 </div>
                                 <!--<div class="form-group">
@@ -101,18 +117,106 @@
                                 </div>-->
                               </div>
                             </div> 
+                            <div class="row">
+                              <div class="col-md-12">
+                                <div class="form-group">
+                                  <label for="staticEmail" class="col-12 col-form-label">Regencies <?php echo form_error('regencies_id') ?></label>
+                                  <div class="col-sm">
+                                   <select class="form-control select2bs4" onchange="districts_list()" name="regencies_id" id="regencies_id" placeholder="Regencies" value="<?php echo $regencies_id; ?>" /></select>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-md-12">
+                                <div class="form-group">
+                                  <label for="staticEmail" class="col-12 col-form-label">Districts <?php echo form_error('districts_id') ?></label>
+                                  <div class="col-sm">
+                                   <select class="form-control select2bs4" onchange="villages_list()" name="districts_id" id="districts_id" placeholder="Districts" value="<?php echo $districts_id; ?>" /></select>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-md-12">
+                                <div class="form-group">
+                                  <label for="staticEmail" class="col-12 col-form-label">Villages <?php echo form_error('villages_id') ?></label>
+                                  <div class="col-sm">
+                                   <select class="form-control select2bs4" name="villages_id" id="villages_id" placeholder="Villages" value="<?php echo $villages_id; ?>" /></select>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
+
                           <div class="tab-pane fade" id="custom-content-below-profile" role="tabpanel" aria-labelledby="custom-content-below-profile-tab">
 
                             <div class="row">
                               <div class="col-md-12">
                                 <h4 class="mt-6 ">Data Items</h4>
                               </div>
+                              <?php 
+                              $iter = 0;
+                              if ($button == "Update") {
+                              foreach ($get_delivery_detail_by_id as $row)
+                                if ($row->category == 1) {
+                              { ?>
+                              <div class="col-md-4">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-12 col-form-label">Name</label>
+                                <?php }?>
+                                  <div class="col-sm">
+                                    <input type="text" class="form-control name-item" autocomplete="off" spellcheck="false" name="name_item[]" id="name_item1" rel="rel_name_item1" placeholder="Name Item" value="<?php echo $row->name;?>" disabled/>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-2">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-12 col-form-label">Price</label>
+                                  <?php }?>
+                                  <div class="col-sm">
+                                    <input type="number" class="form-control price-item" autocomplete="off" spellcheck="false" name="price_item[]" id="price_item" rel="rel_price_item" placeholder="Price Item" value="<?php echo $row->price;?>" disabled/>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-2">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-12 col-form-label">Qty </label>
+                                  <?php }?>
+                                  <div class="col-sm">
+                                    <input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty_item[]" id="qty_item1" rel="rel_qty_item1" placeholder="Qty" value="<?php echo $row->qty;?>" disabled/>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-md-3">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-8 col-form-label">Unit</label>
+                                  <?php }?>
+                                  <div class="col-sm">
+                                    <div class="row">
+                                      <div class=".col-12 .col-sm-6 .col-lg-8">
+                                        <input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_item[]" id="unit_item1" rel="rel_unit_item1" placeholder="Unit" value="<?php echo $row->unit;?>" disabled/>
+                                      </div>
+                                      <?php if($iter == 0) { ?>
+                                      <!-- <div class=".col-6 .col-lg-4" style="margin-left: 16px; margin-top: 5px;">
+                                        <a href="" class=" btn-sm btn-info" id="add_item"><i class="fas fa-plus"></i></a>
+                                      </div> -->
+                                    <?php }?>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <?php
+                                $iter+=1;}}}
+                                else if ($button == "Create"){
+                              ?>
                               <div class="col-md-4">
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Name</label>
                                   <div class="col-sm">
-                                    <input type="text" class="form-control name-item" autocomplete="off" spellcheck="false" name="name_item[]" id="name_item1" rel="rel_name_item1" placeholder="Name Item" value="<?php //echo $item_name; ?>" />
+                                    <input type="text" class="form-control name-item" autocomplete="off" spellcheck="false" name="name_item[]" id="name_item1" rel="rel_name_item1" placeholder="Name Item"/>
                                   </div>
                                 </div>
                               </div>
@@ -121,7 +225,7 @@
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Price</label>
                                   <div class="col-sm">
-                                    <input type="text" class="form-control price-item" autocomplete="off" spellcheck="false" name="price_item[]" id="price_item" rel="rel_price_item" placeholder="Price Item" value="<?php //echo $item_name; ?>" />
+                                    <input type="number" class="form-control price-item" autocomplete="off" spellcheck="false" name="price_item[]" id="price_item" rel="rel_price_item" placeholder="Price Item"/>
                                   </div>
                                 </div>
                               </div>
@@ -130,7 +234,7 @@
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Qty </label>
                                   <div class="col-sm">
-                                    <input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty_item[]" id="qty_item1" rel="rel_qty_item1" placeholder="Qty" value="<?php //echo $item_qty; ?>" />
+                                    <input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty_item[]" id="qty_item1" rel="rel_qty_item1" placeholder="Qty"/>
                                   </div>
                                 </div>
                               </div>
@@ -140,7 +244,7 @@
                                   <div class="col-sm">
                                     <div class="row">
                                       <div class=".col-12 .col-sm-6 .col-lg-8">
-                                        <input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_item[]" id="unit_item1" rel="rel_unit_item1" placeholder="Unit" value="<?php //echo $item_unit; ?>" />
+                                        <input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_item[]" id="unit_item1" rel="rel_unit_item1" placeholder="Unit"/>
                                       </div>
                                       <div class=".col-6 .col-lg-4" style="margin-left: 16px; margin-top: 5px;">
                                         <a href="" class=" btn-sm btn-info" id="add_item"><i class="fas fa-plus"></i></a>
@@ -149,6 +253,7 @@
                                   </div>
                                 </div>
                               </div>
+                            <?php }?>
                               
                             </div>
                               <div class="item_field">
@@ -159,11 +264,73 @@
                               <div class="col-md-12">
                                 <h4 class="mt-6 ">KELENGKAPAN</h4>
                               </div>
+                              <?php 
+                              $iter = 0;
+                              if ($button == "Update") {
+                              foreach ($get_delivery_detail_by_id as $row)
+                                if ($row->category == 2) {
+                              { ?>
+                              <div class="col-md-4">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-12 col-form-label">Name </label>
+                                  <?php }?>
+                                  <div class="col-sm">
+                                    <input type="text" class="form-control name-kelengkapan" autocomplete="off" spellcheck="false" name="name_kelengkapan[]" id="name_kelengkapan1" rel="rel_name_kelengkapan1" placeholder="Name Item" value="<?php echo $row->name;?>" disabled/>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-2">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-12 col-form-label">Price</label>
+                                  <?php }?>
+                                  <div class="col-sm">
+                                    <input type="number" class="form-control price-kelengkapan" autocomplete="off" spellcheck="false" name="price_kelengkapan[]" id="price_kelengkapan" rel="rel_price_kelengkapan" placeholder="Price Item" value="<?php echo $row->price;?>" disabled/>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-2">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-12 col-form-label">Qty </label>
+                                  <?php }?>
+                                  <div class="col-sm">
+                                    <input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty_kelengkapan[]" id="qty_kelengkapan1" rel="rel_qty_kelengkapan1" placeholder="Qty" value="<?php echo $row->qty;?>" disabled/>
+                                  </div>
+                                </div>
+
+                              </div>
+                              <div class="col-md-3">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-8 col-form-label">Unit</label>
+                                  <?php }?>
+                                  <div class="col-sm">
+                                    <div class="row">
+                                      <div class=".col-12 .col-sm-6 .col-lg-8">
+                                        <input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_kelengkapan[]" id="unit_kelengkapan1" rel="rel_unit_kelengkapan1" placeholder="Unit" value="<?php echo $row->unit;?>" disabled/>
+                                      </div>
+                                      <?php if($iter == 0) { ?>
+                                      <!-- <div class=".col-6 .col-lg-4" style="margin-left: 16px; margin-top: 5px;">
+                                        <a href="" class=" btn-sm btn-info" id="add_kelengkapan"><i class="fas fa-plus"></i></a>
+                                      </div> -->
+                                    <?php } ?>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <?php
+                                $iter+=1;}}}
+                                else if ($button == "Create"){
+                              ?>
                               <div class="col-md-4">
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Name </label>
                                   <div class="col-sm">
-                                    <input type="text" class="form-control name-kelengkapan" autocomplete="off" spellcheck="false" name="name_kelengkapan[]" id="name_kelengkapan1" rel="rel_name_kelengkapan1" placeholder="Name Item" value="<?php //echo $kelengkapan_name; ?>" />
+                                    <input type="text" class="form-control name-kelengkapan" autocomplete="off" spellcheck="false" name="name_kelengkapan[]" id="name_kelengkapan1" rel="rel_name_kelengkapan1" placeholder="Name Item" />
                                   </div>
                                 </div>
                               </div>
@@ -172,7 +339,7 @@
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Price</label>
                                   <div class="col-sm">
-                                    <input type="text" class="form-control price-kelengkapan" autocomplete="off" spellcheck="false" name="price_kelengkapan[]" id="price_kelengkapan" rel="rel_price_kelengkapan" placeholder="Price Item" value="<?php //echo $item_name; ?>" />
+                                    <input type="number" class="form-control price-kelengkapan" autocomplete="off" spellcheck="false" name="price_kelengkapan[]" id="price_kelengkapan" rel="rel_price_kelengkapan" placeholder="Price Item"  />
                                   </div>
                                 </div>
                               </div>
@@ -181,7 +348,7 @@
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Qty </label>
                                   <div class="col-sm">
-                                    <input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty_kelengkapan[]" id="qty_kelengkapan1" rel="rel_qty_kelengkapan1" placeholder="Qty" value="<?php //echo $kelengkapan_qty; ?>" />
+                                    <input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty_kelengkapan[]" id="qty_kelengkapan1" rel="rel_qty_kelengkapan1" placeholder="Qty" />
                                   </div>
                                 </div>
 
@@ -192,7 +359,7 @@
                                   <div class="col-sm">
                                     <div class="row">
                                       <div class=".col-12 .col-sm-6 .col-lg-8">
-                                        <input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_kelengkapan[]" id="unit_kelengkapan1" rel="rel_unit_kelengkapan1" placeholder="Unit" value="<?php //echo $kelengkapan_unit; ?>" />
+                                        <input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_kelengkapan[]" id="unit_kelengkapan1" rel="rel_unit_kelengkapan1" placeholder="Unit" />
                                       </div>
                                       <div class=".col-6 .col-lg-4" style="margin-left: 16px; margin-top: 5px;">
                                         <a href="" class=" btn-sm btn-info" id="add_kelengkapan"><i class="fas fa-plus"></i></a>
@@ -201,6 +368,7 @@
                                   </div>
                                 </div>
                               </div>
+                            <?php }?>
                             </div>
                             <div class="kelengkapan_field">
                                 
@@ -210,11 +378,73 @@
                               <div class="col-md-12">
                                 <h4 class="mt-6 ">Items Other</h4>
                               </div>
+                              <?php 
+                              $iter = 0;
+                              if ($button == "Update") {
+                              foreach ($get_delivery_detail_by_id as $row)
+                                if ($row->category == 0) {
+                              { ?>
+                              <div class="col-md-4">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-12 col-form-label">Name </label>
+                                  <?php }?>
+                                  <div class="col-sm">
+                                    <input type="text" class="form-control name-other" autocomplete="off" spellcheck="false" name="name_other[]" id="name_other1" rel="rel_name_other1" placeholder="Name Item" value="<?php echo $row->name;?>" disabled/>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-2">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-12 col-form-label">Price</label>
+                                  <?php }?>
+                                  <div class="col-sm">
+                                    <input type="number" class="form-control price-kelengkapan" autocomplete="off" spellcheck="false" name="price_other[]" id="price_other" rel="rel_price_other" placeholder="Price Other" value="<?php echo $row->price;?>" disabled/>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-2">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-12 col-form-label">Qty </label>
+                                  <?php }?>
+                                  <div class="col-sm">
+                                    <input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty_other[]" id="qty_other1" rel="rel_qty_other1" placeholder="Qty" value="<?php echo $row->qty;?>" disabled/>
+                                  </div>
+                                </div>
+
+                              </div>
+                              <div class="col-md-3">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-8 col-form-label">Unit</label>
+                                  <?php }?>
+                                  <div class="col-sm">
+                                   <div class="row">
+                                      <div class=".col-12 .col-sm-6 .col-lg-8">
+                                        <input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_other[]" id="unit_other1" rel="rel_unit_other1" placeholder="Unit" value="<?php echo $row->unit;?>" disabled/>
+                                      </div>
+                                      <?php if($iter == 0) { ?>
+                                      <!-- <div class=".col-6 .col-lg-4" style="margin-left: 16px; margin-top: 5px;">
+                                        <a href="" class=" btn-sm btn-info" id="add_other"><i class="fas fa-plus"></i></a>
+                                      </div> -->
+                                    <?php } ?>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <?php
+                                $iter+=1;}}}
+                                else if ($button == "Create"){
+                              ?>
                               <div class="col-md-4">
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Name </label>
                                   <div class="col-sm">
-                                    <input type="text" class="form-control name-other" autocomplete="off" spellcheck="false" name="name_other[]" id="name_other1" rel="rel_name_other1" placeholder="Name Item" value="<?php //echo $other_name; ?>" />
+                                    <input type="text" class="form-control name-other" autocomplete="off" spellcheck="false" name="name_other[]" id="name_other1" rel="rel_name_other1" placeholder="Name Item" />
                                   </div>
                                 </div>
                               </div>
@@ -223,7 +453,7 @@
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Price</label>
                                   <div class="col-sm">
-                                    <input type="text" class="form-control price-kelengkapan" autocomplete="off" spellcheck="false" name="price_other[]" id="price_other" rel="rel_price_other" placeholder="Price Other" value="<?php //echo $item_name; ?>" />
+                                    <input type="number" class="form-control price-kelengkapan" autocomplete="off" spellcheck="false" name="price_other[]" id="price_other" rel="rel_price_other" placeholder="Price Other" />
                                   </div>
                                 </div>
                               </div>
@@ -232,7 +462,7 @@
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Qty </label>
                                   <div class="col-sm">
-                                    <input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty_other[]" id="qty_other1" rel="rel_qty_other1" placeholder="Qty" value="<?php //echo $other_qty; ?>" />
+                                    <input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty_other[]" id="qty_other1" rel="rel_qty_other1" placeholder="Qty" />
                                   </div>
                                 </div>
 
@@ -243,7 +473,7 @@
                                   <div class="col-sm">
                                    <div class="row">
                                       <div class=".col-12 .col-sm-6 .col-lg-8">
-                                        <input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_other[]" id="unit_other1" rel="rel_unit_other1" placeholder="Unit" value="<?php //echo $other_unit; ?>" />
+                                        <input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_other[]" id="unit_other1" rel="rel_unit_other1" placeholder="Unit"/>
                                       </div>
                                       <div class=".col-6 .col-lg-4" style="margin-left: 16px; margin-top: 5px;">
                                         <a href="" class=" btn-sm btn-info" id="add_other"><i class="fas fa-plus"></i></a>
@@ -252,16 +482,42 @@
                                   </div>
                                 </div>
                               </div>
+                              <?php } ?>
                             </div>
                             <div class="other_field">
                                 
                               </div>
                           </div>
+
+                          <div class="tab-pane fade" id="custom-content-below-driver" role="tabpanel" aria-labelledby="custom-content-below-driver-tab">
+
+                            <div class="row">
+                              <div class="col-md-12">
+                                <h4 class="mt-6 ">Accept Driver</h4>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label for="staticEmail" class="col-12 col-form-label">Driver<?php echo form_error('driver') ?></label>
+                                    <div class="col-sm">
+                                     <input type="text" class="form-control" autocomplete="off" spellcheck="false" name="driver" id="driver" placeholder="driver" />
+                                    </div>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="staticEmail" class="col-12 col-form-label">Nopol <?php echo form_error('nopol') ?></label>
+                                    <div class="col-sm">
+                                     <input type="text" class="form-control" name="nopol" id="nopol" placeholder="nopol" />
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                          </div>
                         </div>
                     	    <input type="hidden" name="kode" value="<?php echo $kode; ?>" /> 
                             <div class="col-sm" style="text-align: right;">
                               <button type="submit" class="btn btn-primary"><?php echo $button ?></button> 
-                              <a href="<?php echo site_url('delivery') ?>" class="btn btn-default">Cancel</a>
+                              <a href="<?php echo site_url('index.php/delivery') ?>" class="btn btn-default">Cancel</a>
                             </div>
                     </form>
               </div><!-- /.box-body -->
@@ -276,6 +532,27 @@
         <script src="<?php echo base_url() ?>template/adminlte/plugins/jquery-ui/jquery-ui.min.js"></script>
         <script src="<?php echo base_url() ?>template/adminlte/plugins/datatables/jquery.dataTables.js"></script>
         <script src="<?php echo base_url() ?>template/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+      <script>
+        $(function () {
+            //Initialize Select2 Elements
+             $('.select2bs4').select2({
+              theme: 'bootstrap4'
+            })          
+           })
+        if ('<?php echo $button?>' == 'Update') {
+          document.getElementById("name_pengirim").disabled = true;
+          document.getElementById("address_pengirim").disabled = true;
+          document.getElementById("telephone_pengirim").disabled = true;
+          document.getElementById("name_penerima").disabled = true;
+          document.getElementById("address_penerima").disabled = true;
+          document.getElementById("telephone_penerima").disabled = true;
+          document.getElementById("regencies_id").disabled = true;
+          document.getElementById("districts_id").disabled = true;
+          document.getElementById("villages_id").disabled = true;
+          document.getElementById("wr_penerima_id").disabled = true;
+          document.getElementById("wr_pengirim_id").disabled = true;
+        }
+      </script>
       <script>
         $(document).ready(function(){
           var counterA = 1;
@@ -295,7 +572,7 @@
             '<div class="col-md-2">'+
               '<div class="form-group">'+
                 '<div class="col-sm">'+
-                  '<input type="text" class="form-control name-kelengkapan" autocomplete="off" spellcheck="false" name="price_kelengkapan[]" id="price_kelengkapan'+counterA+'" rel="rel_price_kelengkapan'+counterA+'" placeholder="Price Item" value="<?php //echo $kelengkapan_name; ?>" />'+
+                  '<input type="number" class="form-control name-kelengkapan" autocomplete="off" spellcheck="false" name="price_kelengkapan[]" id="price_kelengkapan'+counterA+'" rel="rel_price_kelengkapan'+counterA+'" placeholder="Price Item" value="<?php //echo $kelengkapan_name; ?>" />'+
                 '</div>'+
               '</div>'+
             '</div>'+
@@ -362,7 +639,7 @@
             '<div class="col-md-2">' +
               '<div class="form-group">' +
                 '<div class="col-sm">' +
-                  '<input type="text" class="form-control name-item" autocomplete="off" spellcheck="false" name="price_item[]" id="price_item'+counterB+'" rel="rel_price_item'+counterB+'" placeholder="Price Item" value="<?php //echo $item_name; ?>" />' +
+                  '<input type="number" class="form-control name-item" autocomplete="off" spellcheck="false" name="price_item[]" id="price_item'+counterB+'" rel="rel_price_item'+counterB+'" placeholder="Price Item" value="<?php //echo $item_name; ?>" />' +
                 '</div>' +
               '</div>' +
             '</div>' +
@@ -428,7 +705,7 @@
               '<div class="col-md-2">' +
               '<div class="form-group">' +
                 '<div class="col-sm">' +
-                  '<input type="text" class="form-control name-item" autocomplete="off" spellcheck="false" name="price_other[]" id="price_other'+counterB+'" rel="rel_price_other'+counterB+'" placeholder="Price Other" value="<?php //echo $item_name; ?>" />' +
+                  '<input type="number" class="form-control name-item" autocomplete="off" spellcheck="false" name="price_other[]" id="price_other'+counterB+'" rel="rel_price_other'+counterB+'" placeholder="Price Other" value="<?php //echo $item_name; ?>" />' +
                 '</div>' +
               '</div>' +
             '</div>' +
@@ -466,7 +743,7 @@
           });
 
             $( "#name_pengirim" ).autocomplete({
-              source: "<?php echo base_url()?>customer/get_all_customer/",
+              source: "<?php echo base_url()?>index.php/customer/get_all_customer/",
 
               select: function (event, ui) {
                 $('[name="name_pengirim"]').val(ui.item.label); 
@@ -477,7 +754,7 @@
             });
 
             $( "#name_penerima" ).autocomplete({
-              source: "<?php echo base_url()?>customer/get_all_customer/",
+              source: "<?php echo base_url()?>index.php/customer/get_all_customer/",
 
               select: function (event, ui) {
                 $('[name="name_penerima"]').val(ui.item.label); 
@@ -488,7 +765,7 @@
             });
 
             $( "#driver" ).autocomplete({
-              source: "<?php echo base_url()?>driver/get_all_driver/",
+              source: "<?php echo base_url()?>index.php/driver/get_all_driver/",
 
               select: function (event, ui) {
                 $('[name="driver"]').val(ui.item.label); 
@@ -497,7 +774,7 @@
             });
 
             $( "#nopol" ).autocomplete({
-              source: "<?php echo base_url()?>truck/get_all_nopol/",
+              source: "<?php echo base_url()?>index.php/truck/get_all_nopol/",
 
               select: function (event, ui) {
                 $('[name="nopol"]').val(ui.item.label); 
@@ -529,7 +806,7 @@
         function regencies_list(){
             $.ajax({
                 type : 'ajax',
-                url : '<?php echo base_url()?>delivery/get_regencies/',
+                url : '<?php echo base_url()?>index.php/delivery/get_regencies/',
                 async : false,
                 dataType : 'json',
                 success : function(data){
@@ -557,7 +834,7 @@
             var id = elem.options[elem.selectedIndex].value;
             $.ajax({
                 type : 'ajax',
-                url : '<?php echo base_url()?>delivery/get_districts/'+id,
+                url : '<?php echo base_url()?>index.php/delivery/get_districts/'+id,
                 async : false,
                 dataType : 'json',
                 success : function(data){
@@ -586,7 +863,7 @@
             var id = elem1.options[elem1.selectedIndex].value;
             $.ajax({
                 type : 'ajax',
-                url : '<?php echo base_url()?>delivery/get_villages/'+id,
+                url : '<?php echo base_url()?>index.php/delivery/get_villages/'+id,
                 async : false,
                 dataType : 'json',
                 success : function(data){

@@ -51,7 +51,7 @@
                     </div>
                     <input type="hidden" name="id" value="<?php echo $id; ?>" />
                     <div style="text-align: right;">
-                  <a href="<?php echo site_url('user') ?>" class="btn btn-default">Cancel</a>
+                  <a href="<?php echo site_url('index.php/user') ?>" class="btn btn-default">Cancel</a>
                   </div>
                   </form>
                     </div>

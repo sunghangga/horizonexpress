@@ -8,7 +8,7 @@
                 <div class='card-header'>
                     <div class="row">
                     <div class="col-md-6">
-                  <h3 class='card-title'>DELIVERY LIST <?php echo anchor('index.php/delivery/create/','Create',array('class'=>'btn btn-primary btn-sm','style'=>'margin-left: 10px;'));?>
+                  <h3 class='card-title'>DELIVERY LIST <?php echo anchor('index.php/delivery/create/','Create',array('class'=>'btn btn-primary btn-sm'));?>
         <?php //echo anchor(site_url('delivery/excel'), ' <i class="fa fa-file-excel-o"></i> Excel', 'class="btn btn-success btn-sm"'); ?></h3>
                     </div>
                     <div class="col-md-6">
@@ -33,16 +33,20 @@
                 <tr>
                 <th>Date</th>
                 <th>Kode</th>
+                <th>Status</th>
+                <th>Price</th>
                 <th>Name Pengirim</th>
                 <th>Address Pengirim</th>
                 <th>Telephone Pengirim</th>
+                <th>Warehouse Pengirim</th>
                 <th>Name Penerima</th>
                 <th>Address Penerima</th>
                 <th>Telephone Penerima</th>
+                <th>Warehouse Penerima</th>
                 <th>Create by</th>
-                <th>Driver</th>
-                <th>Nopol</th>
-                <th>Price</th>
+                
+                <!--<th>Driver</th>
+                <th>Nopol</th>-->
                 <th>Action</th>
                 </tr>
             </thead>
@@ -71,7 +75,21 @@
 
         </script>
         <script type="text/javascript">
+          function wr_name(id){
+            var temp = null;
+            $.ajax({
+                type : 'ajax',
+                url : '<?php echo base_url()?>index.php/delivery/get_wr_name/'+id,
+                async : false,
+                dataType : 'json',
+                success : function(data){
+                  temp = data;
+                }
+            });
+            return temp;
+          }
         function data_range(first,last){
+              var name_wr = "";              
               var table = $('#mytable').DataTable( {
                   scrollY: "400px",
                   scrollX: true,
@@ -90,22 +108,43 @@
                   "columns": [
                       { "data": "create_at" },
                       { "data": "kode" },
+                      { "data": null,
+                        render: function ( data, type, row ) {
+                          if (data.status == "received") {
+                            return data.status + " in " + wr_name(data.wr_penerima_id);
+                          }
+                          else {
+                            return data.status;
+                          }
+                        }
+                       },
+                      { "data": "price" },
                       { "data": "name_pengirim" },
                       { "data": "address_pengirim" },
                       { "data": "telephone_pengirim" },
+                      { "data": null,
+                        render: function ( data, type, row ) {
+                          return wr_name(data.wr_pengirim_id);
+                        }
+                       },
                       { "data": "name_penerima" },
                       { "data": "address_penerima" },
                       { "data": "telephone_penerima" },
-                      { "data": "user_id" },
-                      { "data": "driver" },
-                      { "data": "nopol" },
-                      { "data": "price" },
+                      { "data": null,
+                        render: function ( data, type, row ) {
+                          return wr_name(data.wr_penerima_id);
+                        }
+                       },
+                      { "data": "admin" },
+                      
+                      /*{ "data": "driver" },
+                      { "data": "nopol" },*/
                       { "data": null,
                         render: function ( data, type, row ) {
                           // console.log(data.sv_no);
                           return '<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">'+
-                          '<div class="btn-group" role="group" aria-label="First group">'+
-                            '<button id="info" style="margin-left: 5px;" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button></div>'+
+                          /*'<div class="btn-group" role="group" aria-label="First group">'+
+                            '<button id="info" style="margin-left: 5px;" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button></div>'+*/
                           '<div class="btn-group" role="group" aria-label="Second group">'+
                             '<button id="update" style="margin-left: 5px;" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button></div>'+
                             '<div class="btn-group" role="group" aria-label="Third group">'+
@@ -115,9 +154,10 @@
                   ],
                   "columnDefs": [
                       { targets: 0, "width": "90", render: function(data){return moment(data).format('D MMM YYYY'); }},
-                      { targets: [2,3,5,6], "width": "150"},
-                      { targets: 11, render: function(data){return new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(data); }},
-                      { targets: -1, "width": "100px" },
+                      { targets: [4,5,6,7,8,9,10], "width": "150"},
+                      { targets: 3, render: function(data){return new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(data); }},
+                      // { targets: [6,10], render: function(data){return wr_name(data); }},
+                      { targets: -1, "width": "65px" },
                   ]
               } );
 

@@ -17,7 +17,7 @@
                                 </div>
 	                         <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Category <?php echo form_error('category') ?></label>
                                     <div class='col-sm-10'>
-                                      <select class="form-control" id="category" name="category" >
+                                      <select class="form-control select2bs4" id="category" name="category">
                                         <?php if($category != null){ 
                                              echo '<option value="'.$category.'">'.strtoupper($category).'</option>';
                                          } ?>
@@ -28,7 +28,7 @@
                                 </div>
 	                         <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Unit<?php echo form_error('unit_id') ?></label>
                                     <div class='col-sm-10'>
-                                      <select class="form-control" id="unit" name="unit_id">
+                                      <select class="form-control select2bs4" id="unit" name="unit_id">
                                         <?php if($unit_id != null){ 
                                              echo '<option value="'.$unit_id.'">'.$unit.'</option>';
                                          } 
@@ -46,7 +46,7 @@
                           	    <input type="hidden" name="id" value="<?php echo $id; ?>" /> 
                           	 <div style='text-align: right;'> 
                                                   <button type="submit" class="btn btn-primary"><?php echo $button ?></button> 
-                          	    <a href="<?php echo site_url('item') ?>" class="btn btn-default">Cancel</a>
+                          	    <a href="<?php echo site_url('index.php/item') ?>" class="btn btn-default">Cancel</a>
                           	</div>
                           </form>
                         </div>
@@ -58,4 +58,12 @@
           </div><!-- /.container-fluid -->
            <script src="<?php echo base_url('template/adminlte/plugins/jquery/jquery.min.js') ?>"></script>
         <script src="<?php echo base_url('template/adminlte/plugins/jquery-ui/jquery-ui.min.js') ?>"></script>
+        <script>
+          $(function () {
+            //Initialize Select2 Elements
+             $('.select2bs4').select2({
+              theme: 'bootstrap4'
+            })          
+           })
+        </script>
         </section><!-- /.content -->

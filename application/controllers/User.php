@@ -13,12 +13,12 @@ class User extends CI_Controller
         $this->load->model('User_model');
         $this->load->model('Group_model');
         $this->load->library('form_validation');
-        if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('login', 'refresh');}
+        if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
 
     public function index()
     {
-      if($this->session->userdata('user_level') != '1'){ redirect('login', 'refresh');}
+      if($this->session->userdata('user_level') != '1'){ redirect('index.php/login', 'refresh');}
         $user = $this->User_model->get_all();
 
         $data = array(
@@ -30,7 +30,7 @@ class User extends CI_Controller
 
     public function read($id) 
     {
-      if($this->session->userdata('user_level') != '1'){ redirect('login', 'refresh');}
+      if($this->session->userdata('user_level') != '1'){ redirect('index.php/login', 'refresh');}
         $row = $this->User_model->get_by_id($id);
         if ($row) {
             $data = array(
@@ -51,7 +51,7 @@ class User extends CI_Controller
 
     public function create() 
     {
-      if($this->session->userdata('user_level') != '1'){ redirect('login', 'refresh');}
+      if($this->session->userdata('user_level') != '1'){ redirect('index.php/login', 'refresh');}
         $data = array(
             'button' => 'Create',
             'action' => site_url('index.php/user/create_action'),
@@ -59,7 +59,7 @@ class User extends CI_Controller
       	    'get_all_group' => $this->Group_model->get_all(),
       	    'id' => set_value('id'),
             'group_id' => set_value('group_id'),
-      	    'nama' => set_value('nama'),
+      	    'name' => set_value('name'),
       	    'password' => set_value('password'),
       	    'username' => set_value('username'),
 	);
@@ -75,10 +75,10 @@ class User extends CI_Controller
         } else {
             $data = array(
         		'group_id' => $this->input->post('group_id',TRUE),
-        		'nama' => $this->input->post('nama',TRUE),
+        		'name' => $this->input->post('name',TRUE),
             'password' => $this->bcrypt->hash_password($this->input->post('password'),TRUE),
         		'username' => $this->input->post('username',TRUE),
-            'update_at' => date('Y-m-d h:m:s'),
+            'create_at' => date('Y-m-d h:m:s'),
         	    );
 
             $this->User_model->insert($data);
@@ -89,7 +89,7 @@ class User extends CI_Controller
     
     public function update($id) 
     {
-      if($this->session->userdata('user_level') != '1'){ redirect('login', 'refresh');}
+      if($this->session->userdata('user_level') != '1'){ redirect('index.php/login', 'refresh');}
         $row = $this->User_model->get_by_id($id);
         $group = $this->Group_model->get_by_id($row->group_id);
 
@@ -101,7 +101,7 @@ class User extends CI_Controller
           'group' => set_value('group_id', $group->name),
           'get_all_group' => $this->Group_model->get_all(),
       		'id' => set_value('id', $row->id),
-      		'nama' => set_value('nama', $row->name),
+      		'name' => set_value('name', $row->name),
       		'password' => set_value('password', $row->password),
       		'username' => set_value('username', $row->username),
       	    );
@@ -123,7 +123,7 @@ class User extends CI_Controller
           if($row->password!=$this->input->post('password')){
             $data = array(
             'group_id' => $this->input->post('group_id',TRUE),
-            'nama' => $this->input->post('nama',TRUE),
+            'name' => $this->input->post('name',TRUE),
             'password' => $this->bcrypt->hash_password($this->input->post('password'),TRUE),
             'update_at' => date('Y-m-d h:m:s'),
             'username' => $this->input->post('username',TRUE),
@@ -133,7 +133,7 @@ class User extends CI_Controller
               echo "sama";
             $data = array(
             'group_id' => $this->input->post('group_id',TRUE),
-            'nama' => $this->input->post('nama',TRUE),
+            'name' => $this->input->post('name',TRUE),
             'update_at' => date('Y-m-d h:m:s'),
             'username' => $this->input->post('username',TRUE),
               );
@@ -167,7 +167,7 @@ class User extends CI_Controller
         if ($row) {
             $data = array(
               'button' => 'Update',
-              'action' => site_url('user/profil_action'),
+              'action' => site_url('index.php/user/profil_action'),
               'group_id' => set_value('group_id', $group->id),
               'group' => set_value('group_id', $group->name),
               'get_all_group' => $this->Group_model->get_all(),
@@ -218,7 +218,7 @@ class User extends CI_Controller
     public function _rules() 
     {
 	$this->form_validation->set_rules('group_id', 'group id', 'trim');
-	$this->form_validation->set_rules('nama', 'nama', 'trim|required');
+	$this->form_validation->set_rules('name', 'name', 'trim|required');
 	$this->form_validation->set_rules('password', 'password', 'trim|required');
 	$this->form_validation->set_rules('username', 'username', 'trim|required');
 

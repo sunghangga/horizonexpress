@@ -12,8 +12,8 @@ class Group extends CI_Controller
         parent::__construct();
         $this->load->model('Group_model');
         $this->load->library('form_validation');
-        if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('login', 'refresh');}
-        if($this->session->userdata('user_level') != '1'){ redirect('login', 'refresh');}
+        if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
+        if($this->session->userdata('user_level') != '1'){ redirect('index.php/login', 'refresh');}
     }
 
     public function index()

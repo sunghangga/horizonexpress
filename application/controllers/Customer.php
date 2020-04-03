@@ -12,7 +12,8 @@ class Customer extends CI_Controller
         parent::__construct();
         $this->load->model('Customer_model');
         $this->load->library('form_validation');
-        if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('login', 'refresh');}
+        $this->load->helper(array('form', 'url'));
+        if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
 
     public function index()
@@ -56,7 +57,7 @@ class Customer extends CI_Controller
             $this->template->load('template','customer/customer_read', $data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
-            redirect(site_url('customer'));
+            redirect(site_url('index.php/customer'));
         }
     }
 
@@ -68,28 +69,49 @@ class Customer extends CI_Controller
     	    'id' => set_value('id'),
     	    'name' => set_value('name'),
     	    'address' => set_value('address'),
-    	    'telephone' => set_value('telephone')
-	);
+    	    'telephone' => set_value('telephone'),
+            'nip' => set_value('nip'),
+            'photo' => set_value('photo'),
+	    );
         $this->template->load('template','customer/customer_form', $data);
     }
     
     public function create_action() 
     {
         $this->_rules();
+        
+        
 
         if ($this->form_validation->run() == FALSE) {
             $this->create();
         } else {
-            $data = array(
-        		'name' => $this->input->post('name',TRUE),
-        		'address' => $this->input->post('address',TRUE),
-        		'telephone' => $this->input->post('telephone',TRUE),
-        		'create_at' => date('Y-m-d h:m:s')
-        	    );
+            $config['upload_path']          = './assets/img/';
+            $config['allowed_types']        = 'gif|jpg|png|jpeg';
+            $config['file_name']            = 'profile-'.date('ymd').'-'.substr(md5(rand()), 0, 10);
+            $config['overwrite']            = true;
+            $config['max_size']             = 2048;
+            $this->load->library('upload', $config);
 
-            $this->Customer_model->insert($data);
-            $this->session->set_flashdata('message', 'Create Record Success');
-            redirect(site_url('customer'));
+            //upload file
+            if ($this->upload->do_upload('photo')) {
+              $uploadData = $this->upload->data(); 
+              $filename = $uploadData['file_name'];
+              $data = array(
+              'name' => $this->input->post('name',TRUE),
+              'address' => $this->input->post('address',TRUE),
+              'telephone' => $this->input->post('telephone',TRUE),
+              'nip' => $this->input->post('nip',TRUE),
+              'photo' => $filename,
+              'create_at' => date('Y-m-d h:m:s')
+                );
+
+                $this->Customer_model->insert($data);
+                $this->session->set_flashdata('message', 'Create Record Success');
+            }else{
+                echo "gagal upload";
+            }
+            
+            redirect(site_url('index.php/customer'));
         }
     }
     
@@ -102,6 +124,8 @@ class Customer extends CI_Controller
                 'button' => 'Update',
                 'action' => site_url('index.php/customer/update_action'),
         		'id' => set_value('id', $row->id),
+            'nip' => set_value('id', $row->nip),
+            'photo' => set_value('photo', $row->photo),
         		'name' => set_value('name', $row->name),
         		'address' => set_value('address', $row->address),
         		'telephone' => set_value('telephone', $row->telephone)
@@ -109,7 +133,7 @@ class Customer extends CI_Controller
             $this->template->load('template','customer/customer_form', $data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
-            redirect(site_url('customer'));
+            redirect(site_url('index.php/customer'));
         }
     }
     
@@ -128,7 +152,7 @@ class Customer extends CI_Controller
 
             $this->Customer_model->update($this->input->post('id', TRUE), $data);
             $this->session->set_flashdata('message', 'Update Record Success');
-            redirect(site_url('customer'));
+            redirect(site_url('index.php/customer'));
         }
     }
     
@@ -139,10 +163,10 @@ class Customer extends CI_Controller
         if ($row) {
             $this->Customer_model->delete($id);
             $this->session->set_flashdata('message', 'Delete Record Success');
-            redirect(site_url('customer'));
+            redirect(site_url('index.php/customer'));
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
-            redirect(site_url('customer'));
+            redirect(site_url('index.php/customer'));
         }
     }
 

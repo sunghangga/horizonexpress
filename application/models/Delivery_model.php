@@ -59,6 +59,37 @@ class Delivery_model extends CI_Model
         return $this->db->get($this->table)->result();
     }
 
+    function search_kode($title)
+    {
+        $this->db->like('kode', $title , 'both');
+        $this->db->order_by('kode', 'ASC');
+        $this->db->limit(10);
+        return $this->db->get($this->table)->result();
+    }
+
+    function get_all_kode()
+    {
+        $this->db->order_by('kode', 'ASC');
+        $this->db->limit(10);
+        return $this->db->get($this->table)->result();
+    }
+
+    function get_all_kode_by_status($status)
+    {
+        $this->db->where('delivery.status', $status);
+        $this->db->order_by('kode', 'ASC');
+        $this->db->limit(10);
+        return $this->db->get($this->table)->result();
+    }
+
+    function get_kode_by_some_status($status1,$status2)
+    {
+        $this->db->where("(delivery.status='".$status1."' OR delivery.status='".$status2."')", NULL, FALSE);
+        $this->db->order_by('kode', 'ASC');
+        $this->db->limit(10);
+        return $this->db->get($this->table)->result();
+    }
+
     // get all
     function get_all()
     {
@@ -92,11 +123,12 @@ class Delivery_model extends CI_Model
 
     function get_range($first,$last)
     {
-        $this->db->select('delivery.kode, delivery.name_pengirim, delivery.address_pengirim, delivery.telephone_pengirim, delivery.name_penerima, delivery.address_penerima, delivery.telephone_penerima,delivery.driver,delivery.user_id, delivery.nopol,(SELECT SUM(qty*price) FROM delivery_detail WHERE kode=delivery.kode) as price, regencies.name, districts.name, villages.name, delivery.create_at, delivery.update_at');
+        $this->db->select('delivery.kode, delivery.name_pengirim, delivery.address_pengirim, delivery.telephone_pengirim, delivery.wr_pengirim_id wr_pengirim_id, delivery.wr_penerima_id wr_penerima_id, delivery.name_penerima, delivery.address_penerima, delivery.telephone_penerima,delivery.driver,delivery.user_id, delivery.nopol,(SELECT SUM(qty*price) FROM delivery_detail WHERE kode=delivery.kode) as price, regencies.name, districts.name, villages.name, delivery.create_at, delivery.update_at,delivery.status,user.name as admin');
         $this->db->from('delivery');
         $this->db->join('regencies','delivery.regencies_id=regencies.id', 'LEFT');
         $this->db->join('districts','delivery.districts_id=districts.id', 'LEFT');
         $this->db->join('villages','delivery.villages_id=villages.id', 'LEFT');
+        $this->db->join('user','user.id=delivery.user_id', 'LEFT');
         $this->db->where('delivery.create_at>=', $first);
         $this->db->where('delivery.create_at<=', $last);
         $this->db->order_by($this->id, $this->order);
@@ -115,7 +147,7 @@ class Delivery_model extends CI_Model
     // get data by id
     function get_by_id($id)
     {
-        $this->db->select('delivery.kode kode, delivery.name_pengirim name_pengirim, delivery.address_pengirim address_pengirim, delivery.telephone_pengirim telephone_pengirim, delivery.name_penerima name_penerima, delivery.address_penerima address_penerima, delivery.telephone_penerima telephone_penerima, delivery.user_id user_id, delivery.driver driver, delivery.nopol nopol, delivery.price price, regencies.name name_regency, districts.name name_district, villages.name name_village, delivery.create_at create_at, delivery.update_at update_at');
+        $this->db->select('delivery.kode kode, delivery.name_pengirim name_pengirim, delivery.address_pengirim address_pengirim, delivery.telephone_pengirim telephone_pengirim, delivery.wr_pengirim_id wr_pengirim_id, delivery.wr_penerima_id wr_penerima_id, delivery.name_penerima name_penerima, delivery.address_penerima address_penerima, delivery.telephone_penerima telephone_penerima, delivery.user_id user_id, delivery.driver driver, delivery.nopol nopol, regencies.name name_regency, districts.name name_district, villages.name name_village, delivery.create_at create_at, delivery.update_at update_at');
         $this->db->from('delivery');
         $this->db->join('regencies','delivery.regencies_id=regencies.id', 'LEFT');
         $this->db->join('districts','delivery.districts_id=districts.id', 'LEFT');

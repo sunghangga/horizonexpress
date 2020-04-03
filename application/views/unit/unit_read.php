@@ -15,7 +15,7 @@
                                    </div> 
                                 </div>
 	 <div style='text-align: right;'>
-	    <a href="<?php echo site_url('unit') ?>" class="btn btn-default">Cancel</a>
+	    <a href="<?php echo site_url('index.php/unit') ?>" class="btn btn-default">Cancel</a>
 	</div>
                         </div>
                     </div>

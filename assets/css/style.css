@@ -38,8 +38,8 @@
   display: table;
   clear: both;
 }
-/*table {
+.scroll-table {
     display: block;
     overflow-x: auto;
     white-space: nowrap;
-}*/
+}

@@ -30,9 +30,9 @@
                               </div>
                             </div>
                             <div class="form-group row">
-                              <label for="staticEmail" class="col-sm-2 col-form-label">Nama <?php echo form_error('nama') ?></label>
+                              <label for="staticEmail" class="col-sm-2 col-form-label">Nama <?php echo form_error('name') ?></label>
                               <div class="col-sm-10">
-                                <input type="text" class="form-control" name="nama" id="nama" placeholder="Nama" value="<?php echo $nama; ?>" />
+                                <input type="text" class="form-control" name="name" id="name" placeholder="Name" value="<?php echo $name; ?>" />
                               </div>
                             </div>
                             <div class="form-group row">
@@ -49,7 +49,7 @@
                             </div>
                             <div style="text-align: right;">
                         <button type="submit" class="btn btn-primary"><?php echo $button ?></button> 
-                        <a href="<?php echo site_url('user') ?>" class="btn btn-default">Cancel</a>
+                        <a href="<?php echo site_url('index.php/user') ?>" class="btn btn-default">Cancel</a>
                         </div>
                       </form>
                     </div>
@@ -64,8 +64,8 @@
         </section><!-- /.content -->
 
   <script type="text/javascript">
-    var group= document.getElementById("group").value;
-    if(group != "1"){
+    // var group= document.getElementById("group").value;
+    if(<?php echo $this->session->userdata('user_level')?> != "1"){
         document.getElementById("group").disabled = true;
     }
 

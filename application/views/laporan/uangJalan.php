@@ -7,12 +7,12 @@
 <body>
 	<table class="form-p-all">
 		<tr>
-			<td>
+			<td style="padding-bottom: 7px;">
 				<p class="form-p"><b>PT. Horison Nusa Jaya Transport</b></p>
-				<p class="form-p">Jl. Pohgading Timur Lingk. Perarudan</p>
-				<p class="form-p">Jimbaran - Kuta Selatan</p>
+				<!-- <p class="form-p">Jl. Pohgading Timur Lingk. Perarudan</p> -->
+				<!-- <p class="form-p">Jimbaran - Kuta Selatan</p> -->
 				<p class="form-p">Telp. 085253703818</p>
-				<p class="form-p">NPWP 94.206.799.2-905.000</p>
+				<!-- <p class="form-p">NPWP 94.206.799.2-905.000</p> -->
 			</td>
 			<td class="center-text" width="350px">
 				<h2 class="form-p"><b>UANG JALAN</b></h2>
@@ -32,7 +32,7 @@
 	    			<p class="form-p" style="margin-left: 3px;"><b>No. Tanda Terima</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">: 158449406325</p>
+	    			<p class="form-p">: <?php echo $kode?></p>
 	    		</td>
 	    	</tr>
 	    	<tr>
@@ -40,7 +40,7 @@
 	    			<p class="form-p" style="margin-left: 3px;"><b>Tanggal</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">: 18 Mar 2020</p>
+	    			<p class="form-p">: <?php echo $create_at?></p>
 	    		</td>
 	    	</tr>
 	    	<tr>
@@ -48,7 +48,7 @@
 	    			<p class="form-p" style="margin-left: 3px;"><b>Supir</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">: ANDIKA</p>
+	    			<p class="form-p">: <?php echo $driver?></p>
 	    		</td>
 	    	</tr>
 	    	<tr>
@@ -56,7 +56,7 @@
 	    			<p class="form-p" style="margin-left: 3px;"><b>Nopol</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">: 158449406325ADK</p>
+	    			<p class="form-p">: <?php echo $nopol?></p>
 	    		</td>
 	    	</tr>
 	    	<tr>
@@ -64,7 +64,7 @@
 	    			<p class="form-p" style="margin-left: 3px;"><b>Tujuan</b></p>
 	    		</td>
 	    		<td>
-				    <p class="form-p">: Klungkung - Singaraja</p>
+				    <p class="form-p">: <?php echo $kota?></p>
 	    		</td>
 	    	</tr>
 	    </table>
@@ -79,54 +79,28 @@
 	    			<p class="form-p" style="margin-left: 3px;"><b>UANG MAKAN</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">Rp.</p>
+	    			<p class="form-p"><?php echo "Rp ".number_format($table,2,',','.')?></p>
 	    		</td>
 	    	</tr>
 	    </table>
 	  </div>
 	</div>
+	<?php foreach($get_roadmoney_detail_by_id as $row){ ?>
 	<div class="row form-p-all">
 	  <div class="column" style="border-style: solid; width: 690px; margin-top: 2px;">
 	   <table>
 	    	<tr>
 	    		<td width="450px">
-	    			<p class="form-p" style="margin-left: 3px;"><b>JURUSAN 1</b></p>
+	    			<p class="form-p" style="margin-left: 3px;"><b><?php echo $row->postage?></b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">Rp.</p>
+	    			<p class="form-p"><?php echo "Rp ".number_format($row->price,2,',','.')?></p>
 	    		</td>
 	    	</tr>
 	    </table>
 	  </div>
 	</div>
-	<div class="row form-p-all">
-	  <div class="column" style="border-style: solid; width: 690px; margin-top: 2px;">
-	   <table>
-	    	<tr>
-	    		<td width="450px">
-	    			<p class="form-p" style="margin-left: 3px;"><b>JURUSAN 2</b></p>
-	    		</td>
-	    		<td>
-	    			<p class="form-p">Rp.</p>
-	    		</td>
-	    	</tr>
-	    </table>
-	  </div>
-	</div>
-	<div class="row form-p-all">
-	  <div class="column" style="border-style: solid; width: 690px; margin-top: 2px;">
-	   <table>
-	    	<tr>
-	    		<td width="450px">
-	    			<p class="form-p" style="margin-left: 3px;"><b>JURUSAN 3</b></p>
-	    		</td>
-	    		<td>
-	    			<p class="form-p">Rp.</p>
-	    		</td>
-	    	</tr>
-	    </table>
-	  </div>
-	</div>
+	<?php } ?>
 	<div class="row form-p-all">
 	  <div class="column" style="border-style: solid; width: 690px; margin-top: 2px;">
 	   <table>
@@ -135,7 +109,7 @@
 	    			<p class="form-p" style="margin-left: 3px;"><b>PULSA</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">Rp.</p>
+	    			<p class="form-p"><?php echo "Rp ".number_format($pulse,2,',','.')?></p>
 	    		</td>
 	    	</tr>
 	    </table>
@@ -149,7 +123,7 @@
 	    			<p class="form-p" style="margin-left: 3px;"><b>Total</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">Rp.</p>
+	    			<p class="form-p"><?php echo "Rp ".number_format($price,2,',','.')?></p>
 	    		</td>
 	    	</tr>
 	    </table>

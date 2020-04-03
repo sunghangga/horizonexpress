@@ -31,7 +31,7 @@
                                    </div> 
                                 </div>
 	 <div style='text-align: right;'>
-	    <a href="<?php echo site_url('tire') ?>" class="btn btn-default">Cancel</a>
+	    <a href="<?php echo site_url('index.php/tire') ?>" class="btn btn-default">Cancel</a>
 	</div>
                         </div>
                     </div>

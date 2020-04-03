@@ -1,0 +1,531 @@
+<!-- Main content -->
+      <section class='content'>
+        <div class='container-fluid'>
+          <div class='row'>
+            <div class='col-12'>
+              <div class='card'>
+                <div class='card-header'>
+                  <h3 class='card-title'>CHECK</h3>
+                </div>
+                  <div class='card-body'>
+                    <div class='row'>
+                      <div class='col-12'>
+                          <form action="<?php echo $action; ?>" method="post">
+                            	  <div class='form-group row'>
+                                  <label for='label' class='col-sm-2 col-form-label'>Kode <?php echo form_error('kode') ?></label>
+                                    <div class='col-sm-10'>
+                                      <select class="form-control select2bs4" id="kode" name="kode" onchange="show_data()">
+                                        <?php if($kode != null){ 
+                                             echo '<option value="'.$kode.'">'.$kode.'</option>';
+                                         } 
+                                        foreach ($get_all_kode as $row)
+                                            {
+                                              if($kode != $row->kode){
+                                                echo '<option value="'.$row->kode.'">'.$row->kode.'</option>';
+                                              }
+                                            } ?>
+                                        
+                                      </select>
+                                   </div> 
+                                </div>
+	  <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Examiner <?php echo form_error('examiner') ?></label>
+                                    <div class='col-sm-10'><input type="text" class="form-control" name="examiner" id="examiner" placeholder="Examiner" value="<?php echo $examiner; ?>" />
+                                   </div> 
+                                </div>
+
+                                <div id="show_detail">
+                                  
+                                </div>
+
+	    <input type="hidden" name="id" value="<?php echo $id; ?>" /> 
+	 <div style='text-align: right;'> 
+                        <button type="submit" class="btn btn-primary"><?php echo $button ?></button> 
+	    <a href="<?php echo site_url('index.php/check') ?>" class="btn btn-default">Cancel</a>
+	</div>
+                          </form>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div><!-- /.row -->
+          </div><!-- /.container-fluid -->
+
+          <!-- jQuery -->
+        <script src="<?php echo base_url() ?>template/adminlte/plugins/jquery/jquery.min.js"></script>
+        <!-- jQuery UI 1.11.4 -->
+        <script src="<?php echo base_url() ?>template/adminlte/plugins/jquery-ui/jquery-ui.min.js"></script>
+        <script>
+          $(function () {
+            show_data();
+            //Initialize Select2 Elements
+             $('.select2bs4').select2({
+              theme: 'bootstrap4'
+            })   
+            $('.date').datetimepicker({
+                  format: 'YYYY-MM-DD'
+            })       
+           })
+
+          function show_data(){
+            var x = document.getElementById("kode").value;
+            $.ajax({
+                type : 'ajax',
+                url : '<?php echo base_url()?>index.php/delivery/get_delivery_by_id/'+x,
+                async : false,
+                dataType : 'json',
+                success : function(data){
+                  var html = '';
+                  var i;
+                  
+                  html = '<div class="row">'+
+                    '<div class="col-md-12">'+
+                      '<h4 class="mt-6 ">Data Items</h4>'+
+                    '</div>';
+                    var iter = 0;
+                    for (var i = 0; i < data.length; i++) {
+                      if(data[i].category == 1){
+                        for (var j = 0; j < data[i].qty; j++) {
+                        html += '<div class="col-md-4">'+
+                          '<div class="form-group">';
+                            if(iter == 0){
+                            html += '<label for="staticEmail" class="col-12 col-form-label">Name</label>';
+                            }
+                            html += '<div class="col-sm">'+
+                              '<input type="hidden" class="form-control" name="id_detail[]" value="'+data[i].id+'" disabled/>'+
+                              '<input type="text" class="form-control name-item" autocomplete="off" spellcheck="false" name="name_item[]" id="name_item'+data[i].id+iter.toString()+'" rel="rel_name_item1" placeholder="Name Item" value="'+data[i].name+'" disabled/>'+
+                            '</div>'+
+                          '</div>'+
+                        '</div>'+
+
+                        '<div class="col-md-2">'+
+                          '<div class="form-group">';
+                            if(iter == 0){
+                            html += '<label for="staticEmail" class="col-12 col-form-label">Price</label>';
+                            }
+                            html += '<div class="col-sm">'+
+                              '<input type="number" class="form-control price-item" autocomplete="off" spellcheck="false" name="price_item[]" id="price_item'+data[i].id+iter.toString()+'" rel="rel_price_item" placeholder="Price Item" value="'+data[i].price+'" disabled/>'+
+                            '</div>'+
+                          '</div>'+
+                        '</div>'+
+                        '<div class="col-sm">'+
+                          '<div class="form-group">';
+                            if(iter == 0){
+                            html += '<label for="staticEmail" class="col-8 col-form-label">Unit</label>';
+                            }
+                            html += '<div class="col-sm">'+
+                              '<div class="row">'+
+                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
+                                  '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_item[]" id="unit_item'+data[i].id+iter.toString()+'" rel="rel_unit_item1" placeholder="Unit" value="'+data[i].unit+'" disabled/>'+
+                                '</div>'+
+                              '</div>'+
+                            '</div>'+
+                          '</div>'+
+                        '</div>';
+
+                        html += '<div class="col-sm">'+
+                          '<div class="form-group">';
+                            if(iter == 0){
+                            html += '<label for="staticEmail" class="col-12 col-form-label">Status</label>';
+                            }
+                            html += '<div class="col-sm">'+
+                              '<div class="row">'+
+                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
+                                  '<select class="form-control select2bs4" id="status_item'+data[i].id+iter.toString()+'" name="status_item[]">'+
+                                        '<option value="0">TIDAK RUSAK</option>'+
+                                        '<option value="1">RUSAK</option>'+
+                                      '</select>'+
+                                '</div>'+
+                              '</div>'+
+                            '</div>'+
+                          '</div>'+
+                        '</div>';
+
+                        html += '<div class="col-sm">'+
+                          '<div class="form-group">';
+                          html += '<div class="col-sm">'+
+                              '<div class="row">';
+                              if (iter == 0) {
+                                html += '<div class=".col-6 .col-lg-4" style="margin-top: 38px;">';
+                              }
+                              else{
+                                html += '<div class=".col-6 .col-lg-4">';
+                              }
+                                    html += '<a class=" btn btn-warning" data-id="add_data_item'+data[i].id+iter.toString()+'" data-toggle="modal" data-target="#ModalItem'+data[i].id+iter.toString()+'"><i class="fas fa-wrench"></i></a>'+
+                                  '</div>'+
+                                '</div>'+
+                              '</div>'+
+                          '</div>'+
+                        '</div>'+
+                        // start modal
+                        '<div class="modal fade" id="ModalItem'+data[i].id+iter.toString()+'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">'+
+                          '<div class="modal-dialog" role="document">'+
+                            '<div class="modal-content">'+
+                              '<div class="modal-header">'+
+                                '<h5 class="modal-title" id="exampleModalLabel">Form Detail Check</h5>'+
+                                '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'+
+                                  '<span aria-hidden="true">&times;</span>'+
+                                '</button>'+
+                              '</div>'+
+                              '<div class="modal-body">'+
+                                '<form>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Date Check</label>'+
+                                    '<div class="input-group date" data-target-input="nearest" id="inputDate'+data[i].id+iter.toString()+'">'+
+                                      '<input type="text" class="form-control datetimepicker-input" data-target="#inputDate'+data[i].id+iter.toString()+'" placeholder="Date Check"  name="date_item[]" id="date_item'+data[i].id+iter.toString()+'"/>'+
+                                      '<div class="input-group-append" data-target="#inputDate'+data[i].id+iter.toString()+'" data-toggle="datetimepicker">'+
+                                          '<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>'+
+                                      '</div>'+
+                                    '</div>'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Foto Kerusakan</label>'+
+                                    '<input type="file" class="form-control" name="foto[]" id="foto'+data[i].id+iter.toString()+'"/>'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Gejala</label>'+
+                                    '<input type="text" class="form-control" id="gejala_item'+data[i].id+iter.toString()+'" name="gejala_item[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Penyebab</label>'+
+                                    '<input type="text" class="form-control" id="penyebab_item'+data[i].id+iter.toString()+'" name="penyebab_item[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">No. Engine</label>'+
+                                    '<input type="text" class="form-control" id="engine_item'+data[i].id+iter.toString()+'" name="engine_item[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">No. Engine</label>'+
+                                    '<input type="text" class="form-control" id="frame_item'+data[i].id+iter.toString()+'" name="frame_item[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Type</label>'+
+                                    '<input type="text" class="form-control" id="type_item'+data[i].id+iter.toString()+'" name="type_item[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Solusi dari Dealer</label>'+
+                                    '<input type="text" class="form-control" id="solusi_item'+data[i].id+iter.toString()+'" name="solusi_item[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="message-text" class="col-form-label">Keterangan</label>'+
+                                    '<textarea class="form-control" id="keterangan_item'+data[i].id+iter.toString()+'" name="keterangan_item[]"></textarea>'+
+                                  '</div>'+
+                                '</form>'+
+                              '</div>'+
+                              '<div class="modal-footer">'+
+                                '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+
+                              '</div>'+
+                            '</div>'+
+                          '</div>'+
+                        '</div>';
+                        // end modal
+                        
+                      iter += 1;
+                        }
+                      }
+                    }
+                    html += '</div>';
+
+                    html += '<div class="row">'+
+                    '<div class="col-md-12">'+
+                      '<h4 class="mt-6 ">KELENGKAPAN</h4>'+
+                    '</div>';
+                    var iter = 0;
+                    for (var i = 0; i < data.length; i++) {
+                      if(data[i].category == 2){
+                        for (var j = 0; j < data[i].qty; j++) {
+                        html += '<div class="col-md-4">'+
+                      '<div class="form-group">';
+                        if(iter == 0){
+                         html += '<label for="staticEmail" class="col-12 col-form-label">Name </label>';
+                        }
+                        html += '<div class="col-sm">'+
+                        '<input type="hidden" class="form-control" name="id_detail[]" value="'+data[i].id+'"/>'+
+                          '<input type="text" class="form-control name-kelengkapan" autocomplete="off" spellcheck="false" name="name_kelengkapan[]" id="name_kelengkapan'+data[i].id+iter.toString()+'" rel="rel_name_kelengkapan1" placeholder="Name Item" value="'+data[i].name+'" disabled/>'+
+                        '</div>'+
+                      '</div>'+
+                    '</div>'+
+
+                    '<div class="col-md-2">'+
+                      '<div class="form-group">';
+                        if(iter == 0){
+                        html += '<label for="staticEmail" class="col-12 col-form-label">Price</label>';
+                        }
+                        html += '<div class="col-sm">'+
+                          '<input type="number" class="form-control price-kelengkapan" autocomplete="off" spellcheck="false" name="price_kelengkapan[]" id="price_kelengkapan'+data[i].id+iter.toString()+'" rel="rel_price_kelengkapan" placeholder="Price Item" value="'+data[i].price+'" disabled/>'+
+                        '</div>'+
+                      '</div>'+
+                    '</div>'+
+                    '<div class="col-sm">'+
+                      '<div class="form-group">';
+                        if(iter == 0){
+                        html += '<label for="staticEmail" class="col-8 col-form-label">Unit</label>';
+                        }
+                        html += '<div class="col-sm">'+
+                          '<div class="row">'+
+                            '<div class=".col-12 .col-sm-6 .col-lg-8">'+
+                              '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_kelengkapan[]" id="unit_kelengkapan'+data[i].id+iter.toString()+'" rel="rel_unit_kelengkapan1" placeholder="Unit" value="'+data[i].unit+'" disabled/>'+
+                            '</div>'+
+                          '</div>'+
+                        '</div>'+
+                        '</div>'+
+                      '</div>';
+
+                      html += '<div class="col-sm">'+
+                          '<div class="form-group">';
+                            if(iter == 0){
+                            html += '<label for="staticEmail" class="col-12 col-form-label">Status</label>';
+                            }
+                            html += '<div class="col-sm">'+
+                              '<div class="row">'+
+                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
+                                  '<select class="form-control select2bs4" id="status_kelengkapan'+data[i].id+iter.toString()+'" name="status_kelengkapan[]">'+
+                                        '<option value="0">TIDAK RUSAK</option>'+
+                                        '<option value="1">RUSAK</option>'+
+                                      '</select>'+
+                                '</div>'+
+                              '</div>'+
+                            '</div>'+
+                          '</div>'+
+                        '</div>';
+
+                        html += '<div class="col-sm">'+
+                          '<div class="form-group">';
+                            html += '<div class="col-sm">'+
+                              '<div class="row">';
+                              if (iter == 0) {
+                                html += '<div class=".col-6 .col-lg-4" style="margin-top: 38px;">';
+                              }
+                              else{
+                                html += '<div class=".col-6 .col-lg-4">';
+                              }
+                                    html += '<a class=" btn btn-warning" data-id="add_data_kelengkapan'+data[i].id+iter.toString()+'" data-toggle="modal" data-target="#ModalKelengkapan'+data[i].id+iter.toString()+'"><i class="fas fa-wrench"></i></a>'+
+                                  '</div>'+
+                                '</div>'+
+                              '</div>'+
+                          '</div>'+
+                        '</div>'+
+                        // start modal
+                        '<div class="modal fade" id="ModalKelengkapan'+data[i].id+iter.toString()+'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">'+
+                          '<div class="modal-dialog" role="document">'+
+                            '<div class="modal-content">'+
+                              '<div class="modal-header">'+
+                                '<h5 class="modal-title" id="exampleModalLabel">Form Detail Check</h5>'+
+                                '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'+
+                                  '<span aria-hidden="true">&times;</span>'+
+                                '</button>'+
+                              '</div>'+
+                              '<div class="modal-body">'+
+                                '<form>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Date Check</label>'+
+                                    '<div class="input-group date" data-target-input="nearest" id="inputDateLengkap'+data[i].id+iter.toString()+'">'+
+                                      '<input type="text" class="form-control datetimepicker-input" data-target="#inputDateLengkap'+data[i].id+iter.toString()+'" placeholder="Date Check"  name="date_kelengkapan[]" id="date_kelengkapan'+data[i].id+iter.toString()+'"/>'+
+                                      '<div class="input-group-append" data-target="#inputDateLengkap'+data[i].id+iter.toString()+'" data-toggle="datetimepicker">'+
+                                          '<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>'+
+                                      '</div>'+
+                                    '</div>'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Foto Kerusakan</label>'+
+                                    '<input type="file" class="form-control" name="foto_kelengkapan[]" id="foto_kelengkapan'+data[i].id+iter.toString()+'"/>'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Gejala</label>'+
+                                    '<input type="text" class="form-control" id="gejala_kelengkapan'+data[i].id+iter.toString()+'" name="gejala_kelengkapan[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Penyebab</label>'+
+                                    '<input type="text" class="form-control" id="penyebab_kelengkapan'+data[i].id+iter.toString()+'" name="penyebab_kelengkapan[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">No. Engine</label>'+
+                                    '<input type="text" class="form-control" id="engine_kelengkapan'+data[i].id+iter.toString()+'" name="engine_kelengkapan[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">No. Engine</label>'+
+                                    '<input type="text" class="form-control" id="frame_kelengkapan'+data[i].id+iter.toString()+'" name="frame_kelengkapan[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Type</label>'+
+                                    '<input type="text" class="form-control" id="type_kelengkapan'+data[i].id+iter.toString()+'" name="type_kelengkapan[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Solusi dari Dealer</label>'+
+                                    '<input type="text" class="form-control" id="solusi_kelengkapan'+data[i].id+iter.toString()+'" name="solusi_kelengkapan[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="message-text" class="col-form-label">Keterangan</label>'+
+                                    '<textarea class="form-control" id="keterangan_kelengkapan'+data[i].id+iter.toString()+'" name="keterangan_kelengkapan[]"></textarea>'+
+                                  '</div>'+
+                                '</form>'+
+                              '</div>'+
+                              '<div class="modal-footer">'+
+                                '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+
+                              '</div>'+
+                            '</div>'+
+                          '</div>'+
+                        '</div>';
+                        // end modal
+                        
+                      iter += 1;
+                        }
+                      }
+                    }
+                    html += '</div>';
+                    
+
+                  html += '<div class="row">'+
+                    '<div class="col-md-12">'+
+                      '<h4 class="mt-6 ">Item Other</h4>'+
+                    '</div>';
+                    var iter = 0;
+                    for (var i = 0; i < data.length; i++) {
+                      if(data[i].category == 0){
+                        for (var j = 0; j < data[i].qty; j++) {
+                        html += '<div class="col-md-4">'+
+                          '<div class="form-group">';
+                            if(iter == 0){
+                            html += '<label for="staticEmail" class="col-12 col-form-label">Name </label>';
+                            }
+                            html += '<div class="col-sm">'+
+                            '<input type="hidden" class="form-control" name="id_detail[]" value="'+data[i].id+'"/>'+
+                              '<input type="text" class="form-control name-other" autocomplete="off" spellcheck="false" name="name_other[]" id="name_other'+data[i].id+iter.toString()+'" rel="rel_name_other1" placeholder="Name Item" value="'+data[i].name+'" disabled/>'+
+                            '</div>'+
+                          '</div>'+
+                        '</div>'+
+
+                        '<div class="col-md-2">'+
+                          '<div class="form-group">';
+                            if(iter == 0){
+                            html += '<label for="staticEmail" class="col-12 col-form-label">Price</label>';
+                            }
+                            html += '<div class="col-sm">'+
+                              '<input type="number" class="form-control price-kelengkapan" autocomplete="off" spellcheck="false" name="price_other[]" id="price_other'+data[i].id+iter.toString()+'" rel="rel_price_other" placeholder="Price Other" value="'+data[i].price+'" disabled/>'+
+                            '</div>'+
+                          '</div>'+
+                        '</div>'+
+                        '<div class="col-sm">'+
+                          '<div class="form-group">';
+                            if(iter == 0){
+                             html += '<label for="staticEmail" class="col-8 col-form-label">Unit</label>';
+                            }
+                            html += '<div class="col-sm">'+
+                             '<div class="row">'+
+                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
+                                  '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_other[]" id="unit_other'+data[i].id+iter.toString()+'" rel="rel_unit_other1" placeholder="Unit" value="'+data[i].unit+'" disabled/>'+
+                                '</div>'+
+                              '</div>'+
+                            '</div>'+
+                          '</div>'+
+                      '</div>';
+                      html += '<div class="col-sm">'+
+                          '<div class="form-group">';
+                            if(iter == 0){
+                            html += '<label for="staticEmail" class="col-12 col-form-label">Status</label>';
+                            }
+                            html += '<div class="col-sm">'+
+                              '<div class="row">'+
+                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
+                                  '<select class="form-control select2bs4" id="status_other'+data[i].id+iter.toString()+'" name="status_other[]">'+
+                                        '<option value="0">TIDAK RUSAK</option>'+
+                                        '<option value="1">RUSAK</option>'+
+                                      '</select>'+
+                                '</div>'+
+                              '</div>'+
+                            '</div>'+
+                          '</div>'+
+                        '</div>';
+
+                        html += '<div class="col-sm">'+
+                          '<div class="form-group">';
+                          html += '<div class="col-sm">'+
+                              '<div class="row">';
+                              if (iter == 0) {
+                                html += '<div class=".col-6 .col-lg-4" style="margin-top: 38px;">';
+                              }
+                              else{
+                                html += '<div class=".col-6 .col-lg-4">';
+                              }
+                                    html += '<a class=" btn btn-warning" data-id="add_data_other'+data[i].id+iter.toString()+'" data-toggle="modal" data-target="#ModalOther'+data[i].id+iter.toString()+'"><i class="fas fa-wrench"></i></a>'+
+                                  '</div>'+
+                                '</div>'+
+                              '</div>'+
+                            '</div>'+
+                          '</div>'+
+                        '</div>'+
+                        // start modal
+                        '<div class="modal fade" id="ModalOther'+data[i].id+iter.toString()+'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">'+
+                          '<div class="modal-dialog" role="document">'+
+                            '<div class="modal-content">'+
+                              '<div class="modal-header">'+
+                                '<h5 class="modal-title" id="exampleModalLabel">Form Detail Check</h5>'+
+                                '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'+
+                                  '<span aria-hidden="true">&times;</span>'+
+                                '</button>'+
+                              '</div>'+
+                              '<div class="modal-body">'+
+                                '<form>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Date Check</label>'+
+                                    '<div class="input-group date" data-target-input="nearest" id="inputDateOther'+data[i].id+iter.toString()+'">'+
+                                      '<input type="text" class="form-control datetimepicker-input" data-target="#inputDateOther'+data[i].id+iter.toString()+'" placeholder="Date Check"  name="date_other[]" id="date_other'+data[i].id+iter.toString()+'"/>'+
+                                      '<div class="input-group-append" data-target="#inputDateOther'+data[i].id+iter.toString()+'" data-toggle="datetimepicker">'+
+                                          '<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>'+
+                                      '</div>'+
+                                    '</div>'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Foto Kerusakan</label>'+
+                                    '<input type="file" class="form-control" name="foto_other[]" id="foto_other'+data[i].id+iter.toString()+'"/>'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Gejala</label>'+
+                                    '<input type="text" class="form-control" id="gejala_other'+data[i].id+iter.toString()+'" name="gejala_other[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Penyebab</label>'+
+                                    '<input type="text" class="form-control" id="penyebab_other'+data[i].id+iter.toString()+'" name="penyebab_other[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">No. Engine</label>'+
+                                    '<input type="text" class="form-control" id="engine_other'+data[i].id+iter.toString()+'" name="engine_other[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">No. Engine</label>'+
+                                    '<input type="text" class="form-control" id="frame_other'+data[i].id+iter.toString()+'" name="frame_other[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Type</label>'+
+                                    '<input type="text" class="form-control" id="type_other'+data[i].id+iter.toString()+'" name="type_other[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="recipient-name" class="col-form-label">Solusi dari Dealer</label>'+
+                                    '<input type="text" class="form-control" id="solusi_other'+data[i].id+iter.toString()+'" name="solusi_other[]">'+
+                                  '</div>'+
+                                  '<div class="form-group">'+
+                                    '<label for="message-text" class="col-form-label">Keterangan</label>'+
+                                    '<textarea class="form-control" id="keterangan_other'+data[i].id+iter.toString()+'" name="keterangan_other[]"></textarea>'+
+                                  '</div>'+
+                                '</form>'+
+                              '</div>'+
+                              '<div class="modal-footer">'+
+                                '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+
+                              '</div>'+
+                            '</div>'+
+                          '</div>'+
+                        '</div>';
+                        // end modal
+                        
+                      iter += 1;
+                        }
+                      }
+                    }
+                    html += '</div>';
+
+                  $('#show_detail').html(html);
+                }
+            });
+          } 
+        </script>
+        </section><!-- /.content

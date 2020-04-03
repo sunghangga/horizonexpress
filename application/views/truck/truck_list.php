@@ -65,7 +65,14 @@
         <script src="<?php echo base_url('template/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.js') ?>"></script>
         <script type="text/javascript">
             $(document).ready(function () {
-                $("#mytable").dataTable();
+                $("#mytable").dataTable({
+                    scrollY: "400px",
+                  scrollX: true,
+                  scrollCollapse: true,
+                  destroy: true,
+                  paging: true,
+                  searching: true,
+                });
             });
         </script>
                     </div><!-- /.box-body -->

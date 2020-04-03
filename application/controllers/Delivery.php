@@ -10,9 +10,9 @@ class Delivery extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('Delivery_model','Customer_model','User_model'));
+        $this->load->model(array('Delivery_model','Customer_model','User_model','Warehouse_model'));
         $this->load->library('form_validation');
-        if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('login', 'refresh');}
+        if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
 
     public function get_regencies(){
@@ -30,6 +30,11 @@ class Delivery extends CI_Controller
       echo json_encode($data);
     }
 
+    public function get_delivery_by_id($id=null){
+      $data = $this->Delivery_model->get_delivery_detail_by_id($id);
+      echo json_encode($data);
+    }
+
     // buat testing aja
     public function get_price(){
       $data = $this->Delivery_model->get_price('158527678129');
@@ -39,9 +44,7 @@ class Delivery extends CI_Controller
       echo $user->name;//$data['price'];
       //echo json_encode($data);
     }
-
-
-
+    
     public function pdfTerima($id=null){
         $row = $this->Delivery_model->get_by_id($id);
         if ($row) {
@@ -71,13 +74,8 @@ class Delivery extends CI_Controller
             $this->mypdf->generate("laporan/tandaTerima","A5","landscape","Bukti Tanda Terima Pengiriman - ".$data['kode'],$data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
-            redirect(site_url('delivery'));
+            redirect(site_url('index.php/delivery'));
         }
-    }
-
-    public function pdfJalan($id=null){
-      $this->load->library("mypdf");
-      $this->mypdf->generate("laporan/uangJalan","A5","landscape");
     }
 
     public function pdfBarangKeluar($id=null){
@@ -111,6 +109,11 @@ class Delivery extends CI_Controller
         }
     }
 
+    public function get_wr_name($id){
+        $data = $this->Warehouse_model->get_by_id($id);
+        echo json_encode($data->name);
+    }
+
     public function read($id) 
     {
         $row = $this->Delivery_model->get_by_id($id);
@@ -137,7 +140,7 @@ class Delivery extends CI_Controller
             $this->template->load('template','delivery/delivery_read', $data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
-            redirect(site_url('delivery'));
+            redirect(site_url('index.php/delivery'));
         }
     }
 
@@ -153,18 +156,24 @@ class Delivery extends CI_Controller
             'name_pengirim' => set_value('name_pengirim'),
             'address_pengirim' => set_value('address_pengirim'),
             'telephone_pengirim' => set_value('telephone_pengirim'),
+            'wr_pengirim_id' => set_value('wr_pengirim_id'),
+            'wr_pengirim_name' => set_value('wr_pengirim_name'),
             'name_penerima' => set_value('name_penerima'),
             'address_penerima' => set_value('address_penerima'),
             'telephone_penerima' => set_value('telephone_penerima'),
+            'wr_penerima_id' => set_value('wr_penerima_id'),
+            'wr_penerima_name' => set_value('wr_penerima_name'),
             'driver' => set_value('driver'),
             'nopol' => set_value('nopol'),
             'price' => set_value('price'),
             'regencies_id' => set_value('regencies_id'),
             'districts_id' => set_value('districts_id'),
             'villages_id' => set_value('villages_id'),
+            'get_wr' => $this->Warehouse_model->get_all(),
             // 'create_at' => $date,
             // 'update_at' => set_value('update_at'),
     );
+        // echo json_encode($data);
         $this->template->load('template','delivery/delivery_form', $data);
     }
     
@@ -182,13 +191,15 @@ class Delivery extends CI_Controller
             'name_pengirim' => $this->input->post('name_pengirim',TRUE),
             'address_pengirim' => $this->input->post('address_pengirim',TRUE),
             'telephone_pengirim' => $this->input->post('telephone_pengirim',TRUE),
+            'wr_pengirim_id' => $this->input->post('wr_pengirim_id',TRUE),
             'name_penerima' => $this->input->post('name_penerima',TRUE),
             'address_penerima' => $this->input->post('address_penerima',TRUE),
             'telephone_penerima' => $this->input->post('telephone_penerima',TRUE),
+            'wr_penerima_id' => $this->input->post('wr_penerima_id',TRUE),
             'user_id' => $this->session->userdata('user_id'),
-            'driver' => $this->input->post('driver',TRUE),
-            'nopol' => $this->input->post('nopol',TRUE),
-            'price' => $this->input->post('price'),
+            /*'driver' => $this->input->post('driver',TRUE),
+            'nopol' => $this->input->post('nopol',TRUE),*/
+            // 'price' => $this->input->post('price'),
             'regencies_id' => $this->input->post('regencies_id',TRUE),
             'districts_id' => $this->input->post('districts_id',TRUE),
             'villages_id' => $this->input->post('villages_id',TRUE),
@@ -286,70 +297,60 @@ class Delivery extends CI_Controller
             $this->Delivery_model->insert_batch($otherdata);
 
             $this->session->set_flashdata('message', 'Create Record Success');
-            redirect(site_url('delivery'));
+            redirect(site_url('index.php/delivery'));
         }
     }
     
     public function update($id) 
     {
         $row = $this->Delivery_model->get_by_id($id);
+        $wr_pengirim = $this->Warehouse_model->get_by_id($row->wr_pengirim_id);
+        $wr_penerima = $this->Warehouse_model->get_by_id($row->wr_penerima_id);
 
         if ($row) {
             $data = array(
             'button' => 'Update',
             'action' => site_url('index.php/delivery/update_action'),
             'kode' => set_value('kode', $row->kode),
-            'name_pengirim' => set_value('name_pengirim', $row->name_driver),
-            'address_pengirim' => set_value('address_pengirim', $row->address_driver),
-            'telephone_pengirim' => set_value('telephone_pengirim', $row->telephone_driver),
-            'name_penerima' => set_value('name_penerima', $row->name_customer),
-            'address_penerima' => set_value('address_penerima', $row->address_customer),
-            'telephone_penerima' => set_value('telephone_penerima', $row->telephone_customer),
-            'weight' => set_value('weight', $row->weight),
-            'amount' => set_value('amount', $row->amount),
-            'price' => set_value('price', $row->price),
+            'name_pengirim' => set_value('name_pengirim', $row->name_pengirim),
+            'address_pengirim' => set_value('address_pengirim', $row->address_pengirim),
+            'telephone_pengirim' => set_value('telephone_pengirim', $row->telephone_pengirim),
+            'wr_pengirim_id' => set_value('wr_pengirim_id', $wr_pengirim->id),
+            'wr_pengirim_name' => set_value('wr_pengirim_name', $wr_pengirim->name),
+            'name_penerima' => set_value('name_penerima', $row->name_penerima),
+            'address_penerima' => set_value('address_penerima', $row->address_penerima),
+            'telephone_penerima' => set_value('telephone_penerima', $row->telephone_penerima),
+            'wr_penerima_id' => set_value('wr_penerima_id', $wr_penerima->id),
+            'wr_penerima_name' => set_value('wr_penerima_name', $wr_penerima->name),
+            // 'weight' => set_value('weight', $row->weight),
+            // 'amount' => set_value('amount', $row->amount),
+            // 'price' => set_value('price', $row->price),
             'regencies_id' => set_value('regencies_id', $row->name_regency),
             'districts_id' => set_value('districts_id', $row->name_district),
             'villages_id' => set_value('villages_id', $row->name_village),
+            'get_delivery_detail_by_id' => $this->Delivery_model->get_delivery_detail_by_id($id),
+            'get_wr' => $this->Warehouse_model->get_by_id($id),
             // 'create_at' => set_value('create_at', $row->create_at),
             // 'update_at' => set_value('update_at', $row->update_at),
         );
             $this->template->load('template','delivery/delivery_form', $data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
-            redirect(site_url('delivery'));
+            redirect(site_url('index.php/delivery'));
         }
     }
     
     public function update_action() 
     {
-        $this->_rules();
+        $data = array(
+            'driver' => $this->input->post('driver',TRUE),
+            'nopol' => $this->input->post('nopol',TRUE),
+            'status' => 'driver',
+        );
 
-        if ($this->form_validation->run() == FALSE) {
-            $this->update($this->input->post('kode', TRUE));
-        } else {
-            $data = array(
-                'name_driver' => $this->input->post('name_driver',TRUE),
-                'address_driver' => $this->input->post('address_driver',TRUE),
-                'telephone_driver' => $this->input->post('telephone_driver',TRUE),
-                'name_customer' => $this->input->post('name_customer',TRUE),
-                'address_customer' => $this->input->post('address_customer',TRUE),
-                'telephone_customer' => $this->input->post('telephone_customer',TRUE),
-                'user_id' => $this->session->userdata('user_id'),
-                'weight' => $this->input->post('weight'),
-                'amount' => $this->input->post('amount'),
-                'price' => $this->input->post('price'),
-                'regencies_id' => $this->input->post('regencies_id',TRUE),
-                'districts_id' => $this->input->post('districts_id',TRUE),
-                'villages_id' => $this->input->post('villages_id',TRUE),
-                // 'create_at' => $this->input->post('create_at',TRUE),
-                // 'update_at' => $this->input->post('update_at',TRUE),
-            );
-
-            $this->Delivery_model->update($this->input->post('kode', TRUE), $data);
-            $this->session->set_flashdata('message', 'Update Record Success');
-            redirect(site_url('delivery'));
-        }
+        $this->Delivery_model->update($this->input->post('kode', TRUE), $data);
+        $this->session->set_flashdata('message', 'Update Record Success');
+        redirect(site_url('index.php/delivery'));
     }
     
     public function delete($id) 
@@ -359,10 +360,10 @@ class Delivery extends CI_Controller
         if ($row) {
             $this->Delivery_model->delete($id);
             $this->session->set_flashdata('message', 'Delete Record Success');
-            redirect(site_url('delivery'));
+            redirect(site_url('index.php/delivery'));
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
-            redirect(site_url('delivery'));
+            redirect(site_url('index.php/delivery'));
         }
     }
 

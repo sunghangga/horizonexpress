@@ -11,7 +11,7 @@
                       <div class='card-body'>
                         <div class="row">
                           <div class="col-12">
-                            <form action="<?php echo $action; ?>" method="post">
+                            <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data">
                               <div class="form-group row">
                               <label for="staticEmail" class="col-sm-2 col-form-label">Name <?php echo form_error('name') ?></label>
                               <div class="col-sm-10">
@@ -30,10 +30,22 @@
                                 <input type="text" class="form-control" name="telephone" id="telephone" placeholder="Telephone" value="<?php echo $telephone; ?>" />
                               </div>
                             </div>
+                            <div class="form-group row">
+                              <label for="staticEmail" class="col-sm-2 col-form-label">NIP <?php echo form_error('nip') ?></label>
+                              <div class="col-sm-10">
+                                <input type="text" class="form-control" name="nip" id="nip" placeholder="NIP" value="<?php echo $nip; ?>" />
+                              </div>
+                            </div>
+                            <div class="form-group row">
+                              <label for="staticEmail" class="col-sm-2 col-form-label">Photo <?php echo form_error('photo') ?></label>
+                              <div class="col-sm-10">
+                                <input type="file" class="form-control" name="photo" id="photo" src="<?php echo $photo; ?>" />
+                              </div>
+                            </div>
                     	    <input type="hidden" name="id" value="<?php echo $id; ?>" /> 
                     	    <div style="text-align: right;">
                             <button type="submit" class="btn btn-primary"><?php echo $button ?></button> 
-                            <a href="<?php echo site_url('customer') ?>" class="btn btn-default">Cancel</a>
+                            <a href="<?php echo site_url('index.php/customer') ?>" class="btn btn-default">Cancel</a>
                           </div>
                       </form>
                 </div><!-- /.box-body -->

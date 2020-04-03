@@ -6,7 +6,7 @@
             <div class='col-12'>
               <div class='card'>
                 <div class='card-header'>
-                  <h3 class='card-title'>USER LIST <?php echo anchor('index.php/user/create/','Create',array('class'=>'btn btn-primary btn-sm','style'=>'margin-left: 10px;'));?></h3>
+                  <h3 class='card-title'>USER LIST <?php echo anchor('index.php/user/create/','Create',array('class'=>'btn btn-primary btn-sm'));?></h3>
                 </div><!-- /.box-header -->
                 <div class='card-body'>
                 <table class="table table-bordered table-striped" id="mytable">

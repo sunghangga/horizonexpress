@@ -12,7 +12,7 @@ class Tire extends CI_Controller
         parent::__construct();
         $this->load->model('Tire_model');
         $this->load->library('form_validation');
-        if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('login', 'refresh');}
+        if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
 
     public function index()

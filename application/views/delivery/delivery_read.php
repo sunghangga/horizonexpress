@@ -172,7 +172,7 @@
                     </div>
                     <input type="hidden" name="id" value="<?php echo $kode; ?>" />
                     <div style="text-align: right;">
-                  <a href="<?php echo site_url('delivery') ?>" class="btn btn-default">Cancel</a>
+                  <a href="<?php echo site_url('index.php/delivery') ?>" class="btn btn-default">Cancel</a>
                   </div>
                   </form>
                     </div>

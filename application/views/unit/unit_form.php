@@ -18,7 +18,7 @@
 	    <input type="hidden" name="id" value="<?php echo $id; ?>" /> 
 	 <div style='text-align: right;'> 
                         <button type="submit" class="btn btn-primary"><?php echo $button ?></button> 
-	    <a href="<?php echo site_url('unit') ?>" class="btn btn-default">Cancel</a>
+	    <a href="<?php echo site_url('index.php/unit') ?>" class="btn btn-default">Cancel</a>
 	</div>
                           </form>
                         </div>
