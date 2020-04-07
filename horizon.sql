@@ -27,7 +27,7 @@ CREATE TABLE `check` (
   `create_at` date DEFAULT NULL,
   `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `check_item` */
 
@@ -46,7 +46,7 @@ CREATE TABLE `check_item` (
   `solusi` mediumtext,
   `keterangan` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `customer` */
 
@@ -58,11 +58,11 @@ CREATE TABLE `customer` (
   `address` text,
   `telephone` varchar(12) NOT NULL,
   `nip` varchar(25) NOT NULL,
-  `photo` varchar(20) DEFAULT NULL,
+  `photo` varchar(30) DEFAULT 'default.jpg',
   `create_at` date NOT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `delivery` */
 
@@ -103,7 +103,7 @@ CREATE TABLE `delivery_detail` (
   `price` float DEFAULT NULL,
   `unit` varchar(15) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `districts` */
 
@@ -193,10 +193,11 @@ CREATE TABLE `receive` (
   `receiver` varchar(55) NOT NULL,
   `pdi` varchar(55) NOT NULL,
   `pic` varchar(55) NOT NULL,
+  `catatan` text,
   `create_at` date DEFAULT NULL,
   `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `receive_item` */
 
@@ -204,11 +205,12 @@ DROP TABLE IF EXISTS `receive_item`;
 
 CREATE TABLE `receive_item` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `delivery_detail_id` varchar(15) NOT NULL,
+  `kode` varchar(15) NOT NULL,
+  `delivery_detail_id` int(11) DEFAULT NULL,
   `qty_received` float NOT NULL,
   `keterangan` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `regencies` */
 
@@ -235,7 +237,7 @@ CREATE TABLE `road_money` (
   `create_at` date DEFAULT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `road_money_detail` */
 
@@ -247,7 +249,7 @@ CREATE TABLE `road_money_detail` (
   `postage` varchar(255) NOT NULL,
   `price` float DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `tire` */
 
@@ -289,10 +291,11 @@ CREATE TABLE `tire_out` (
   `user_id` int(5) NOT NULL,
   `km_before` varchar(10) NOT NULL,
   `km_after` varchar(10) NOT NULL,
+  `keterangan` text,
   `create_at` date NOT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `truck` */
 

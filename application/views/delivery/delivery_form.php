@@ -501,13 +501,13 @@
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Driver<?php echo form_error('driver') ?></label>
                                     <div class="col-sm">
-                                     <input type="text" class="form-control" autocomplete="off" spellcheck="false" name="driver" id="driver" placeholder="driver" />
+                                     <input type="text" class="form-control" autocomplete="off" spellcheck="false" name="driver" id="driver" placeholder="driver" value="<?php echo $driver ?>" />
                                     </div>
                                   </div>
                                   <div class="form-group">
                                     <label for="staticEmail" class="col-12 col-form-label">Nopol <?php echo form_error('nopol') ?></label>
                                     <div class="col-sm">
-                                     <input type="text" class="form-control" name="nopol" id="nopol" placeholder="nopol" />
+                                     <input type="text" class="form-control" name="nopol" id="nopol" placeholder="nopol" value="<?php echo $nopol ?>"/>
                                     </div>
                                   </div>
                                 </div>

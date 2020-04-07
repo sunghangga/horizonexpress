@@ -10,8 +10,8 @@
                   <div class='card-body'>
                     <div class='row'>
                       <div class='col-12'>
-                          <form action="<?php echo $action; ?>" method="post">
-                            	  <div class='form-group row'>
+                          <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data">
+                                <div class='form-group row'>
                                   <label for='label' class='col-sm-2 col-form-label'>Kode <?php echo form_error('kode') ?></label>
                                     <div class='col-sm-10'>
                                       <select class="form-control select2bs4" id="kode" name="kode" onchange="show_data()">
@@ -28,20 +28,30 @@
                                       </select>
                                    </div> 
                                 </div>
-	  <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Examiner <?php echo form_error('examiner') ?></label>
+                                <div class='form-group row'>
+                                  <label for='label' class='col-sm-2 col-form-label'>Examiner <?php echo form_error('examiner') ?></label>
                                     <div class='col-sm-10'><input type="text" class="form-control" name="examiner" id="examiner" placeholder="Examiner" value="<?php echo $examiner; ?>" />
                                    </div> 
                                 </div>
+                                <div class="form-group row">
+                                    <label for="recipient-name" class="col-sm-2 col-form-label">Date Check</label>
+                                    <div class="col-sm-4 input-group date" data-target-input="nearest" id="inputDate">
+                                      <input type="text" class="form-control datetimepicker-input" data-target="#inputDate" placeholder="Date Check"  name="date_item" id="date_item"/>
+                                      <div class="input-group-append" data-target="#inputDate" data-toggle="datetimepicker">
+                                          <div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
+                                      </div>
+                                    </div>
+                                  </div>
 
                                 <div id="show_detail">
                                   
                                 </div>
 
-	    <input type="hidden" name="id" value="<?php echo $id; ?>" /> 
-	 <div style='text-align: right;'> 
-                        <button type="submit" class="btn btn-primary"><?php echo $button ?></button> 
-	    <a href="<?php echo site_url('index.php/check') ?>" class="btn btn-default">Cancel</a>
-	</div>
+                              <input type="hidden" name="id" value="<?php echo $id; ?>" /> 
+                           <div style='text-align: right;'> 
+                                                <button type="submit" class="btn btn-primary"><?php echo $button ?></button> 
+                              <a href="<?php echo site_url('index.php/check') ?>" class="btn btn-default">Cancel</a>
+                          </div>
                           </form>
                         </div>
                     </div>
@@ -78,14 +88,16 @@
                   var html = '';
                   var i;
                   
-                  html = '<div class="row">'+
-                    '<div class="col-md-12">'+
-                      '<h4 class="mt-6 ">Data Items</h4>'+
-                    '</div>';
                     var iter = 0;
                     for (var i = 0; i < data.length; i++) {
                       if(data[i].category == 1){
                         for (var j = 0; j < data[i].qty; j++) {
+                        if(iter == 0){
+                           html = '<div class="row">'+
+                          '<div class="col-md-12">'+
+                            '<h4 class="mt-6 ">Data Items</h4>'+
+                          '</div>';
+                          }
                         html += '<div class="col-md-4">'+
                           '<div class="form-group">';
                             if(iter == 0){
@@ -93,55 +105,24 @@
                             }
                             html += '<div class="col-sm">'+
                               '<input type="hidden" class="form-control" name="id_detail[]" value="'+data[i].id+'" disabled/>'+
-                              '<input type="text" class="form-control name-item" autocomplete="off" spellcheck="false" name="name_item[]" id="name_item'+data[i].id+iter.toString()+'" rel="rel_name_item1" placeholder="Name Item" value="'+data[i].name+'" disabled/>'+
-                            '</div>'+
-                          '</div>'+
-                        '</div>'+
-
-                        '<div class="col-md-2">'+
-                          '<div class="form-group">';
-                            if(iter == 0){
-                            html += '<label for="staticEmail" class="col-12 col-form-label">Price</label>';
-                            }
-                            html += '<div class="col-sm">'+
-                              '<input type="number" class="form-control price-item" autocomplete="off" spellcheck="false" name="price_item[]" id="price_item'+data[i].id+iter.toString()+'" rel="rel_price_item" placeholder="Price Item" value="'+data[i].price+'" disabled/>'+
-                            '</div>'+
-                          '</div>'+
-                        '</div>'+
-                        '<div class="col-sm">'+
-                          '<div class="form-group">';
-                            if(iter == 0){
-                            html += '<label for="staticEmail" class="col-8 col-form-label">Unit</label>';
-                            }
-                            html += '<div class="col-sm">'+
-                              '<div class="row">'+
-                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_item[]" id="unit_item'+data[i].id+iter.toString()+'" rel="rel_unit_item1" placeholder="Unit" value="'+data[i].unit+'" disabled/>'+
-                                '</div>'+
-                              '</div>'+
+                              '<input type="text" class="form-control name-item" autocomplete="off" spellcheck="false" name="name_item[]" id="name_item'+data[i].id+iter.toString()+'" rel="rel_name_item1" placeholder="Name Item" value="'+data[i].name+'"/>'+
                             '</div>'+
                           '</div>'+
                         '</div>';
 
-                        html += '<div class="col-sm">'+
+                        html += '<div class="col-2">'+
                           '<div class="form-group">';
                             if(iter == 0){
-                            html += '<label for="staticEmail" class="col-12 col-form-label">Status</label>';
+                            html += '<label for="staticEmail" class="col-form-label">Status</label>';
                             }
-                            html += '<div class="col-sm">'+
-                              '<div class="row">'+
-                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<select class="form-control select2bs4" id="status_item'+data[i].id+iter.toString()+'" name="status_item[]">'+
+                            html += '<select class="form-control select2bs4" id="status_item'+data[i].id+iter.toString()+'" name="status_item[]">'+
                                         '<option value="0">TIDAK RUSAK</option>'+
                                         '<option value="1">RUSAK</option>'+
                                       '</select>'+
-                                '</div>'+
-                              '</div>'+
-                            '</div>'+
                           '</div>'+
                         '</div>';
 
-                        html += '<div class="col-sm">'+
+                        html += '<div class="col-6">'+
                           '<div class="form-group">';
                           html += '<div class="col-sm">'+
                               '<div class="row">';
@@ -168,16 +149,6 @@
                                 '</button>'+
                               '</div>'+
                               '<div class="modal-body">'+
-                                '<form>'+
-                                  '<div class="form-group">'+
-                                    '<label for="recipient-name" class="col-form-label">Date Check</label>'+
-                                    '<div class="input-group date" data-target-input="nearest" id="inputDate'+data[i].id+iter.toString()+'">'+
-                                      '<input type="text" class="form-control datetimepicker-input" data-target="#inputDate'+data[i].id+iter.toString()+'" placeholder="Date Check"  name="date_item[]" id="date_item'+data[i].id+iter.toString()+'"/>'+
-                                      '<div class="input-group-append" data-target="#inputDate'+data[i].id+iter.toString()+'" data-toggle="datetimepicker">'+
-                                          '<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>'+
-                                      '</div>'+
-                                    '</div>'+
-                                  '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="recipient-name" class="col-form-label">Foto Kerusakan</label>'+
                                     '<input type="file" class="form-control" name="foto[]" id="foto'+data[i].id+iter.toString()+'"/>'+
@@ -195,7 +166,7 @@
                                     '<input type="text" class="form-control" id="engine_item'+data[i].id+iter.toString()+'" name="engine_item[]">'+
                                   '</div>'+
                                   '<div class="form-group">'+
-                                    '<label for="recipient-name" class="col-form-label">No. Engine</label>'+
+                                    '<label for="recipient-name" class="col-form-label">No. Frame</label>'+
                                     '<input type="text" class="form-control" id="frame_item'+data[i].id+iter.toString()+'" name="frame_item[]">'+
                                   '</div>'+
                                   '<div class="form-group">'+
@@ -210,7 +181,6 @@
                                     '<label for="message-text" class="col-form-label">Keterangan</label>'+
                                     '<textarea class="form-control" id="keterangan_item'+data[i].id+iter.toString()+'" name="keterangan_item[]"></textarea>'+
                                   '</div>'+
-                                '</form>'+
                               '</div>'+
                               '<div class="modal-footer">'+
                                 '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+
@@ -226,14 +196,17 @@
                     }
                     html += '</div>';
 
-                    html += '<div class="row">'+
-                    '<div class="col-md-12">'+
-                      '<h4 class="mt-6 ">KELENGKAPAN</h4>'+
-                    '</div>';
+                    
                     var iter = 0;
                     for (var i = 0; i < data.length; i++) {
                       if(data[i].category == 2){
                         for (var j = 0; j < data[i].qty; j++) {
+                          if(iter == 0){
+                         html += '<div class="row">'+
+                          '<div class="col-md-12">'+
+                            '<h4 class="mt-6 ">KELENGKAPAN</h4>'+
+                          '</div>';
+                        }
                         html += '<div class="col-md-4">'+
                       '<div class="form-group">';
                         if(iter == 0){
@@ -241,55 +214,24 @@
                         }
                         html += '<div class="col-sm">'+
                         '<input type="hidden" class="form-control" name="id_detail[]" value="'+data[i].id+'"/>'+
-                          '<input type="text" class="form-control name-kelengkapan" autocomplete="off" spellcheck="false" name="name_kelengkapan[]" id="name_kelengkapan'+data[i].id+iter.toString()+'" rel="rel_name_kelengkapan1" placeholder="Name Item" value="'+data[i].name+'" disabled/>'+
+                          '<input type="text" class="form-control name-kelengkapan" autocomplete="off" spellcheck="false" name="name_item[]" id="name_kelengkapan'+data[i].id+iter.toString()+'" rel="rel_name_kelengkapan1" placeholder="Name Item" value="'+data[i].name+'"/>'+
                         '</div>'+
                       '</div>'+
-                    '</div>'+
+                    '</div>';
 
-                    '<div class="col-md-2">'+
-                      '<div class="form-group">';
-                        if(iter == 0){
-                        html += '<label for="staticEmail" class="col-12 col-form-label">Price</label>';
-                        }
-                        html += '<div class="col-sm">'+
-                          '<input type="number" class="form-control price-kelengkapan" autocomplete="off" spellcheck="false" name="price_kelengkapan[]" id="price_kelengkapan'+data[i].id+iter.toString()+'" rel="rel_price_kelengkapan" placeholder="Price Item" value="'+data[i].price+'" disabled/>'+
-                        '</div>'+
-                      '</div>'+
-                    '</div>'+
-                    '<div class="col-sm">'+
-                      '<div class="form-group">';
-                        if(iter == 0){
-                        html += '<label for="staticEmail" class="col-8 col-form-label">Unit</label>';
-                        }
-                        html += '<div class="col-sm">'+
-                          '<div class="row">'+
-                            '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                              '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_kelengkapan[]" id="unit_kelengkapan'+data[i].id+iter.toString()+'" rel="rel_unit_kelengkapan1" placeholder="Unit" value="'+data[i].unit+'" disabled/>'+
-                            '</div>'+
-                          '</div>'+
-                        '</div>'+
-                        '</div>'+
-                      '</div>';
-
-                      html += '<div class="col-sm">'+
+                        html += '<div class="col-2">'+
                           '<div class="form-group">';
                             if(iter == 0){
-                            html += '<label for="staticEmail" class="col-12 col-form-label">Status</label>';
+                            html += '<label for="staticEmail" class="col-form-label">Status</label>';
                             }
-                            html += '<div class="col-sm">'+
-                              '<div class="row">'+
-                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<select class="form-control select2bs4" id="status_kelengkapan'+data[i].id+iter.toString()+'" name="status_kelengkapan[]">'+
+                            html += '<select class="form-control select2bs4" id="status_kelengkapan'+data[i].id+iter.toString()+'" name="status_item[]">'+
                                         '<option value="0">TIDAK RUSAK</option>'+
                                         '<option value="1">RUSAK</option>'+
                                       '</select>'+
-                                '</div>'+
-                              '</div>'+
-                            '</div>'+
                           '</div>'+
                         '</div>';
 
-                        html += '<div class="col-sm">'+
+                        html += '<div class="col-6">'+
                           '<div class="form-group">';
                             html += '<div class="col-sm">'+
                               '<div class="row">';
@@ -316,49 +258,38 @@
                                 '</button>'+
                               '</div>'+
                               '<div class="modal-body">'+
-                                '<form>'+
-                                  '<div class="form-group">'+
-                                    '<label for="recipient-name" class="col-form-label">Date Check</label>'+
-                                    '<div class="input-group date" data-target-input="nearest" id="inputDateLengkap'+data[i].id+iter.toString()+'">'+
-                                      '<input type="text" class="form-control datetimepicker-input" data-target="#inputDateLengkap'+data[i].id+iter.toString()+'" placeholder="Date Check"  name="date_kelengkapan[]" id="date_kelengkapan'+data[i].id+iter.toString()+'"/>'+
-                                      '<div class="input-group-append" data-target="#inputDateLengkap'+data[i].id+iter.toString()+'" data-toggle="datetimepicker">'+
-                                          '<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>'+
-                                      '</div>'+
-                                    '</div>'+
-                                  '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="recipient-name" class="col-form-label">Foto Kerusakan</label>'+
-                                    '<input type="file" class="form-control" name="foto_kelengkapan[]" id="foto_kelengkapan'+data[i].id+iter.toString()+'"/>'+
+                                    '<input type="file" class="form-control" name="foto[]" id="foto_kelengkapan'+data[i].id+iter.toString()+'"/>'+
                                   '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="recipient-name" class="col-form-label">Gejala</label>'+
-                                    '<input type="text" class="form-control" id="gejala_kelengkapan'+data[i].id+iter.toString()+'" name="gejala_kelengkapan[]">'+
+                                    '<input type="text" class="form-control" id="gejala_kelengkapan'+data[i].id+iter.toString()+'" name="gejala_item[]">'+
                                   '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="recipient-name" class="col-form-label">Penyebab</label>'+
-                                    '<input type="text" class="form-control" id="penyebab_kelengkapan'+data[i].id+iter.toString()+'" name="penyebab_kelengkapan[]">'+
+                                    '<input type="text" class="form-control" id="penyebab_kelengkapan'+data[i].id+iter.toString()+'" name="penyebab_item[]">'+
                                   '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="recipient-name" class="col-form-label">No. Engine</label>'+
-                                    '<input type="text" class="form-control" id="engine_kelengkapan'+data[i].id+iter.toString()+'" name="engine_kelengkapan[]">'+
+                                    '<input type="text" class="form-control" id="engine_kelengkapan'+data[i].id+iter.toString()+'" name="engine_item[]">'+
                                   '</div>'+
                                   '<div class="form-group">'+
-                                    '<label for="recipient-name" class="col-form-label">No. Engine</label>'+
-                                    '<input type="text" class="form-control" id="frame_kelengkapan'+data[i].id+iter.toString()+'" name="frame_kelengkapan[]">'+
+                                    '<label for="recipient-name" class="col-form-label">No. Frame</label>'+
+                                    '<input type="text" class="form-control" id="frame_kelengkapan'+data[i].id+iter.toString()+'" name="frame_item[]">'+
                                   '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="recipient-name" class="col-form-label">Type</label>'+
-                                    '<input type="text" class="form-control" id="type_kelengkapan'+data[i].id+iter.toString()+'" name="type_kelengkapan[]">'+
+                                    '<input type="text" class="form-control" id="type_kelengkapan'+data[i].id+iter.toString()+'" name="type_item[]">'+
                                   '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="recipient-name" class="col-form-label">Solusi dari Dealer</label>'+
-                                    '<input type="text" class="form-control" id="solusi_kelengkapan'+data[i].id+iter.toString()+'" name="solusi_kelengkapan[]">'+
+                                    '<input type="text" class="form-control" id="solusi_kelengkapan'+data[i].id+iter.toString()+'" name="solusi_item[]">'+
                                   '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="message-text" class="col-form-label">Keterangan</label>'+
-                                    '<textarea class="form-control" id="keterangan_kelengkapan'+data[i].id+iter.toString()+'" name="keterangan_kelengkapan[]"></textarea>'+
+                                    '<textarea class="form-control" id="keterangan_kelengkapan'+data[i].id+iter.toString()+'" name="keterangan_item[]"></textarea>'+
                                   '</div>'+
-                                '</form>'+
                               '</div>'+
                               '<div class="modal-footer">'+
                                 '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+
@@ -374,72 +305,43 @@
                     }
                     html += '</div>';
                     
-
-                  html += '<div class="row">'+
-                    '<div class="col-md-12">'+
-                      '<h4 class="mt-6 ">Item Other</h4>'+
-                    '</div>';
                     var iter = 0;
                     for (var i = 0; i < data.length; i++) {
                       if(data[i].category == 0){
                         for (var j = 0; j < data[i].qty; j++) {
-                        html += '<div class="col-md-4">'+
-                          '<div class="form-group">';
-                            if(iter == 0){
-                            html += '<label for="staticEmail" class="col-12 col-form-label">Name </label>';
-                            }
-                            html += '<div class="col-sm">'+
-                            '<input type="hidden" class="form-control" name="id_detail[]" value="'+data[i].id+'"/>'+
-                              '<input type="text" class="form-control name-other" autocomplete="off" spellcheck="false" name="name_other[]" id="name_other'+data[i].id+iter.toString()+'" rel="rel_name_other1" placeholder="Name Item" value="'+data[i].name+'" disabled/>'+
-                            '</div>'+
-                          '</div>'+
+                          if(iter == 0){
+                         html += '<div class="row">'+
+                          '<div class="col-md-12">'+
+                            '<h4 class="mt-6 ">Item Other</h4>'+
+                          '</div>';
+                        }
+                          html += '<div class="col-md-4">'+
+                      '<div class="form-group">';
+                        if(iter == 0){
+                         html += '<label for="staticEmail" class="col-12 col-form-label">Name </label>';
+                        }
+                        html += '<div class="col-sm">'+
+                        '<input type="hidden" class="form-control" name="id_detail[]" value="'+data[i].id+'"/>'+
+                          '<input type="text" class="form-control name-other" autocomplete="off" spellcheck="false" name="name_item[]" id="name_other'+data[i].id+iter.toString()+'" rel="rel_name_other1" placeholder="Name Item" value="'+data[i].name+'"/>'+
                         '</div>'+
+                      '</div>'+
+                    '</div>';
 
-                        '<div class="col-md-2">'+
+                        html += '<div class="col-2">'+
                           '<div class="form-group">';
                             if(iter == 0){
-                            html += '<label for="staticEmail" class="col-12 col-form-label">Price</label>';
+                            html += '<label for="staticEmail" class="col-form-label">Status</label>';
                             }
-                            html += '<div class="col-sm">'+
-                              '<input type="number" class="form-control price-kelengkapan" autocomplete="off" spellcheck="false" name="price_other[]" id="price_other'+data[i].id+iter.toString()+'" rel="rel_price_other" placeholder="Price Other" value="'+data[i].price+'" disabled/>'+
-                            '</div>'+
-                          '</div>'+
-                        '</div>'+
-                        '<div class="col-sm">'+
-                          '<div class="form-group">';
-                            if(iter == 0){
-                             html += '<label for="staticEmail" class="col-8 col-form-label">Unit</label>';
-                            }
-                            html += '<div class="col-sm">'+
-                             '<div class="row">'+
-                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_other[]" id="unit_other'+data[i].id+iter.toString()+'" rel="rel_unit_other1" placeholder="Unit" value="'+data[i].unit+'" disabled/>'+
-                                '</div>'+
-                              '</div>'+
-                            '</div>'+
-                          '</div>'+
-                      '</div>';
-                      html += '<div class="col-sm">'+
-                          '<div class="form-group">';
-                            if(iter == 0){
-                            html += '<label for="staticEmail" class="col-12 col-form-label">Status</label>';
-                            }
-                            html += '<div class="col-sm">'+
-                              '<div class="row">'+
-                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<select class="form-control select2bs4" id="status_other'+data[i].id+iter.toString()+'" name="status_other[]">'+
+                            html += '<select class="form-control select2bs4" id="status_other'+data[i].id+iter.toString()+'" name="status_item[]">'+
                                         '<option value="0">TIDAK RUSAK</option>'+
                                         '<option value="1">RUSAK</option>'+
                                       '</select>'+
-                                '</div>'+
-                              '</div>'+
-                            '</div>'+
                           '</div>'+
                         '</div>';
 
-                        html += '<div class="col-sm">'+
+                        html += '<div class="col-6">'+
                           '<div class="form-group">';
-                          html += '<div class="col-sm">'+
+                            html += '<div class="col-sm">'+
                               '<div class="row">';
                               if (iter == 0) {
                                 html += '<div class=".col-6 .col-lg-4" style="margin-top: 38px;">';
@@ -451,7 +353,6 @@
                                   '</div>'+
                                 '</div>'+
                               '</div>'+
-                            '</div>'+
                           '</div>'+
                         '</div>'+
                         // start modal
@@ -465,49 +366,38 @@
                                 '</button>'+
                               '</div>'+
                               '<div class="modal-body">'+
-                                '<form>'+
-                                  '<div class="form-group">'+
-                                    '<label for="recipient-name" class="col-form-label">Date Check</label>'+
-                                    '<div class="input-group date" data-target-input="nearest" id="inputDateOther'+data[i].id+iter.toString()+'">'+
-                                      '<input type="text" class="form-control datetimepicker-input" data-target="#inputDateOther'+data[i].id+iter.toString()+'" placeholder="Date Check"  name="date_other[]" id="date_other'+data[i].id+iter.toString()+'"/>'+
-                                      '<div class="input-group-append" data-target="#inputDateOther'+data[i].id+iter.toString()+'" data-toggle="datetimepicker">'+
-                                          '<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>'+
-                                      '</div>'+
-                                    '</div>'+
-                                  '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="recipient-name" class="col-form-label">Foto Kerusakan</label>'+
-                                    '<input type="file" class="form-control" name="foto_other[]" id="foto_other'+data[i].id+iter.toString()+'"/>'+
+                                    '<input type="file" class="form-control" name="foto[]" id="foto_other'+data[i].id+iter.toString()+'"/>'+
                                   '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="recipient-name" class="col-form-label">Gejala</label>'+
-                                    '<input type="text" class="form-control" id="gejala_other'+data[i].id+iter.toString()+'" name="gejala_other[]">'+
+                                    '<input type="text" class="form-control" id="gejala_other'+data[i].id+iter.toString()+'" name="gejala_item[]">'+
                                   '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="recipient-name" class="col-form-label">Penyebab</label>'+
-                                    '<input type="text" class="form-control" id="penyebab_other'+data[i].id+iter.toString()+'" name="penyebab_other[]">'+
+                                    '<input type="text" class="form-control" id="penyebab_other'+data[i].id+iter.toString()+'" name="penyebab_item[]">'+
                                   '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="recipient-name" class="col-form-label">No. Engine</label>'+
-                                    '<input type="text" class="form-control" id="engine_other'+data[i].id+iter.toString()+'" name="engine_other[]">'+
+                                    '<input type="text" class="form-control" id="engine_other'+data[i].id+iter.toString()+'" name="engine_item[]">'+
                                   '</div>'+
                                   '<div class="form-group">'+
-                                    '<label for="recipient-name" class="col-form-label">No. Engine</label>'+
-                                    '<input type="text" class="form-control" id="frame_other'+data[i].id+iter.toString()+'" name="frame_other[]">'+
+                                    '<label for="recipient-name" class="col-form-label">No. Frame</label>'+
+                                    '<input type="text" class="form-control" id="frame_other'+data[i].id+iter.toString()+'" name="frame_item[]">'+
                                   '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="recipient-name" class="col-form-label">Type</label>'+
-                                    '<input type="text" class="form-control" id="type_other'+data[i].id+iter.toString()+'" name="type_other[]">'+
+                                    '<input type="text" class="form-control" id="type_other'+data[i].id+iter.toString()+'" name="type_item[]">'+
                                   '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="recipient-name" class="col-form-label">Solusi dari Dealer</label>'+
-                                    '<input type="text" class="form-control" id="solusi_other'+data[i].id+iter.toString()+'" name="solusi_other[]">'+
+                                    '<input type="text" class="form-control" id="solusi_other'+data[i].id+iter.toString()+'" name="solusi_item[]">'+
                                   '</div>'+
                                   '<div class="form-group">'+
                                     '<label for="message-text" class="col-form-label">Keterangan</label>'+
-                                    '<textarea class="form-control" id="keterangan_other'+data[i].id+iter.toString()+'" name="keterangan_other[]"></textarea>'+
+                                    '<textarea class="form-control" id="keterangan_other'+data[i].id+iter.toString()+'" name="keterangan_item[]"></textarea>'+
                                   '</div>'+
-                                '</form>'+
                               '</div>'+
                               '<div class="modal-footer">'+
                                 '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+

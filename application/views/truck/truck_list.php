@@ -12,7 +12,7 @@
         <table class="table table-bordered table-striped scroll-table" id="mytable">
             <thead>
                 <tr>
-                    <th width="80px">No</th>
+                    <th>No</th>
 		    <th>Name</th>
 		    <th>Nopol</th>
 		    <th>Nosin</th>
@@ -33,7 +33,7 @@
             {
                 ?>
                 <tr>
-		    <td><?php echo ++$start ?></td>
+		    <td style="text-align: center;"><?php echo ++$start ?></td>
 		    <td><?php echo $truck->name ?></td>
 		    <td><?php echo $truck->nopol ?></td>
 		    <td><?php echo $truck->nosin ?></td>
@@ -44,7 +44,7 @@
 		    <td><?php echo $truck->km ?></td>
 		    <td><?php echo $truck->create_at ?></td>
 		    <td><?php echo $truck->update_at ?></td>
-		    <td style="text-align:center" width="140px">
+		    <td style="text-align:center">
 			<?php 
 			echo anchor(site_url('index.php/truck/read/'.$truck->id),'<i class="fa fa-eye"></i>',array('title'=>'detail','class'=>'btn btn-info btn-sm')); 
 			echo '  '; 
@@ -66,8 +66,8 @@
         <script type="text/javascript">
             $(document).ready(function () {
                 $("#mytable").dataTable({
-                    scrollY: "400px",
-                  scrollX: true,
+                  // scrollY: "400px",
+                  // scrollX: true,
                   scrollCollapse: true,
                   destroy: true,
                   paging: true,

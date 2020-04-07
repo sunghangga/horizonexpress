@@ -12,13 +12,13 @@
                 <table class="table table-bordered table-striped" id="mytable">
                     <thead>
                         <tr>
-                            <th width="5%">No</th>
-                    		    <th width="15%">Nama</th>
-                            <th width="15%">Username</th>
-                            <th width="10%">Group</th>
+                            <th>No</th>
+                    		    <th>Nama</th>
+                            <th>Username</th>
+                            <th>Group</th>
                             <th>Date</th>
                     		    <th>Last Update</th>
-                    		    <th width="13%">Action</th>
+                    		    <th>Action</th>
                                     </tr>
                                 </thead>
                     	    <tbody>
@@ -59,7 +59,21 @@
         <!-- page script -->
         <script>
             $(function () {
-                $('#mytable').DataTable();
+                $('#mytable').DataTable({
+                    scrollY: "500px",
+                    scrollX: true,
+                    scrollCollapse: true,
+                  destroy: true,
+                  paging: true,
+                  searching: true,
+                  "columnDefs": [
+                      { targets: -1, "width": "100px" },
+                      { targets: 5, "width": "150px" },
+                      { targets: 1, "width": "150px" },
+                      { targets: 2, "width": "100px" },
+                      { targets: 4, "width": "100px" },
+                    ]
+                });
             });
         </script>
                     </div><!-- /.box-body -->

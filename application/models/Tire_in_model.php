@@ -18,7 +18,9 @@ class Tire_in_model extends CI_Model
     // get all
     function get_all()
     {
-        $this->db->order_by($this->id, $this->order);
+        $this->db->select('tire_in.id id, tire_in.tire_id tire_id, tire_in.amount amount, tire_in.user_id user_id, tire_in.create_at create_at, tire.id ids_tire, tire.name tire_name');
+        $this->db->join('tire', 'tire.id=tire_in.tire_id');
+        $this->db->order_by('tire.name', $this->order);
         return $this->db->get($this->table)->result();
     }
 
@@ -27,7 +29,7 @@ class Tire_in_model extends CI_Model
     {
         $this->db->select('tire_in.id id, tire_in.tire_id tire_id, tire_in.amount amount, tire_in.user_id user_id, tire_in.create_at create_at, tire.id ids_tire, tire.name tire_name');
         $this->db->join('tire', 'tire.id=tire_in.tire_id');
-        $this->db->order_by('tire.name', 'ASC');
+        $this->db->order_by('tire.name', $this->order);
         $this->db->where('tire_in.id', $id);
         return $this->db->get($this->table)->row();
     }

@@ -111,6 +111,10 @@ class Road_money_model extends CI_Model
       return $this->db->insert_batch('road_money_detail', $data);
     }
 
+    public function update_batch($data){
+      return $this->db->update_batch('road_money_detail', $data, 'id');
+    }
+
     // update data
     function update($id, $data)
     {

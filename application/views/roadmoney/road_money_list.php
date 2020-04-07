@@ -68,8 +68,8 @@
                     render: function ( data, type, row ) {
                       // console.log(data.sv_no);
                       return '<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">'+
-                      /*'<div class="btn-group" role="group" aria-label="First group">'+
-                        '<button id="info" style="margin-left: 5px;" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button></div>'+*/
+                      '<div class="btn-group" role="group" aria-label="First group">'+
+                        '<button id="info" style="margin-left: 5px;" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button></div>'+
                       '<div class="btn-group" role="group" aria-label="Second group">'+
                         '<button id="update" style="margin-left: 5px;" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button></div>'+
                         '<div class="btn-group" role="group" aria-label="Third group">'+
@@ -81,7 +81,7 @@
                   { targets: -2, "width": "90px", render: function(data){return moment(data).format('D MMM YYYY'); }},
                   { targets: 0, "width": "150px"},
                   { targets: [1,2], "width": "30%", render: function(data){return new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(data); }},
-                  { targets: -1, "width": "65px" },
+                  { targets: -1, "width": "100px" },
               ]
           } );
 
@@ -89,7 +89,7 @@
             e.preventDefault();
               var data = table.row( $(this).parents('tr') ).data();
               if (data != null) {
-                window.location = '<?php echo base_url()?>index.php/delivery/read/'+data.kode;
+                window.location = '<?php echo base_url()?>index.php/road_money/read/'+data.id;
               }
           } );
           $('#mytable').on( 'click', '#update', function (e) {

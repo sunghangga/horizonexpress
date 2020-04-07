@@ -15,8 +15,8 @@
 				<!-- <p class="form-p">NPWP 94.206.799.2-905.000</p> -->
 			</td>
 			<td class="center-text" width="350px">
-				<h2 class="form-p"><b>UANG JALAN</b></h2>
-				<hr class="line-title-jalan">
+				<h2 class="form-p"><b><u>UANG JALAN</u></b></h2>
+				<!-- <hr class="line-title-jalan"> -->
 			</td>
 			<td >
 				<img src="template/dist/img/logo-red.png" alt="Logo" class="form-logo">

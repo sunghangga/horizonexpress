@@ -18,7 +18,6 @@ class Tire_out extends CI_Controller
     public function index()
     {
         $tire_out = $this->Tire_out_model->get_all();
-
         $data = array(
             'tire_out_data' => $tire_out
         );
@@ -48,6 +47,30 @@ class Tire_out extends CI_Controller
         }
     }
 
+    public function pdfBarangKeluar($id=null){
+        $row = $this->Tire_out_model->get_by_id($id);
+        $dt = new DateTime($row->create_at);
+        $date = $dt->format('Y-m-d');
+        echo json_encode($row);
+        if ($row) {
+            $data = array(
+            'driver' => $row->driver_name,
+            'nopol' => $row->nopol,
+            'km_after' => $row->km_after,
+            'km_before' => $row->km_before,
+            'tire_name' => $row->tire_name,
+            'keterangan' => $row->keterangan,
+            'create_at' => date_indo($date),
+            'amount' => $row->amount,
+        );
+        $this->load->library("mypdf");
+        $this->mypdf->generate("laporan/barangKeluar","A5","landscape","Laporan Pengeluaran Barang - ".$data['nopol'],$data);
+        } else {
+            $this->session->set_flashdata('message', 'Record Not Found');
+            redirect(site_url('index.php/tire_out'));
+        }
+    }
+
     public function create() 
     {
         $data = array(
@@ -60,6 +83,7 @@ class Tire_out extends CI_Controller
             'get_all_driver' => $this->Driver_model->get_all(),
             'driver_name' => set_value('driver_name'),
     	    'driver_id' => set_value('driver_id'),
+            'keterangan' => set_value('keterangan'),
     	    'nopol' => set_value('nopol'),
     	    'km_before' => set_value('km_before'),
     	    'km_after' => set_value('km_after'),
@@ -82,6 +106,7 @@ class Tire_out extends CI_Controller
     		'km_before' => $this->input->post('km_before',TRUE),
     		'km_after' => $this->input->post('km_after',TRUE),
     		'user_id' => $this->session->userdata('user_id'),
+            'keterangan' => $this->input->post('keterangan',TRUE),
             'create_at' => date('Y-m-d h:m:s'),
 	    );
             $ids = $this->input->post('tire_id',TRUE);
@@ -115,6 +140,7 @@ class Tire_out extends CI_Controller
                 'driver_name' => set_value('driver_name', $row->driver_name),
         		'km_before' => set_value('km_before', $row->km_before),
         		'km_after' => set_value('km_after', $row->km_after),
+                'keterangan' => set_value('keterangan', $row->keterangan),
 	    );
             $this->template->load('template','tireout/tire_out_form', $data);
         } else {
@@ -137,6 +163,7 @@ class Tire_out extends CI_Controller
     		'nopol' => $this->input->post('nopol',TRUE),
     		'km_before' => $this->input->post('km_before',TRUE),
     		'km_after' => $this->input->post('km_after',TRUE),
+            'keterangan' => $this->input->post('keterangan',TRUE),
 	    );
             $ids = $this->input->post('tire_id',TRUE);
             $mount = $this->input->post('amount',TRUE);

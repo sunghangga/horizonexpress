@@ -18,19 +18,26 @@ class Tire_out_model extends CI_Model
     // get all
     function get_all()
     {
-        $this->db->order_by($this->id, $this->order);
-        return $this->db->get($this->table)->result();
+        $this->db->select('tire_out.id id, tire_out.tire_id tire_id, tire_out.amount amount, tire_out.driver_id driver_id, tire_out.nopol nopol, tire_out.user_id user_id, tire_out.km_before km_before, tire_out.km_after km_after, tire_out.keterangan keterangan, tire_out.create_at create_at, tire_out.update_at update_at, tire.id ids_tire, tire.name tire_name, driver.name driver_name, user.username username');
+        $this->db->from('tire_out');
+        $this->db->join('tire', 'tire.id=tire_out.tire_id', 'LEFT');
+        $this->db->join('driver', 'driver.id=tire_out.driver_id', 'LEFT');
+        $this->db->join('user', 'user.id=tire_out.user_id', 'LEFT');
+        $this->db->order_by('tire_out.id', $this->order);
+        return $this->db->get()->result();
     }
 
     // get data by id
     function get_by_id($id)
     {
-        $this->db->select('tire_out.id id, tire_out.tire_id tire_id, tire_out.amount amount, tire_out.driver_id driver_id, tire_out.nopol nopol, tire_out.user_id user_id, tire_out.km_before km_before, tire_out.km_after, tire_out.create_at create_at, tire_out.update_at update_at, tire.id ids_tire, tire.name tire_name, driver.name driver_name');
+        $this->db->select('tire_out.id id, tire_out.tire_id tire_id, tire_out.amount amount, tire_out.driver_id driver_id, tire_out.nopol nopol, tire_out.user_id user_id, tire_out.km_before km_before, tire_out.km_after km_after, tire_out.keterangan keterangan, tire_out.create_at create_at, tire_out.update_at update_at, tire.id ids_tire, tire.name tire_name, driver.name driver_name, user.username username');
+        $this->db->from('tire_out');
         $this->db->join('tire', 'tire.id=tire_out.tire_id', 'LEFT');
         $this->db->join('driver', 'driver.id=tire_out.driver_id', 'LEFT');
-        $this->db->order_by('tire.name', 'ASC');
+        $this->db->join('user', 'user.id=tire_out.user_id', 'LEFT');
         $this->db->where('tire_out.id', $id);
-        return $this->db->get($this->table)->row();
+        $this->db->order_by('tire_out.id', $this->order);
+        return $this->db->get()->row();
     }
     
     // get total rows

@@ -143,8 +143,8 @@
                         render: function ( data, type, row ) {
                           // console.log(data.sv_no);
                           return '<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">'+
-                          /*'<div class="btn-group" role="group" aria-label="First group">'+
-                            '<button id="info" style="margin-left: 5px;" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button></div>'+*/
+                          '<div class="btn-group" role="group" aria-label="First group">'+
+                            '<button id="info" style="margin-left: 5px;" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button></div>'+
                           '<div class="btn-group" role="group" aria-label="Second group">'+
                             '<button id="update" style="margin-left: 5px;" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button></div>'+
                             '<div class="btn-group" role="group" aria-label="Third group">'+
@@ -155,9 +155,11 @@
                   "columnDefs": [
                       { targets: 0, "width": "90", render: function(data){return moment(data).format('D MMM YYYY'); }},
                       { targets: [4,5,6,7,8,9,10], "width": "150"},
-                      { targets: 3, render: function(data){return new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(data); }},
+                      { targets: 3, "width": "100px", render: function(data){return new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(data); }},
                       // { targets: [6,10], render: function(data){return wr_name(data); }},
-                      { targets: -1, "width": "65px" },
+                      { targets: -1, "width": "100px" },
+                      { targets: 1, "width": "80px" },
+                      { targets: 2, "width": "80px" },
                   ]
               } );
 

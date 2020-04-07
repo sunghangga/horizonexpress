@@ -51,6 +51,8 @@ class Customer extends CI_Controller
         		'name' => $row->name,
         		'address' => $row->address,
         		'telephone' => $row->telephone,
+                'nip' => $row->nip,
+                'photo' => $row->photo,
                 'create_at' => $row->create_at,
                 'update_at' => $row->update_at
         	    );
@@ -124,8 +126,8 @@ class Customer extends CI_Controller
                 'button' => 'Update',
                 'action' => site_url('index.php/customer/update_action'),
         		'id' => set_value('id', $row->id),
-            'nip' => set_value('id', $row->nip),
-            'photo' => set_value('photo', $row->photo),
+                'nip' => set_value('id', $row->nip),
+                'photo' => set_value('photo', $row->photo),
         		'name' => set_value('name', $row->name),
         		'address' => set_value('address', $row->address),
         		'telephone' => set_value('telephone', $row->telephone)
@@ -137,28 +139,68 @@ class Customer extends CI_Controller
         }
     }
     
+    public function _updateImage()
+    {
+        $row = $this->Customer_model->get_by_id($this->input->post('id', TRUE));
+
+        $config['upload_path']          = './assets/img/';
+        $config['allowed_types']        = 'gif|jpg|png|jpeg';
+        $config['file_name']            = 'profile-'.date('ymd').'-'.substr(md5(rand()), 0, 10);
+        $config['overwrite']            = true;
+        $config['max_size']             = 2048;
+        $this->load->library('upload', $config);
+        if ($this->upload->do_upload('photo')) {
+          $uploadData = $this->upload->data(); 
+          return $uploadData['file_name'];
+        }
+        else{
+            return $row->photo;
+        }
+    }
+
     public function update_action() 
     {
         $this->_rules();
 
+        $row = $this->Customer_model->get_by_id($this->input->post('id', TRUE));
+
         if ($this->form_validation->run() == FALSE) {
             $this->update($this->input->post('id', TRUE));
         } else {
-            $data = array(
-        		'name' => $this->input->post('name',TRUE),
-        		'address' => $this->input->post('address',TRUE),
-        		'telephone' => $this->input->post('telephone',TRUE)
-        	    );
+            if ($_FILES['photo']['size'] != 0) {
+                if ($row->photo != "default.jpg") {
+                    $path = './assets/img/'.$row->photo;
+                    unlink($path);
+                }
+                $present_photo = $this->_updateImage();
+            } else {
+                $present_photo = $row->photo;
+            }
 
+          $data = array(
+          'name' => $this->input->post('name',TRUE),
+          'address' => $this->input->post('address',TRUE),
+          'telephone' => $this->input->post('telephone',TRUE),
+          'nip' => $this->input->post('nip',TRUE),
+          'photo' => $present_photo,
+            );
+
+          
             $this->Customer_model->update($this->input->post('id', TRUE), $data);
-            $this->session->set_flashdata('message', 'Update Record Success');
+            $this->session->set_flashdata('message', 'Create Record Success');
             redirect(site_url('index.php/customer'));
         }
+        
     }
     
     public function delete($id) 
     {
         $row = $this->Customer_model->get_by_id($id);
+
+        if ($row->photo != "default.jpg") {
+            $path = './assets/img/'.$row->photo;
+            unlink($path);
+        }
 
         if ($row) {
             $this->Customer_model->delete($id);

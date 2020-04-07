@@ -28,6 +28,16 @@ class Receive_model extends CI_Model
         $this->db->where($this->id, $id);
         return $this->db->get($this->table)->row();
     }
+
+    function get_detail_by_kode($kode)
+    {
+        $this->db->select('receive_item.id id, receive_item.kode kode, receive_item.qty_received qty_received, receive_item.keterangan keterangan, delivery_detail.name name, delivery_detail.qty qty, delivery_detail.category category, delivery_detail.unit unit, delivery_detail.price price');
+        $this->db->from('receive_item');
+        $this->db->join('delivery_detail','delivery_detail.id=receive_item.delivery_detail_id', 'INNER');
+        $this->db->where('delivery_detail.kode', $kode);
+        $this->db->order_by('delivery_detail.kode', $this->order);
+        return $this->db->get()->result();
+    }
     
     // get total rows
     function total_rows($q = NULL) {
@@ -75,6 +85,10 @@ class Receive_model extends CI_Model
 
     public function insert_batch($data){
       return $this->db->insert_batch('receive_item', $data);
+    }
+
+    public function update_batch($data){
+      return $this->db->update_batch('receive_item', $data, 'delivery_detail_id');
     }
 
     // update data

@@ -58,6 +58,10 @@ class Check_model extends CI_Model
         $this->db->insert($this->table, $data);
     }
 
+    public function insert_batch($data){
+      return $this->db->insert_batch('check_item', $data);
+    }
+
     // update data
     function update($id, $data)
     {

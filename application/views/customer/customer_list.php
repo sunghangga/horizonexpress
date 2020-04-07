@@ -12,12 +12,12 @@
         <table class="table table-bordered table-striped" id="mytable">
             <thead>
                 <tr>
-                    <th width="80px">No</th>
+                    <th>No</th>
 		    <th>Name</th>
+            <th>Photo</th>
 		    <th>Address</th>
 		    <th>Telephone</th>
-		    <th>Date</th>
-		    <th>Last Update</th>
+		    <th>Create At</th>
 		    <th>Action</th>
                 </tr>
             </thead>
@@ -30,11 +30,11 @@
                 <tr>
 		    <td><?php echo ++$start ?></td>
 		    <td><?php echo $customer->name ?></td>
+            <td><img type="file" style="width: 80px;height: 80px;" name="photo" id="photo" src="<?php echo base_url('assets/img/'.$customer->photo) ?>" /></td>
 		    <td><?php echo $customer->address ?></td>
 		    <td><?php echo $customer->telephone ?></td>
 		    <td><?php echo $customer->create_at ?></td>
-		    <td><?php echo $customer->update_at ?></td>
-		    <td style="text-align:center" width="140px">
+		    <td style="text-align:center">
 			<?php 
 			echo anchor(site_url('index.php/customer/read/'.$customer->id),'<i class="fa fa-eye"></i>',array('title'=>'detail','class'=>'btn btn-info btn-sm')); 
 			echo '  '; 
@@ -57,7 +57,21 @@
         <script src="<?php echo base_url() ?>template/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
         <script type="text/javascript">
             $(document).ready(function () {
-                $("#mytable").dataTable();
+                $("#mytable").dataTable({
+                    scrollY: "800px",
+                    scrollX: true,
+                    scrollCollapse: true,
+                  destroy: true,
+                  paging: true,
+                  searching: true,
+                  "columnDefs": [
+                      { targets: -1, "width": "100px" },
+                      { targets: 3, "width": "220px" },
+                      { targets: 1, "width": "100px" },
+                      { targets: 4, "width": "90px" },
+                      { targets: -2, "width": "80px" },
+                    ]
+                });
             });
         </script>
                     </div><!-- /.box-body -->

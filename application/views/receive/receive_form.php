@@ -11,7 +11,7 @@
                     <div class='row'>
                       <div class='col-12'>
                           <form action="<?php echo $action; ?>" method="post">
-	  <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Kode <?php echo form_error('kode') ?></label>
+	                         <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Kode <?php echo form_error('kode') ?></label>
                                     <div class='col-sm-10'>
                                       <select class="form-control select2bs4" id="kode" name="kode" onchange="show_data()">
                                         <?php if($kode != null){ 
@@ -32,12 +32,16 @@
                                     <div class='col-sm-10'><input type="text" class="form-control" name="receiver" id="receiver" placeholder="Receiver" value="<?php echo $receiver; ?>" />
                                    </div> 
                                 </div>
-	  <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Pdi <?php echo form_error('pdi') ?></label>
+	  <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>PDI <?php echo form_error('pdi') ?></label>
                                     <div class='col-sm-10'><input type="text" class="form-control" name="pdi" id="pdi" placeholder="Pdi" value="<?php echo $pdi; ?>" />
                                    </div> 
                                 </div>
-	  <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Pic <?php echo form_error('pic') ?></label>
+	  <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>PIC <?php echo form_error('pic') ?></label>
                                     <div class='col-sm-10'><input type="text" class="form-control" name="pic" id="pic" placeholder="Pic" value="<?php echo $pic; ?>" />
+                                   </div> 
+                                </div>
+                                <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Catatan <?php echo form_error('pic') ?></label>
+                                    <div class='col-sm-10'><textarea type="text" class="form-control" name="catatan" id="catatan" placeholder="Catatan"/><?php echo $catatan; ?></textarea>
                                    </div> 
                                 </div>
 
@@ -68,11 +72,25 @@
             //Initialize Select2 Elements
              $('.select2bs4').select2({
               theme: 'bootstrap4'
-            })          
+            })  
+            if ('<?php echo $button?>' == 'Update') {
+              document.getElementById("kode").disabled = true;
+            }        
            })
 
           function show_data(){
             var x = document.getElementById("kode").value;
+            var datas = [];
+            $.ajax({
+                type : 'ajax',
+                url : '<?php echo base_url()?>index.php/receive/read_receive/'+x,
+                async : false,
+                dataType : 'json',
+                success : function(data){
+                  datas = data;
+                }
+            });
+
             $.ajax({
                 type : 'ajax',
                 url : '<?php echo base_url()?>index.php/delivery/get_delivery_by_id/'+x,
@@ -82,20 +100,23 @@
                   var html = '';
                   var i;
                   
-                  html = '<div class="row">'+
-                    '<div class="col-md-12">'+
-                      '<h4 class="mt-6 ">Data Items</h4>'+
-                    '</div>';
+                  
                     var iter = 0;
                     for (var i = 0; i < data.length; i++) {
-                      if(data[i].category == 1){
+                      if(data[i].category == 1 && data[i].qty != 0){
+                        if(iter == 0){
+                            html = '<div class="row">'+
+                            '<div class="col-md-12">'+
+                              '<h4 class="mt-6 ">Data Items</h4>'+
+                            '</div>';
+                            }
                         html += '<div class="col-md-4">'+
                           '<div class="form-group">';
                             if(iter == 0){
                             html += '<label for="staticEmail" class="col-12 col-form-label">Name</label>';
                             }
                             html += '<div class="col-sm">'+
-                              '<input type="hidden" class="form-control" name="id_detail[]" value="'+data[i].id+'" disabled/>'+
+                              '<input type="hidden" class="form-control" name="id_detail[]" value="'+data[i].id+'"/>'+
                               '<input type="text" class="form-control name-item" autocomplete="off" spellcheck="false" name="name_item[]" id="name_item'+data[i].id+'" rel="rel_name_item1" placeholder="Name Item" value="'+data[i].name+'" disabled/>'+
                             '</div>'+
                           '</div>'+
@@ -145,7 +166,7 @@
                             html += '<div class="col-sm">'+
                               '<div class="row">'+
                                 '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_items'+data[i].id+'" rel="rel_unit_item1" placeholder="Qty Receive" />'+
+                                  '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_items'+data[i].id+'" rel="rel_unit_item1" placeholder="Qty Receive" value="'+datas[i].qty_received+'"/>'+
                                 '</div>'+
                               '</div>'+
                             '</div>'+
@@ -160,7 +181,7 @@
                             html += '<div class="col-sm">'+
                               '<div class="row">'+
                                 '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_item'+data[i].id+'" rel="rel_unit_item1" placeholder="Description"/>'+
+                                  '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_item'+data[i].id+'" rel="rel_unit_item1" placeholder="Description" value="'+datas[i].keterangan+'"/>'+
                                 '</div>'+
                               '</div>'+
                             '</div>'+
@@ -171,13 +192,16 @@
                     }
                     html += '</div>';
 
-                    html += '<div class="row">'+
-                    '<div class="col-md-12">'+
-                      '<h4 class="mt-6 ">KELENGKAPAN</h4>'+
-                    '</div>';
+                    
                     var iter = 0;
                     for (var i = 0; i < data.length; i++) {
-                      if(data[i].category == 2){
+                      if(data[i].category == 2 && data[i].qty != 0){
+                        if(iter == 0){
+                         html += '<div class="row">'+
+                          '<div class="col-md-12">'+
+                            '<h4 class="mt-6 ">KELENGKAPAN</h4>'+
+                          '</div>';
+                        }
                         html += '<div class="col-md-4">'+
                       '<div class="form-group">';
                         if(iter == 0){
@@ -234,7 +258,7 @@
                             html += '<div class="col-sm">'+
                               '<div class="row">'+
                                 '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_received_item'+data[i].id+'" rel="rel_qty_received_kelengkapan1" placeholder="Qty Receive" />'+
+                                  '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_received_item'+data[i].id+'" rel="rel_qty_received_kelengkapan1" placeholder="Qty Receive" value="'+datas[i].qty_received+'"/>'+
                                 '</div>'+
                               '</div>'+
                             '</div>'+
@@ -249,7 +273,7 @@
                             html += '<div class="col-sm">'+
                               '<div class="row">'+
                                 '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_kelengkapan'+data[i].id+'" rel="rel_keterangan_kelengkapan1" placeholder="Description"/>'+
+                                  '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_kelengkapan'+data[i].id+'" rel="rel_keterangan_kelengkapan1" placeholder="Description" value="'+datas[i].keterangan+'"/>'+
                                 '</div>'+
                               '</div>'+
                             '</div>'+
@@ -261,13 +285,16 @@
                     html += '</div>';
                     
 
-                  html += '<div class="row">'+
-                    '<div class="col-md-12">'+
-                      '<h4 class="mt-6 ">Item Other</h4>'+
-                    '</div>';
+                  
                     var iter = 0;
                     for (var i = 0; i < data.length; i++) {
-                      if(data[i].category == 0){
+                      if(data[i].category == 0 && data[i].qty != 0){
+                        if(iter == 0){
+                            html += '<div class="row">'+
+                            '<div class="col-md-12">'+
+                              '<h4 class="mt-6 ">Item Other</h4>'+
+                            '</div>';
+                            }
                         html += '<div class="col-md-4">'+
                           '<div class="form-group">';
                             if(iter == 0){
@@ -324,7 +351,7 @@
                             html += '<div class="col-sm">'+
                               '<div class="row">'+
                                 '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_received_other'+data[i].id+'" rel="rel_qty_received_other1" placeholder="Qty Receive" />'+
+                                  '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_received_other'+data[i].id+'" rel="rel_qty_received_other1" placeholder="Qty Receive" value="'+datas[i].qty_received+'"/>'+
                                 '</div>'+
                               '</div>'+
                             '</div>'+
@@ -339,7 +366,7 @@
                             html += '<div class="col-sm">'+
                               '<div class="row">'+
                                 '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_other'+data[i].id+'" rel="rel_keterangan_other1" placeholder="Description"/>'+
+                                  '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_other'+data[i].id+'" rel="rel_keterangan_other1" placeholder="Description" value="'+datas[i].keterangan+'"/>'+
                                 '</div>'+
                               '</div>'+
                             '</div>'+

@@ -94,12 +94,12 @@
                     render: function ( data, type, row ) {
                       // console.log(data.sv_no);
                       return '<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">'+
-                      /*'<div class="btn-group" role="group" aria-label="First group">'+
-                        '<button id="info" style="margin-left: 5px;" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button></div>'+*/
+                      '<div class="btn-group" role="group" aria-label="First group">'+
+                        '<button id="info" style="margin-left: 5px;" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button></div>'+
                       '<div class="btn-group" role="group" aria-label="Second group">'+
                         '<button id="update" style="margin-left: 5px;" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button></div>'+
                         '<div class="btn-group" role="group" aria-label="Third group">'+
-                        '<button id="print" style="margin-left: 5px;" class="btn btn-primary btn-sm"><i class="fas fa-print"></i></i></button></div>'+
+                        '<button id="print" style="margin-left: 5px;" class="btn btn-primary btn-sm"><i class="fas fa-print"></i></button></div>'+
                     '</div>';
                   } }
               ],
@@ -107,7 +107,8 @@
                   { targets: 0, "width": "150px"},
                   { targets: [1,2,3], "width": "20%"},
                   { targets: -2, "width": "90px", render: function(data){return moment(data).format('D MMM YYYY'); }},
-                  { targets: -1, "width": "65px" },
+                  { targets: -1, "width": "100px" },
+                  { targets: 4, "width": "65px" },
               ]
           } );
 
@@ -115,7 +116,7 @@
             e.preventDefault();
               var data = table.row( $(this).parents('tr') ).data();
               if (data != null) {
-                window.location = '<?php echo base_url()?>index.php/delivery/read/'+data.kode;
+                window.location = '<?php echo base_url()?>index.php/receive/read/'+data.id;
               }
           } );
           $('#mytable').on( 'click', '#update', function (e) {

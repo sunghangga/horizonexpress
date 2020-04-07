@@ -15,8 +15,8 @@
 				<!-- <p class="form-p">NPWP 94.206.799.2-905.000</p> -->
 			</td>
 			<td class="center-text" width="350px">
-				<p class="form-p"><b>BUKTI TANDA TERIMA PENGIRIMAN</b></p>
-				<hr class="line-title">
+				<p class="form-p"><b><u>BUKTI TANDA TERIMA PENGIRIMAN</u></b></p>
+				<!-- <hr class="line-title"> -->
 				<p class="form-p"><b>No. : <?php echo $kode?></b></p>
 			</td>
 			<td >

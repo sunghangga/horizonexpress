@@ -29,16 +29,22 @@
                                 <input type="text" class="form-control" name="telephone" id="telephone" placeholder="telephone" value="<?php echo $telephone; ?>" disabled/>
                              </div> 
                           </div>
+                          <div class="form-group row">
+                              <label for="staticEmail" class="col-sm-2 col-form-label">NIP <?php echo form_error('nip') ?></label>
+                              <div class="col-sm-10">
+                                <input type="text" class="form-control" name="nip" id="nip" placeholder="NIP" value="<?php echo $nip; ?>" disabled/>
+                              </div>
+                            </div>
+                            <div class="form-group row">
+                              <label for="staticEmail" class="col-sm-2 col-form-label">Photo <?php echo form_error('photo') ?></label>
+                              <div class="col-sm-10">
+                                <img type="file" style="width: 200px;height: 200px;" name="photo" id="photo" src="<?php echo base_url('assets/img/'.$photo) ?>" />
+                              </div>
+                            </div>
                           <div class='form-group row'>
                           <label for='label' class='col-sm-2 col-form-label'>Create At <?php echo form_error('create_at') ?></label>
                               <div class='col-sm-10'>
                                 <input type="text" class="form-control" name="create_at" id="create_at" placeholder="create_at" value="<?php echo $create_at; ?>" disabled/>
-                             </div> 
-                          </div>
-                          <div class='form-group row'>
-                          <label for='label' class='col-sm-2 col-form-label'>Update At <?php echo form_error('update_at') ?></label>
-                              <div class='col-sm-10'>
-                                <input type="text" class="form-control" name="update_at" id="update_at" placeholder="update_at" value="<?php echo $update_at; ?>" disabled/>
                              </div> 
                           </div>
                           <div style='text-align: right;'>
@@ -56,6 +62,5 @@
         <script src="<?php echo base_url() ?>assets/bootstrap/js/moment.js"></script>
         <script>
           document.getElementById("create_at").value = moment(document.getElementById("create_at").value).format('D MMM YYYY');
-          document.getElementById("update_at").value = moment(document.getElementById("create_at").value).format('D MMM YYYY');
         </script>
         </section><!-- /.content -->

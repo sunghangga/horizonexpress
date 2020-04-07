@@ -77,12 +77,7 @@ class Delivery extends CI_Controller
             redirect(site_url('index.php/delivery'));
         }
     }
-
-    public function pdfBarangKeluar($id=null){
-      $this->load->library("mypdf");
-      $this->mypdf->generate("laporan/barangKeluar","A5","landscape");
-    }
-
+    
     public function index()
     {
         $this->template->load('template','delivery/delivery_list');
@@ -117,25 +112,36 @@ class Delivery extends CI_Controller
     public function read($id) 
     {
         $row = $this->Delivery_model->get_by_id($id);
+        $wr_pengirim = $this->Warehouse_model->get_by_id($row->wr_pengirim_id);
+        $wr_penerima = $this->Warehouse_model->get_by_id($row->wr_penerima_id);
+
         if ($row) {
             $data = array(
-            'kode' => $row->kode,
-            'name_pengirim' => $row->name_pengirim,
-            'address_pengirim' => $row->address_pengirim,
-            'telephone_pengirim' => $row->telephone_pengirim,
-            'name_penerima' => $row->name_penerima,
-            'address_penerima' => $row->address_penerima,
-            'telephone_penerima' => $row->telephone_penerima,
-            'user_id' => $row->user_id,
-            'driver' => $row->driver,
-            'nopol' => $row->nopol,
-            'price' => $row->price,
-            'name_regency' => $row->name_regency,
-            'name_district' => $row->name_district,
-            'name_village' => $row->name_village,
-            'create_at' => $row->create_at,
-            'update_at' => $row->update_at,
+            'button' => 'Update',
+            'action' => site_url('index.php/delivery/update_action'),
+            'kode' => set_value('kode', $row->kode),
+            'driver' => set_value('driver', $row->driver),
+            'nopol' => set_value('driver', $row->nopol),
+            'name_pengirim' => set_value('name_pengirim', $row->name_pengirim),
+            'address_pengirim' => set_value('address_pengirim', $row->address_pengirim),
+            'telephone_pengirim' => set_value('telephone_pengirim', $row->telephone_pengirim),
+            'wr_pengirim_id' => set_value('wr_pengirim_id', $wr_pengirim->id),
+            'wr_pengirim_name' => set_value('wr_pengirim_name', $wr_pengirim->name),
+            'name_penerima' => set_value('name_penerima', $row->name_penerima),
+            'address_penerima' => set_value('address_penerima', $row->address_penerima),
+            'telephone_penerima' => set_value('telephone_penerima', $row->telephone_penerima),
+            'wr_penerima_id' => set_value('wr_penerima_id', $wr_penerima->id),
+            'wr_penerima_name' => set_value('wr_penerima_name', $wr_penerima->name),
+            // 'weight' => set_value('weight', $row->weight),
+            // 'amount' => set_value('amount', $row->amount),
+            // 'price' => set_value('price', $row->price),
+            'regencies_id' => set_value('regencies_id', $row->name_regency),
+            'districts_id' => set_value('districts_id', $row->name_district),
+            'villages_id' => set_value('villages_id', $row->name_village),
             'get_delivery_detail_by_id' => $this->Delivery_model->get_delivery_detail_by_id($id),
+            'get_wr' => $this->Warehouse_model->get_by_id($id),
+            // 'create_at' => set_value('create_at', $row->create_at),
+            // 'update_at' => set_value('update_at', $row->update_at),
         );
             $this->template->load('template','delivery/delivery_read', $data);
         } else {
@@ -312,6 +318,8 @@ class Delivery extends CI_Controller
             'button' => 'Update',
             'action' => site_url('index.php/delivery/update_action'),
             'kode' => set_value('kode', $row->kode),
+            'driver' => set_value('driver', $row->driver),
+            'nopol' => set_value('driver', $row->nopol),
             'name_pengirim' => set_value('name_pengirim', $row->name_pengirim),
             'address_pengirim' => set_value('address_pengirim', $row->address_pengirim),
             'telephone_pengirim' => set_value('telephone_pengirim', $row->telephone_pengirim),

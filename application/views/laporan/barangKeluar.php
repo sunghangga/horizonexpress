@@ -7,16 +7,17 @@
 <body>
 	<table class="form-p-all">
 		<tr>
-			<td>
+			<td style="padding-bottom: 18px;">
 				<p class="form-p"><b>PT. Horison Nusa Jaya Transport</b></p>
-				<p class="form-p">Jl. Pohgading Timur Lingk. Perarudan</p>
-				<p class="form-p">Jimbaran - Kuta Selatan</p>
+				<!-- <p class="form-p">Jl. Pohgading Timur Lingk. Perarudan</p>
+				<p class="form-p">Jimbaran - Kuta Selatan</p> -->
 				<p class="form-p">Telp. 085253703818</p>
-				<p class="form-p">NPWP 94.206.799.2-905.000</p>
+				<!-- <p class="form-p">NPWP 94.206.799.2-905.000</p> -->
 			</td>
 			<td class="center-text" width="350px">
-				<p class="form-p"><b>FORM PENGELUARAN BARANG</b></p>
-				<hr class="line-title-barang">
+				<h3 class="form-p"><b><u>FORM PENGELUARAN BARANG</u></b></h3>
+				<!-- <hr class="line-title"> -->
+				<!-- <p class="form-p"><b>No. : <?php echo $kode?></b></p> -->
 			</td>
 			<td >
 				<img src="template/dist/img/logo-red.png" alt="Logo" class="form-logo">
@@ -31,7 +32,7 @@
 	    			<p class="form-p" style="margin-bottom: 0; margin-left: 3px; margin-right: 40px;"><b>TGL</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p" style="margin-bottom: 0;">: 18 Mar 2020</p>
+	    			<p class="form-p" style="margin-bottom: 0;">: <?php echo $create_at ?></p>
 	    		</td>
 	    	</tr>
 	    	<tr>
@@ -39,7 +40,7 @@
 	    			<p class="form-p" style="margin-left: 3px; margin-right: 40px;"><b>Supir</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">: ANDIKA</p>
+	    			<p class="form-p">: <?php echo $driver ?></p>
 	    		</td>
 	    	</tr>
 	    	<tr>
@@ -47,7 +48,7 @@
 	    			<p class="form-p" style="margin-left: 3px; margin-right: 40px;"><b>Nopol</b></p>
 	    		</td>
 	    		<td>
-				    <p class="form-p">: 158449406325ADK</p>
+				    <p class="form-p">: <?php echo $nopol ?></p>
 	    		</td>
 	    	</tr>
 	    </table>
@@ -59,7 +60,7 @@
 	    			<p class="form-p" style="margin-bottom: 0; margin-left: 3px; margin-right: 40px;"><b>KM sebelumnya</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p" style="margin-bottom: 0;">: 2200</p>
+	    			<p class="form-p" style="margin-bottom: 0;">: <?php echo $km_before ?></p>
 	    		</td>
 	    	</tr>
 	    	<tr>
@@ -67,7 +68,7 @@
 	    			<p class="form-p" style="margin-left: 3px; margin-right: 40px;"><b>KM saat ini</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">: 2300</p>
+	    			<p class="form-p">: <?php echo $km_after ?></p>
 	    		</td>
 	    	</tr>
 	    	<tr>
@@ -75,7 +76,7 @@
 	    			<p class="form-p" style="margin-left: 3px; margin-right: 40px;"><b>Selisih KM</b></p>
 	    		</td>
 	    		<td>
-				    <p class="form-p">: 100</p>
+				    <p class="form-p">: <?php echo $km_after - $km_before ?></p>
 	    		</td>
 	    	</tr>
 	    </table>
@@ -85,22 +86,26 @@
 	<div class="row form-p-all" style="margin-top: 10px;">
 	  <div class="column" style="width: 703px; height: 150px; margin-top: 2px;">
 	    <table>
-	    	<tr>
-	    		<td>
-	    			<p style="margin-bottom: 0; margin-top: 0; margin-left: 3px;"><b>Nama Barang</b></p>
-	    		</td>
-	    		<td>
-	    			<p style="margin-bottom: 0; margin-top: 0;">: Ban Achilles Type 0012</p>
-	    		</td>
-	    	</tr>
-	    	<tr>
-	    		<td>
-	    			<!-- <p style="margin-bottom: 0; margin-top: 0; margin-left: 3px;"><b>Nama Barang</b></p> -->
-	    		</td>
-	    		<td>
-	    			<p style="margin-bottom: 0; margin-top: 0; margin-left: 6.5px;"> Ban Achilles Type 0012</p>
-	    		</td>
-	    	</tr>
+	    	<?php for($i=0;$i<$amount;$i++){
+	    		if ($i<1) { ?>
+	    			<tr>
+			    		<td>
+			    			<p style="margin-bottom: 0; margin-top: 0; margin-left: 3px;"><b>Nama Barang</b></p>
+			    		</td>
+			    		<td>
+			    			<p style="margin-bottom: 0; margin-top: 0;">: <?php echo $tire_name ?></p>
+			    		</td>
+			    	</tr>
+	    		<?php } else{ ?>
+		    	<tr>
+		    		<td>
+		    			<!-- <p style="margin-bottom: 0; margin-top: 0; margin-left: 3px;"><b>Nama Barang</b></p> -->
+		    		</td>
+		    		<td>
+		    			<p style="margin-bottom: 0; margin-top: 0; margin-left: 6.5px;"> <?php echo $tire_name ?></p>
+		    		</td>
+		    	</tr>
+		    <?php }} ?>
 	    </table>
 	  </div>
 	</div>
@@ -113,7 +118,7 @@
 	    			<p style="margin-bottom: 0; margin-top: 0; margin-left: 3px;"><b>Keterangan</b></p>
 	    		</td>
 	    		<td>
-	    			<p style="margin-bottom: 0; margin-top: 0;">: Menggunakan ban merk achilles</p>
+	    			<p style="margin-bottom: 0; margin-top: 0;">: <?php echo $keterangan ?></p>
 	    		</td>
 	    	</tr>
 	    </table>
@@ -139,7 +144,7 @@
 	  		</tr>
 	  		<tr>
 	  			<td width="100px" style="vertical-align: bottom;">
-	  				<p style="margin-bottom: 0;"><b>(Nama Supir)</b></p>
+	  				<p style="margin-bottom: 0;"><b>(<?php echo $driver ?>)</b></p>
 	  			</td>
 	  			<td width="100px" style="vertical-align: bottom;">
 	  				<p style="margin-bottom: 0; margin-left: 120px;"><b>(Emila)</b></p>
@@ -148,7 +153,7 @@
 	  				<p style="margin-bottom: 0; margin-left: 120px;"><b>(Arisna)</b></p>
 	  			</td>
 	  			<td width="100px" style="vertical-align: bottom;">
-	  				<p style="margin-bottom: 0; margin-left: 120px;"><b>(Nama Security)</b></p>
+	  				<p style="margin-bottom: 0; margin-left: 120px;"><b>(Security)</b></p>
 	  			</td>
 	  		</tr>
 	  	</table>

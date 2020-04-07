@@ -31,12 +31,12 @@ class Check extends CI_Controller
         $row = $this->Check_model->get_by_id($id);
         if ($row) {
             $data = array(
-		'id' => $row->id,
-		'kode' => $row->kode,
-		'examiner' => $row->examiner,
-		'create_at' => $row->create_at,
-		'update_at' => $row->update_at,
-	    );
+        		'id' => $row->id,
+        		'kode' => $row->kode,
+        		'examiner' => $row->examiner,
+        		'create_at' => $row->create_at,
+        		'update_at' => $row->update_at,
+        	    );
             $this->template->load('template','check/check_read', $data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
@@ -66,13 +66,75 @@ class Check extends CI_Controller
             $this->create();
         } else {
             $data = array(
-		'kode' => $this->input->post('kode',TRUE),
-		'examiner' => $this->input->post('examiner',TRUE),
-		'create_at' => $this->input->post('create_at',TRUE),
-		'update_at' => $this->input->post('update_at',TRUE),
-	    );
+        		'kode' => $this->input->post('kode',TRUE),
+        		'examiner' => $this->input->post('examiner',TRUE),
+        		'create_at' => $this->input->post('date_item',TRUE)
+        	    );
 
             $this->Check_model->insert($data);
+
+            $status = $this->input->post('status_item');
+            $kode = $this->input->post('kode');
+            // $fotos = $_FILES['foto']['name'];
+            $name = $this->input->post('name_item'); 
+            $gejala = $this->input->post('gejala_item');
+            $penyebab = $this->input->post('penyebab_item');
+            $engine = $this->input->post('engine_item'); 
+            $frame = $this->input->post('frame_item'); 
+            $type = $this->input->post('type_item');
+            $solusi = $this->input->post('solusi_item'); 
+            $keterangan = $this->input->post('keterangan_item');
+
+            $itemdata = array();
+            $index = 0; // Set index array awal dengan 0
+
+            $files = $_FILES; 
+            
+            foreach($name as $names){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+              if($status[$index] =="1"){
+
+                $config['upload_path']          = './upload/check/';
+                $config['allowed_types']        = 'gif|jpg|png|jpeg';
+                $config['file_name']            = 'check-'.date('ymd').'-'.substr(md5(rand()), 0, 10);
+                $config['overwrite']            = true;
+                $config['max_size']             = 2048;
+                $this->load->library('upload', $config);
+                $this->upload->initialize($config);
+
+                $_FILES['foto']['name'] = $files['foto']['name'][$index];
+                $_FILES['foto']['type'] = $files['foto']['type'][$index];
+                $_FILES['foto']['tmp_name'] = $files['foto']['tmp_name'][$index];
+                $_FILES['foto']['error'] = $files['foto']['error'][$index];
+                $_FILES['foto']['size'] = $files['foto']['size'][$index];
+
+                //upload file
+                if ($this->upload->do_upload('foto')) {
+                  $uploadData = $this->upload->data(); 
+                  $foto = $uploadData['file_name'];
+                }else{
+                   $error = array('error' => $this->upload->display_errors());
+                   echo json_encode($error);
+                  $foto = null;
+                }
+
+                array_push($itemdata, array(
+                  'kode'=>$kode,
+                  'item'=>$name[$index],  
+                  'foto'=>$foto,
+                  'gejala'=>$gejala[$index],
+                  'penyebab'=>$penyebab[$index],  
+                  'engine'=>$engine[$index],
+                  'frame'=>$frame[$index],
+                  'type'=>$type[$index],  
+                  'solusi'=>$solusi[$index],
+                  'keterangan'=>$keterangan[$index]
+                ));
+                
+              }
+              $index++;
+            }
+
+            $this->Check_model->insert_batch($itemdata); 
             $this->session->set_flashdata('message', 'Create Record Success');
             redirect(site_url('index.php/check'));
         }
@@ -164,8 +226,6 @@ class Check extends CI_Controller
     {
 	$this->form_validation->set_rules('kode', 'kode', 'trim|required');
 	$this->form_validation->set_rules('examiner', 'examiner', 'trim|required');
-	$this->form_validation->set_rules('create_at', 'create at', 'trim|required');
-	$this->form_validation->set_rules('update_at', 'update at', 'trim|required');
 
 	$this->form_validation->set_rules('id', 'id', 'trim');
 	$this->form_validation->set_error_delimiters('<span class="text-danger">', '</span>');

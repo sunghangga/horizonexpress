@@ -10,7 +10,7 @@ class Receive extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('Receive_model','Delivery_model'));
+        $this->load->model(array('Receive_model','Delivery_model','Warehouse_model'));
         $this->load->library('form_validation');
         if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
@@ -26,45 +26,56 @@ class Receive extends CI_Controller
         $this->template->load('template','receive/receive_list', $data);
     }
 
+    public function read_receive($kode=null)
+    {
+        $data = $this->Receive_model->get_detail_by_kode($kode);
+        echo json_encode($data);
+    }
+
     public function pdfReceive($id=null){
-        // $row = $this->Receive_model->get_by_id($id);
-        // $row_del = $this->Delivery_model->get_by_id($row->kode);
-        // $dt = new DateTime($row->create_at);
-        // $date = $dt->format('Y-m-d');
-        // if ($row) {
-        //     $data = array(
-        //     'kode' => $row->kode,
-        //     'table' => $row->table_money,
-        //     'driver' => $row_del->driver,
-        //     'nopol' => $row_del->nopol,
-        //     'pulse' => $row->pulse,
-        //     'price' => $row_price['price'] + $row->table_money + $row->pulse,
-        //     'kota' => $row_del->name_regency,
-        //     'create_at' => date_indo($date),
-        //     'update_at' => $row->update_at,
-        //     'get_roadmoney_detail_by_id' => $this->Road_money_model->get_roadmoney_detail_by_id($row->kode),
-        // );
+        $row = $this->Receive_model->get_by_id($id);
+        $row_del = $this->Delivery_model->get_by_id($row->kode);
+        $row_wr = $this->Warehouse_model->get_by_id($row_del->wr_pengirim_id);
+        $dt = new DateTime($row->create_at);
+        $date = $dt->format('Y-m-d');
+        if ($row) {
+            $data = array(
+            'kode' => $row->kode,
+            'receiver' => $row->receiver,
+            'pdi' => $row->pdi,
+            'pic' => $row->pic,
+            'catatan' => $row->catatan,
+            'dealer' => $row_wr->name,
+            'nopol' => $row_del->nopol,
+            'supir' => $row_del->driver,
+            'create_at' => date_indo($date),
+            'get_delivery_detail_by_id' => $this->Receive_model->get_detail_by_kode($row->kode),
+        );
             $this->load->library("mypdf");
-            $this->mypdf->generate("laporan/kondisiKSU","A4","portrait","Laporan Kondisi KSU - "/*.$data['kode'],$data*/);
-        // } else {
-        //     $this->session->set_flashdata('message', 'Record Not Found');
-        //     redirect(site_url('index.php/receive'));
-        // }
+            $this->mypdf->generate("laporan/kondisiKSU","A4","portrait","Laporan Kondisi KSU - ".$data['kode'],$data);
+        } else {
+            $this->session->set_flashdata('message', 'Record Not Found');
+            redirect(site_url('index.php/receive'));
+        }
     }
 
     public function read($id) 
     {
         $row = $this->Receive_model->get_by_id($id);
+
         if ($row) {
             $data = array(
-		'id' => $row->id,
-		'kode' => $row->kode,
-		'receiver' => $row->receiver,
-		'pdi' => $row->pdi,
-		'pic' => $row->pic,
-		'create_at' => $row->create_at,
-		'update_at' => $row->update_at,
-	    );
+        'button' => 'Update',
+        'action' => site_url('index.php/receive/update_action'),
+        'id' => set_value('id', $row->id),
+        'kode' => set_value('kode', $row->kode),
+        'receiver' => set_value('receiver', $row->receiver),
+        'pdi' => set_value('pdi', $row->pdi),
+        'pic' => set_value('pic', $row->pic),
+        'catatan' => set_value('catatan', $row->catatan),
+        'create_at' => set_value('create_at', $row->create_at),
+        'update_at' => set_value('update_at', $row->update_at),
+        );
             $this->template->load('template','receive/receive_read', $data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
@@ -82,6 +93,7 @@ class Receive extends CI_Controller
     	    'receiver' => set_value('receiver'),
     	    'pdi' => set_value('pdi'),
     	    'pic' => set_value('pic'),
+            'catatan' => set_value('catatan'),
             'get_all_kode' => $this->Delivery_model->get_all_kode_by_status("driver"),
 	);
         $this->template->load('template','receive/receive_form', $data);
@@ -99,21 +111,23 @@ class Receive extends CI_Controller
           		'receiver' => $this->input->post('receiver',TRUE),
           		'pdi' => $this->input->post('pdi',TRUE),
           		'pic' => $this->input->post('pic',TRUE),
+                'catatan' => $this->input->post('catatan',TRUE),
           		'create_at' => date('Y-m-d h:m:s'),
           	    );
 
             $this->Receive_model->insert($data);
 
             $kode = $this->input->post('kode');
-            $id = $this->input->post('id'); // Ambil data nis dan masukkan ke variabel item
+            $id_detail = $this->input->post('id_detail'); // Ambil data nis dan masukkan ke variabel item
             $qty = $this->input->post('qty'); // Ambil data nama dan masukkan ke variabel qyt
             $keterangan = $this->input->post('keterangan');
             $itemdata = array();
-            
+
             $index = 0; // Set index array awal dengan 0
             foreach($keterangan as $keterangans){ // Kita buat perulangan berdasarkan nis sampai data terakhir
               array_push($itemdata, array(
-                'delivery_detail_id'=>$kode,
+                'kode'=>$kode,
+                'delivery_detail_id'=>$id_detail[$index],
                 'qty_received'=>$qty[$index],  
                 'keterangan'=>$keterangan[$index]
               ));
@@ -150,8 +164,8 @@ class Receive extends CI_Controller
 		'receiver' => set_value('receiver', $row->receiver),
 		'pdi' => set_value('pdi', $row->pdi),
 		'pic' => set_value('pic', $row->pic),
+        'catatan' => set_value('catatan', $row->catatan),
 		'create_at' => set_value('create_at', $row->create_at),
-		'update_at' => set_value('update_at', $row->update_at),
 	    );
             $this->template->load('template','receive/receive_form', $data);
         } else {
@@ -172,13 +186,33 @@ class Receive extends CI_Controller
 		'receiver' => $this->input->post('receiver',TRUE),
 		'pdi' => $this->input->post('pdi',TRUE),
 		'pic' => $this->input->post('pic',TRUE),
-		'create_at' => $this->input->post('create_at',TRUE),
-		'update_at' => $this->input->post('update_at',TRUE),
+        'catatan' => $this->input->post('catatan',TRUE),
 	    );
 
-            $this->Receive_model->update($this->input->post('id', TRUE), $data);
-            $this->session->set_flashdata('message', 'Update Record Success');
-            redirect(site_url('index.php/receive'));
+        $this->Receive_model->update($this->input->post('id', TRUE), $data);
+
+        $kode = $this->input->post('kode');
+        $id_detail = $this->input->post('id_detail'); // Ambil data nis dan masukkan ke variabel item
+        $qty = $this->input->post('qty'); // Ambil data nama dan masukkan ke variabel qyt
+        $keterangan = $this->input->post('keterangan');
+        $itemdata = array();
+
+        $index = 0; // Set index array awal dengan 0
+        foreach($keterangan as $keterangans){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+          array_push($itemdata, array(
+            'kode'=>$kode,
+            'delivery_detail_id'=>$id_detail[$index],
+            'qty_received'=>$qty[$index],  
+            'keterangan'=>$keterangan[$index]
+          ));
+          
+          $index++;
+        }
+        // echo json_encode($itemdata);
+        $this->Receive_model->update_batch($itemdata);
+
+        $this->session->set_flashdata('message', 'Update Record Success');
+        redirect(site_url('index.php/receive'));
         }
     }
     

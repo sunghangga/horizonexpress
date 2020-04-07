@@ -38,10 +38,6 @@
                                     <div class='col-sm-10'><input type="text" class="form-control" name="create_at" id="create_at" placeholder="Create At" value="<?php echo $create_at; ?>" disabled/>
                                    </div> 
                                 </div>
-	  <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Update At <?php echo form_error('update_at') ?></label>
-                                    <div class='col-sm-10'><input type="text" class="form-control" name="update_at" id="update_at" placeholder="Update At" value="<?php echo $update_at; ?>" disabled/>
-                                   </div> 
-                                </div>
 	 <div style='text-align: right;'>
 	    <a href="<?php echo site_url('index.php/driver') ?>" class="btn btn-default">Cancel</a>
 	</div>
@@ -57,7 +53,6 @@
         <script src="<?php echo base_url() ?>assets/bootstrap/js/moment.js"></script>
         <script>
           document.getElementById("create_at").value = moment(document.getElementById("create_at").value).format('D MMM YYYY');
-          document.getElementById("update_at").value = moment(document.getElementById("create_at").value).format('D MMM YYYY');
           document.getElementById("sim_expire").value = moment(document.getElementById("sim_expire").value).format('D MMM YYYY');
         </script>
         </section><!-- /.content -->

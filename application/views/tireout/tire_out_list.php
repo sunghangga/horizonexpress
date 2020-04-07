@@ -12,15 +12,15 @@
         <table class="table table-bordered table-striped" id="mytable">
             <thead>
                 <tr>
-                    <th width="80px">No</th>
-		    <th>Tire Id</th>
+                    <th>No</th>
+		    <th>Tire Name</th>
 		    <th>Amount</th>
-		    <th>Driver Id</th>
+		    <th>Driver Name</th>
 		    <th>Nopol</th>
+            <th>Created By</th>
 		    <th>Km Before</th>
 		    <th>Km After</th>
 		    <th>Create At</th>
-		    <th>Update At</th>
 		    <th>Action</th>
                 </tr>
             </thead>
@@ -32,19 +32,19 @@
                 ?>
                 <tr>
 		    <td><?php echo ++$start ?></td>
-		    <td><?php echo $tire_out->tire_id ?></td>
+		    <td><?php echo $tire_out->tire_name ?></td>
 		    <td><?php echo $tire_out->amount ?></td>
-		    <td><?php echo $tire_out->driver_id ?></td>
+		    <td><?php echo $tire_out->driver_name ?></td>
 		    <td><?php echo $tire_out->nopol ?></td>
+            <td><?php echo $tire_out->username ?></td>
 		    <td><?php echo $tire_out->km_before ?></td>
 		    <td><?php echo $tire_out->km_after ?></td>
 		    <td><?php echo $tire_out->create_at ?></td>
-		    <td><?php echo $tire_out->update_at ?></td>
-		    <td style="text-align:center" width="140px">
+		    <td style="text-align:center">
 			<?php 
-			echo anchor(site_url('index.php/tire_out/read/'.$tire_out->id),'<i class="fa fa-eye"></i>',array('title'=>'detail','class'=>'btn btn-info btn-sm')); 
+            echo anchor(site_url('index.php/tire_out/update/'.$tire_out->id),'<i class="fa fa-edit"></i>',array('title'=>'edit','class'=>'btn btn-warning btn-sm')); 
 			echo '  '; 
-			echo anchor(site_url('index.php/tire_out/update/'.$tire_out->id),'<i class="fa fa-edit"></i>',array('title'=>'edit','class'=>'btn btn-warning btn-sm')); 
+			echo anchor(site_url('index.php/tire_out/pdfBarangKeluar/'.$tire_out->id),'<i class="fas fa-print"></i>',array('title'=>'print','class'=>'btn btn-primary btn-sm','target'=>'_blank')); 
 			echo '  '; 
 			echo anchor(site_url('index.php/tire_out/delete/'.$tire_out->id),'<i class="fa fa-trash-alt"></i>','title="delete" class="btn btn-danger btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"'); 
 			?>
@@ -61,7 +61,19 @@
         <script src="<?php echo base_url('template/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.js') ?>"></script>
         <script type="text/javascript">
             $(document).ready(function () {
-                $("#mytable").dataTable();
+                $("#mytable").dataTable({
+                     scrollY: "800px",
+                      scrollX: true,
+                      scrollCollapse: true,
+                      destroy: true,
+                      paging: true,
+                      searching: true,
+                      "columnDefs": [
+                      { targets: -2, "width": "90px", render: function(data){return moment('<?php echo $tire_out->create_at ?>').format('D MMM YYYY'); }},
+                      { targets: -1, "width": "100px" },
+                      { targets: 1, "width": "80px" },
+                      ]
+                });
             });
         </script>
                     </div><!-- /.box-body -->

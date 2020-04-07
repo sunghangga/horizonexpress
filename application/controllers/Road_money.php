@@ -76,14 +76,19 @@ class Road_money extends CI_Controller
     public function read($id) 
     {
         $row = $this->Road_money_model->get_by_id($id);
+        $row_detail = $this->Road_money_model->get_roadmoney_detail_by_id($row->kode);
         if ($row) {
             $data = array(
-		'id' => $row->id,
-		'kode' => $row->kode,
-		'table_money' => $row->table_money,
-		'pulse' => $row->pulse,
-		'create_at' => $row->create_at,
-		'update_at' => $row->update_at,
+            'button' => 'Update',
+            'action' => site_url('index.php/road_money/update_action'),
+            'id' => set_value('id', $row->id),
+            'kode' => set_value('kode', $row->kode),
+            'table_money' => set_value('table_money', $row->table_money),
+            'pulse' => set_value('pulse', $row->pulse),
+            'postage' => set_value('postage', $row_detail[0]->postage),
+            'price' => set_value('price', $row_detail[0]->price),
+            'get_roadmoney_detail_by_id' => $row_detail,
+		      'create_at' => $row->create_at,
 	    );
             $this->template->load('template','roadmoney/road_money_read', $data);
         } else {
@@ -102,8 +107,6 @@ class Road_money extends CI_Controller
 	    'kode' => set_value('kode'),
 	    'table_money' => set_value('table_money'),
 	    'pulse' => set_value('pulse'),
-	    'create_at' => set_value('create_at'),
-	    'update_at' => set_value('update_at'),
         'get_all_kode' => $this->Delivery_model->get_kode_by_some_status("driver","received"),
 	);
         $this->template->load('template','roadmoney/road_money_form', $data);
@@ -168,15 +171,19 @@ class Road_money extends CI_Controller
     public function update($id) 
     {
         $row = $this->Road_money_model->get_by_id($id);
+        $row_detail = $this->Road_money_model->get_roadmoney_detail_by_id($row->kode);
 
         if ($row) {
             $data = array(
                 'button' => 'Update',
                 'action' => site_url('index.php/road_money/update_action'),
-		'id' => set_value('id', $row->id),
-		'kode' => set_value('kode', $row->kode),
-		'table_money' => set_value('table_money', $row->table_money),
-		'pulse' => set_value('pulse', $row->pulse)
+        		'id' => set_value('id', $row->id),
+        		'kode' => set_value('kode', $row->kode),
+        		'table_money' => set_value('table_money', $row->table_money),
+        		'pulse' => set_value('pulse', $row->pulse),
+                'postage' => set_value('postage', $row_detail[0]->postage),
+                'price' => set_value('price', $row_detail[0]->price),
+                'get_roadmoney_detail_by_id' => $row_detail,
 	    );
             $this->template->load('template','roadmoney/road_money_form', $data);
         } else {
@@ -187,19 +194,41 @@ class Road_money extends CI_Controller
     
     public function update_action() 
     {
-        $this->_rules();
+        $this->_update_rules();
+
+        $row = $this->Road_money_model->get_by_id($this->input->post('id', TRUE));
 
         if ($this->form_validation->run() == FALSE) {
             $this->update($this->input->post('id', TRUE));
         } else {
             $data = array(
-		'kode' => $this->input->post('kode',TRUE),
-		'table_money' => $this->input->post('table_money',TRUE),
-		'pulse' => $this->input->post('pulse',TRUE),
-		'create_at' => $this->input->post('create_at',TRUE)
+    		'kode' => $row->kode,
+    		'table_money' => $this->input->post('table_money',TRUE),
+    		'pulse' => $this->input->post('pulse',TRUE),
 	    );
 
             $this->Road_money_model->update($this->input->post('id', TRUE), $data);
+
+            $kode = $row->kode;
+            $id_detail = $this->input->post('id_detail');
+            $postage = $this->input->post('postage'); 
+            $money = $this->input->post('money'); 
+            $roadmoney = array();
+            
+            $index = 0; // Set index array awal dengan 0
+            foreach($postage as $postages){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+              array_push($roadmoney, array(
+                'id'=>$id_detail[$index],
+                'kode'=>$kode,
+                'postage'=>$postage[$index],  
+                'price'=>$money[$index],
+              ));
+              
+              $index++;
+            }
+            echo json_encode($roadmoney);
+            $this->Road_money_model->update_batch($roadmoney); 
+
             $this->session->set_flashdata('message', 'Update Record Success');
             redirect(site_url('index.php/road_money'));
         }
@@ -228,6 +257,15 @@ class Road_money extends CI_Controller
 
     	$this->form_validation->set_rules('id', 'id', 'trim');
     	$this->form_validation->set_error_delimiters('<span class="text-danger">', '</span>');
+    }
+
+    public function _update_rules() 
+    {
+        $this->form_validation->set_rules('table_money', 'table money', 'trim|required');
+        $this->form_validation->set_rules('pulse', 'pulse', 'trim|required');
+
+        $this->form_validation->set_rules('id', 'id', 'trim');
+        $this->form_validation->set_error_delimiters('<span class="text-danger">', '</span>');
     }
 
 }

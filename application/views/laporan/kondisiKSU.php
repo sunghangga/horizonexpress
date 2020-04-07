@@ -14,9 +14,25 @@
 	<title></title>
 </head>
 <body>
-
-	<p class="form-p" style="text-align: center;"><b>LAPORAN KONDISI KSU</b></p>
-
+	<table class="form-p-all">
+		<tr>
+			<td style="padding-bottom: 18px;">
+				<p class="form-p"><b>PT. Horison Nusa Jaya Transport</b></p>
+				<!-- <p class="form-p">Jl. Pohgading Timur Lingk. Perarudan</p>
+				<p class="form-p">Jimbaran - Kuta Selatan</p> -->
+				<p class="form-p">Telp. 085253703818</p>
+				<!-- <p class="form-p">NPWP 94.206.799.2-905.000</p> -->
+			</td>
+			<td class="center-text" width="350px">
+				<h3 class="form-p"><b><u>LAPORAN KONDISI KSU</u></b></h3>
+				<!-- <hr class="line-title"> -->
+				<p class="form-p"><b>No. : <?php echo $kode?></b></p>
+			</td>
+			<td >
+				<img src="template/dist/img/logo-red.png" alt="Logo" class="form-logo">
+			</td>
+		</tr>
+	</table>
 	<div class="row form-p-all" style="margin-top: 20px;">
 	  <div class="column" style="height: 85px;">
 	  	<table>
@@ -25,7 +41,7 @@
 	    			<p class="form-p" style="margin-left: 3px;"><b>DEALER</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">: MKM Jimbaran</p>
+	    			<p class="form-p">: <?php echo $dealer?></p>
 	    		</td>
 	    	</tr>
 	    	<tr>
@@ -33,7 +49,7 @@
 	    			<p class="form-p" style="margin-left: 3px;"><b>NOMOR POLISI TRUCK</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">: DK 2234 AQ</p>
+	    			<p class="form-p">: <?php echo $nopol?></p>
 	    		</td>
 	    	</tr>
 	    	<tr>
@@ -41,7 +57,7 @@
 	    			<p class="form-p" style="margin-left: 3px;"><b>NAMA EKSPEDISI/SOPIR</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">: Hamid</p>
+	    			<p class="form-p">: <?php echo $supir?></p>
 	    		</td>
 	    	</tr>
 	    	<tr>
@@ -49,7 +65,7 @@
 	    			<p class="form-p" style="margin-left: 3px;"><b>TANGGAL UNLOADING/PENERIMAAN KSU</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">: 25 Maret 2020</p>
+	    			<p class="form-p">: <?php echo $create_at?></p>
 	    		</td>
 	    	</tr>
 	    </table>
@@ -63,36 +79,46 @@
 	  			<td width="25px" class="border-td">
 	  				<p class="form-p"><b>NO</b></p>
 	  			</td>
-		        <td width="220px" class="border-td">
+		        <td width="200px" class="border-td">
 		           <p class="form-p"><b>NAMA KSU</b></p>
 		        </td>
-	  			<td width="100px" class="border-td">
-	  				<p class="form-p"><b>JUMLAH UNIT</b></p>
+	  			<td width="80px" class="border-td">
+	  				<p class="form-p"><b>JML UNIT</b></p>
 	  			</td>
-	  			<td width="150px" class="border-td">
-	  				<p class="form-p"><b>JMLH KSU DITERIMA</b></p>
+	  			<td width="80px" class="border-td">
+	  				<p class="form-p"><b>JML KSU DITERIMA</b></p>
+	  			</td>
+	  			<td width="100px" class="border-td">
+	  				<p class="form-p"><b>SELISIH JML KSU</b></p>
 	  			</td>
 	  			<td width="180px" class="border-td"> 
 	  				<p class="form-p"><b>KETERANGAN</b></p>
 	  			</td>
 	  		</tr>
-	  		<tr>
-	  			<td width="25px" class="border-td">
-	  				<f style="margin-left: 3px;font-size:10px;">1</f>
-	  			</td>
-	            <td width="220px" class="border-td">
-	              <f style="font-size:10px;">Motor Scoopy 110 CC</f>
-	            </td>
-	  			<td width="100px" style="text-align: center;" class="border-td">
-	  				<f style="font-size:10px;">3</f>
-	  			</td>
-	  			<td width="150px" style="text-align: center;" class="border-td">
-	  				<f style="font-size:10px;">3</f>
-	  			</td>
-	  			<td width="180px" style="text-align: center;" class="border-td">
-	  				<f style="font-size:10px;">Aman</f>
-	  			</td>
-	  		</tr>
+	  		<?php $iter = 0; foreach($get_delivery_detail_by_id as $row){
+		  		if ($row->qty > 0) {
+		  		  ?>
+		  		<tr>
+		  			<td width="25px" height="25px" class="border-td" style="text-align: center;">
+		  				<f style="margin-left: 3px;font-size:10px;"><?php echo $iter += 1;?></f>
+		  			</td>
+		            <td width="200px" class="border-td">
+		              <f style="font-size:10px;"><?php echo $row->name?></f>
+		            </td>
+		  			<td width="80px" style="text-align: center;" class="border-td">
+		  				<f style="font-size:10px;"><?php echo $row->qty?></f>
+		  			</td>
+		  			<td width="80px" style="text-align: center;" class="border-td">
+		  				<f style="font-size:10px;"><?php echo $row->qty_received?></f>
+		  			</td>
+		  			<td width="100px" style="text-align: center;" class="border-td">
+		  				<f style="font-size:10px;"><?php echo $row->qty - $row->qty_received?></f>
+		  			</td>
+		  			<td width="180px" style="text-align: center;" class="border-td">
+		  				<f style="font-size:10px;"><?php echo $row->keterangan?></f>
+		  			</td>
+		  		</tr>
+		  	<?php }} ?>
 	  	</table>
 	  </div>
 	</div>
@@ -105,7 +131,7 @@
 	    			<p class="form-p"><b><u>CATATAN</u></b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">: MKM Jimbaran</p>
+	    			<p class="form-p">: <?php echo $catatan?></p>
 	    		</td>
 	    	</tr>
 	    </table>
@@ -131,16 +157,16 @@
 	  		</tr>
 	  		<tr>
 	  			<td width="100px" style="vertical-align: bottom;">
-	  				<p style="margin-bottom: 0;"><b>(Nama)</b></p>
+	  				<p style="margin-bottom: 0;"><b>(<?php echo $receiver?>)</b></p>
 	  			</td>
 	  			<td width="100px" style="vertical-align: bottom;">
-	  				<p style="margin-bottom: 0;"><b>(Nama)</b></p>
+	  				<p style="margin-bottom: 0;"><b>(<?php echo $pdi?>)</b></p>
 	  			</td>
 	  			<td width="100px" style="vertical-align: bottom;">
-	  				<p style="margin-bottom: 0;"><b>(Nama)</b></p>
+	  				<p style="margin-bottom: 0;"><b>(<?php echo $supir?>)</b></p>
 	  			</td>
 	  			<td width="100px" style="vertical-align: bottom;">
-	  				<p style="margin-bottom: 0;"><b>(Nama)</b></p>
+	  				<p style="margin-bottom: 0;"><b>(<?php echo $pic?>)</b></p>
 	  			</td>
 	  		</tr>
 	  	</table>
