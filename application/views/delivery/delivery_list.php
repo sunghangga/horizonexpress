@@ -43,10 +43,7 @@
                 <th>Address Penerima</th>
                 <th>Telephone Penerima</th>
                 <th>Warehouse Penerima</th>
-                <th>Create by</th>
-                
-                <!--<th>Driver</th>
-                <th>Nopol</th>-->
+                <th>Created by</th>
                 <th>Action</th>
                 </tr>
             </thead>

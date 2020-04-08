@@ -36,7 +36,7 @@
                                 <div class="form-group row">
                                     <label for="recipient-name" class="col-sm-2 col-form-label">Date Check</label>
                                     <div class="col-sm-4 input-group date" data-target-input="nearest" id="inputDate">
-                                      <input type="text" class="form-control datetimepicker-input" data-target="#inputDate" placeholder="Date Check"  name="date_item" id="date_item"/>
+                                      <input type="text" class="form-control datetimepicker-input" data-target="#inputDate" placeholder="Date Check"  name="date_item" id="date_item" value="<?php echo $date_check; ?>" />
                                       <div class="input-group-append" data-target="#inputDate" data-toggle="datetimepicker">
                                           <div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
                                       </div>
@@ -74,7 +74,10 @@
             })   
             $('.date').datetimepicker({
                   format: 'YYYY-MM-DD'
-            })       
+            })    
+            if ('<?php echo $button?>' == 'Update') {
+              document.getElementById("kode").disabled = true;
+            }   
            })
 
           function show_data(){

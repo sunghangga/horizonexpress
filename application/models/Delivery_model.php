@@ -82,6 +82,18 @@ class Delivery_model extends CI_Model
         return $this->db->get($this->table)->result();
     }
 
+    function get_kode_by_status_check($status)
+    {
+        $this->db->select('delivery.status status, delivery.kode kode');
+        $this->db->from('delivery');
+        $this->db->join('check','delivery.kode=check.kode', 'LEFT');
+        $this->db->where('delivery.status', $status);
+        $this->db->where('check.kode', NULL, FALSE);
+        $this->db->order_by('delivery.kode', 'DESC');
+        $this->db->limit(10);
+        return $this->db->get()->result();
+    }
+
     function get_kode_by_some_status($status1,$status2)
     {
         $this->db->where("(delivery.status='".$status1."' OR delivery.status='".$status2."')", NULL, FALSE);

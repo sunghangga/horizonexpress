@@ -294,6 +294,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <p>Group</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="<?php echo base_url('index.php/company') ?>" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Company</p>
+                </a>
+              </li>
             </ul>
           </li>
           <?php } ?>

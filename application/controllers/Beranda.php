@@ -11,7 +11,7 @@ class Beranda extends CI_Controller
     {
         parent::__construct();
         $this->load->model(array('Delivery_model','Customer_model','Driver_model'));
-        if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('login', 'refresh');}
+        if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
 
   

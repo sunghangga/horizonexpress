@@ -13,7 +13,6 @@ class Mypdf {
 
     public function generate($view, $paper = "A4", $orientation = "portrait", $filename = "Laporan", $data = array()){
     	$html = $this->ci->load->view($view, $data, TRUE);
-
     	$dompdf = new Dompdf();
 
     	$dompdf->loadHtml($html);
