@@ -24,10 +24,11 @@ CREATE TABLE `check` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `kode` varchar(15) DEFAULT NULL,
   `examiner` varchar(55) DEFAULT NULL,
+  `date_check` date DEFAULT NULL,
   `create_at` date DEFAULT NULL,
   `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=108 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `check_item` */
 
@@ -36,6 +37,7 @@ DROP TABLE IF EXISTS `check_item`;
 CREATE TABLE `check_item` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `kode` varchar(15) NOT NULL,
+  `status` int(5) DEFAULT '0',
   `item` varchar(55) NOT NULL,
   `foto` mediumtext,
   `gejala` mediumtext NOT NULL,
@@ -46,7 +48,20 @@ CREATE TABLE `check_item` (
   `solusi` mediumtext,
   `keterangan` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4;
+
+/*Table structure for table `company` */
+
+DROP TABLE IF EXISTS `company`;
+
+CREATE TABLE `company` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(55) DEFAULT NULL,
+  `logo` varchar(25) DEFAULT 'logo.png',
+  `tlp` varchar(15) DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 /*Table structure for table `customer` */
 
