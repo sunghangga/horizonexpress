@@ -14,7 +14,7 @@ MySQL - 5.5.49-0ubuntu0.14.04.1 : Database - mkmhonda_horizon
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 CREATE DATABASE /*!32312 IF NOT EXISTS*/`mkmhonda_horizon` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
-USE `horizon`;
+USE `mkmhonda_horizon`;
 
 /*Table structure for table `check` */
 
@@ -28,7 +28,7 @@ CREATE TABLE `check` (
   `create_at` date DEFAULT NULL,
   `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `check` */
 
@@ -42,8 +42,8 @@ CREATE TABLE `check_item` (
   `status` int(5) DEFAULT '0',
   `item` varchar(55) NOT NULL,
   `foto` mediumtext,
-  `gejala` mediumtext NOT NULL,
-  `penyebab` mediumtext NOT NULL,
+  `gejala` mediumtext,
+  `penyebab` mediumtext,
   `engine` varchar(15) DEFAULT NULL,
   `frame` varchar(15) DEFAULT NULL,
   `type` varchar(25) DEFAULT NULL,
@@ -86,13 +86,15 @@ CREATE TABLE `customer` (
   `create_at` date NOT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `customer` */
 
 insert  into `customer`(`id`,`name`,`address`,`telephone`,`nip`,`photo`,`create_at`,`update_at`) values 
 (9,'PT MPM','SURABAYA','-','-','default.jpg','2020-04-23','2020-04-23 11:35:52'),
-(10,'CV NASIONAL MOTOR - RUTENG','RUTENG','-','-','default.jpg','2020-04-23','2020-04-23 11:36:31');
+(10,'CV NASIONAL MOTOR - RUTENG','RUTENG','-','-','default.jpg','2020-04-23','2020-04-23 11:36:31'),
+(11,'aaa','sss','ddd','','default.jpg','2020-05-02','2020-05-02 08:48:18'),
+(12,'fff','ggg','hhh','','default.jpg','2020-05-02','2020-05-02 08:48:18');
 
 /*Table structure for table `delivery` */
 
@@ -135,7 +137,7 @@ CREATE TABLE `delivery_detail` (
   `price` float DEFAULT NULL,
   `unit` varchar(15) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `delivery_detail` */
 
@@ -7500,7 +7502,7 @@ CREATE TABLE `receive` (
   `create_at` date DEFAULT NULL,
   `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `receive` */
 
@@ -7515,7 +7517,7 @@ CREATE TABLE `receive_item` (
   `qty_received` float NOT NULL,
   `keterangan` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `receive_item` */
 
@@ -8062,7 +8064,7 @@ CREATE TABLE `road_money` (
   `create_at` date DEFAULT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `road_money` */
 
@@ -8076,7 +8078,7 @@ CREATE TABLE `road_money_detail` (
   `postage` varchar(255) NOT NULL,
   `price` float DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `road_money_detail` */
 
