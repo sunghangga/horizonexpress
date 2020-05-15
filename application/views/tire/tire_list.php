@@ -10,7 +10,7 @@
 		<?php //echo anchor(site_url('tire/pdf'), '<i class="fa fa-file-pdf-o"></i> PDF', 'class="btn btn-primary btn-sm"'); ?></h3>
                 </div><!-- /.card-header -->
                 <div class='card-body'>
-        <table class="table table-bordered table-striped" id="mytable">
+        <table class="table table-bordered table-striped" style="width:100%;" id="mytable">
             <thead>
                 <tr>
                     <th width="80px">No</th>

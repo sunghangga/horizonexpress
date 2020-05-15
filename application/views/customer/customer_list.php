@@ -9,7 +9,7 @@
                   <h3 class='card-title'>CUSTOMER LIST <?php echo anchor('index.php/customer/create/','Create',array('class'=>'btn btn-primary btn-sm'));?>
                 </div><!-- /.box-header -->
                 <div class='card-body'>
-        <table class="table table-bordered table-striped" id="mytable">
+        <table class="table table-bordered table-striped" style="width:100%;" id="mytable">
             <thead>
                 <tr>
                     <th>No</th>
@@ -67,7 +67,7 @@
                   "columnDefs": [
                       { targets: -1, "width": "100px" },
                       { targets: 3, "width": "220px" },
-                      { targets: 1, "width": "100px" },
+                      { targets: 1, "width": "200px" },
                       { targets: 4, "width": "90px" },
                       { targets: -2, "width": "80px" },
                     ]

@@ -19,6 +19,12 @@ class Company_model extends CI_Model
     function get_all()
     {
         $this->db->order_by($this->id, $this->order);
+        return $this->db->get($this->table)->row();
+    }
+
+    function get_all_company()
+    {
+        $this->db->order_by($this->id, $this->order);
         return $this->db->get($this->table)->result();
     }
 

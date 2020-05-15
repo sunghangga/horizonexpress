@@ -17,7 +17,7 @@ class Company extends CI_Controller
 
     public function index()
     {
-        $company = $this->Company_model->get_all();
+        $company = $this->Company_model->get_all_company();
 
         $data = array(
             'company_data' => $company
@@ -96,28 +96,66 @@ class Company extends CI_Controller
         }
     }
     
+    public function _updateImage()
+    {
+        $row = $this->Company_model->get_by_id($this->input->post('id', TRUE));
+
+        $config['upload_path']          = './upload/logo/';
+        $config['allowed_types']        = 'gif|jpg|png|jpeg';
+        $config['file_name']            = 'logo-'.date('ymd').'-'.substr(md5(rand()), 0, 10);
+        $config['overwrite']            = true;
+        $config['max_size']             = 2048;
+        $this->load->library('upload', $config);
+        if ($this->upload->do_upload('logo')) {
+          $uploadData = $this->upload->data(); 
+          return $uploadData['file_name'];
+        }
+        else{
+            return $row->logo;
+        }
+    }
+
     public function update_action() 
     {
         $this->_rules();
 
+        $row = $this->Company_model->get_by_id($this->input->post('id', TRUE));
+        
         if ($this->form_validation->run() == FALSE) {
             $this->update($this->input->post('id', TRUE));
         } else {
-            $data = array(
-		'name' => $this->input->post('name',TRUE),
-		'logo' => $this->input->post('logo',TRUE),
-		'tlp' => $this->input->post('tlp',TRUE),
-	    );
+            if ($_FILES['logo']['size'] != 0) {
+                if ($row->logo != "logo.png") {
+                    $path = './upload/logo/'.$row->logo;
+                    unlink($path);
+                }
+                $present_photo = $this->_updateImage();
+            } else {
+                $present_photo = $row->logo;
+            }
 
+              $data = array(
+              'name' => $this->input->post('name',TRUE),
+              'tlp' => $this->input->post('tlp',TRUE),
+              'logo' => $present_photo,
+            );
+
+          
             $this->Company_model->update($this->input->post('id', TRUE), $data);
-            $this->session->set_flashdata('message', 'Update Record Success');
+            $this->session->set_flashdata('message', 'Create Record Success');
             redirect(site_url('index.php/company'));
         }
+        
     }
     
     public function delete($id) 
     {
         $row = $this->Company_model->get_by_id($id);
+
+        if ($row->logo != "logo.png") {
+            $path = './upload/logo/'.$row->logo;
+            unlink($path);
+        }
 
         if ($row) {
             $this->Company_model->delete($id);
@@ -132,7 +170,6 @@ class Company extends CI_Controller
     public function _rules() 
     {
 	$this->form_validation->set_rules('name', 'name', 'trim|required');
-	$this->form_validation->set_rules('logo', 'logo', 'trim|required');
 	$this->form_validation->set_rules('tlp', 'tlp', 'trim|required');
 
 	$this->form_validation->set_rules('id', 'id', 'trim');

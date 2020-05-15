@@ -10,7 +10,7 @@ class Road_money extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('Road_money_model','Delivery_model','Receive_model'));
+        $this->load->model(array('Road_money_model','Delivery_model','Receive_model','Company_model'));
         $this->load->library('form_validation');
         if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
@@ -47,6 +47,7 @@ class Road_money extends CI_Controller
     }
 
     public function pdfJalan($id=null){
+        $company = $this->Company_model->get_all();
         $row = $this->Road_money_model->get_by_id($id);
         $row_del = $this->Delivery_model->get_by_id($row->kode);
         $row_price = $this->Road_money_model->get_price($row->kode);
@@ -54,6 +55,9 @@ class Road_money extends CI_Controller
         $date = $dt->format('Y-m-d');
         if ($row) {
             $data = array(
+                'logo' => $company->logo,
+                'name' => $company->name,
+                'tlp' => $company->tlp,
             'kode' => $row->kode,
             'table' => $row->table_money,
             'driver' => $row_del->driver,
@@ -107,7 +111,7 @@ class Road_money extends CI_Controller
 	    'kode' => set_value('kode'),
 	    'table_money' => set_value('table_money'),
 	    'pulse' => set_value('pulse'),
-        'get_all_kode' => $this->Delivery_model->get_kode_by_some_status("driver","received"),
+        'get_all_kode' => $this->Delivery_model->get_kode_by_status_road_money("driver","received"),
 	);
         $this->template->load('template','roadmoney/road_money_form', $data);
     }

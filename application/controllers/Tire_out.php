@@ -10,7 +10,7 @@ class Tire_out extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('Tire_out_model','Tire_model','Driver_model'));
+        $this->load->model(array('Tire_out_model','Tire_model','Driver_model','Company_model'));
         $this->load->library('form_validation');
         if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
@@ -23,6 +23,13 @@ class Tire_out extends CI_Controller
         );
 
         $this->template->load('template','tireout/tire_out_list', $data);
+    }
+
+    public function range(){
+        $first = $_GET['first'];
+        $last = $_GET['last'];
+        $data = $this->Tire_out_model->get_range($first,$last);
+        echo json_encode($data);
     }
 
     public function read($id) 
@@ -48,12 +55,16 @@ class Tire_out extends CI_Controller
     }
 
     public function pdfBarangKeluar($id=null){
+        $company = $this->Company_model->get_all();
         $row = $this->Tire_out_model->get_by_id($id);
         $dt = new DateTime($row->create_at);
         $date = $dt->format('Y-m-d');
         echo json_encode($row);
         if ($row) {
             $data = array(
+                'logo' => $company->logo,
+                'name' => $company->name,
+                'tlp' => $company->tlp,
             'driver' => $row->driver_name,
             'nopol' => $row->nopol,
             'km_after' => $row->km_after,
@@ -181,15 +192,19 @@ class Tire_out extends CI_Controller
 
             $this->Tire_out_model->update($this->input->post('id', TRUE), $data);
             $this->session->set_flashdata('message', 'Update Record Success');
-            rredirect(base_url().'index.php/tire_out');
+            redirect(base_url().'index.php/tire_out');
         }
     }
     
     public function delete($id) 
     {
         $row = $this->Tire_out_model->get_by_id($id);
+        $tires = $this->Tire_model->get_by_id($row->tire_id);
+        
+        $stok = array('stock' => ($tires->stock + $row->amount));
 
         if ($row) {
+            $this->Tire_model->update($row->tire_id, $stok);
             $this->Tire_out_model->delete($id);
             $this->session->set_flashdata('message', 'Delete Record Success');
             redirect(base_url().'index.php/tire_out');

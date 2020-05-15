@@ -17,14 +17,14 @@
 	<table class="form-p-all">
 		<tr>
 			<td width="380px" style="padding-bottom: 18px;">
-				<p class="form-p"><b>PT. Horison Nusa Jaya Transport</b></p>
-				<p class="form-p">Telp. 085253703818</p>
+				<p class="form-p"><b><?php echo $name ?></b></p>
+				<p class="form-p">Telp. <?php echo $tlp ?></p>
 			</td>
 			<td width="430px">
 				<h3 class="form-p"><b><u>FORM PEMERIKSAAN UNIT MOTOR</u></b></h3>
 			</td>
 			<td >
-				<img src="template/dist/img/logo-red.png" alt="Logo" class="form-logo">
+				<img type="file" src="./upload/logo/<?php echo $logo ?>" alt="Logo" class="form-logo">
 			</td>
 		</tr>
 	</table>

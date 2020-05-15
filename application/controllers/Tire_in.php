@@ -26,14 +26,22 @@ class Tire_in extends CI_Controller
         $this->template->load('template','tirein/tire_in_list', $data);
     }
 
+    public function range(){
+        $first = $_GET['first'];
+        $last = $_GET['last'];
+        $data = $this->Tire_in_model->get_range($first,$last);
+        echo json_encode($data);
+    }
+
     public function read($id) 
     {
         $row = $this->Tire_in_model->get_by_id($id);
         if ($row) {
             $data = array(
 		'id' => $row->id,
-		'tire_id' => $row->tire_id,
+		'tire_id' => $row->tire_name,
 		'amount' => $row->amount,
+        'user_name' => $row->user_name,
 		'create_at' => $row->create_at,
 	    );
             $this->template->load('template','tirein/tire_in_read', $data);
@@ -50,7 +58,7 @@ class Tire_in extends CI_Controller
             'action' => site_url('index.php/tire_in/create_action'),
     	    'id' => set_value('id'),
             'get_all_tire' => $this->Tire_model->get_all(),
-    	    'tire_id' => set_value('tire_id'),
+    	    // 'tire_id' => set_value('tire_id'),
     	    'amount' => set_value('amount'),
     	    'create_at' => set_value('create_at'),
 	);
@@ -106,17 +114,18 @@ class Tire_in extends CI_Controller
     
     public function update_action($tambah) 
     {
-        $this->_rules();
+        $this->_update_rules();
+        $row = $this->Tire_in_model->get_by_id($this->input->post('id', TRUE));
 
         if ($this->form_validation->run() == FALSE) {
             $this->update($this->input->post('id', TRUE));
         } else {
             $data = array(
-    		'tire_id' => $this->input->post('tire_id',TRUE),
+    		'tire_id' => $row->tire_id,
     		'amount' => $this->input->post('amount',TRUE),
             'user_id' => $this->session->userdata('user_id'),
 	    );
-            $ids = $this->input->post('tire_id',TRUE);
+            $ids = $row->tire_id;
             $mount = $this->input->post('amount',TRUE);
             $tires = $this->Tire_model->get_by_id($ids);
             $hasil = $tambah - $mount;
@@ -128,7 +137,7 @@ class Tire_in extends CI_Controller
                 $mount = abs($hasil);
                 $stok = array('stock' => ($tires->stock - $mount));
             }
-            $this->Tire_model->update($this->input->post('tire_id', TRUE), $stok);
+            $this->Tire_model->update($row->tire_id, $stok);
 
             $this->Tire_in_model->update($this->input->post('id', TRUE), $data);
             $this->session->set_flashdata('message', 'Update Record Success');
@@ -139,8 +148,12 @@ class Tire_in extends CI_Controller
     public function delete($id) 
     {
         $row = $this->Tire_in_model->get_by_id($id);
+        $tires = $this->Tire_model->get_by_id($row->tire_id);
+        
+        $stok = array('stock' => ($tires->stock - $row->amount));
 
         if ($row) {
+            $this->Tire_model->update($row->tire_id, $stok);
             $this->Tire_in_model->delete($id);
             $this->session->set_flashdata('message', 'Delete Record Success');
             redirect(base_url().'index.php/tire_in');
@@ -148,6 +161,14 @@ class Tire_in extends CI_Controller
             $this->session->set_flashdata('message', 'Record Not Found');
             redirect(base_url().'index.php/tire_in');
         }
+    }
+
+    public function _update_rules() 
+    {
+        $this->form_validation->set_rules('amount', 'amount', 'trim|required');
+
+        $this->form_validation->set_rules('id', 'id', 'trim');
+        $this->form_validation->set_error_delimiters('<span class="text-danger">', '</span>');
     }
 
     public function _rules() 

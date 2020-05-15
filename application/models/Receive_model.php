@@ -29,6 +29,13 @@ class Receive_model extends CI_Model
         return $this->db->get($this->table)->row();
     }
 
+    function exist_row_check($field,$data){
+        $this->db->where($field,$data);
+        $this->db->from($this->table);
+        $query = $this->db->get();
+        return $query->num_rows();
+    }
+
     function get_detail_by_kode($kode)
     {
         $this->db->select('receive_item.id id, receive_item.kode kode, receive_item.qty_received qty_received, receive_item.keterangan keterangan, delivery_detail.name name, delivery_detail.qty qty, delivery_detail.category category, delivery_detail.unit unit, delivery_detail.price price');

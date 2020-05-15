@@ -10,7 +10,7 @@ class Receive extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('Receive_model','Delivery_model','Warehouse_model'));
+        $this->load->model(array('Receive_model','Delivery_model','Warehouse_model','Company_model'));
         $this->load->library('form_validation');
         if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
@@ -33,6 +33,7 @@ class Receive extends CI_Controller
     }
 
     public function pdfReceive($id=null){
+        $company = $this->Company_model->get_all();
         $row = $this->Receive_model->get_by_id($id);
         $row_del = $this->Delivery_model->get_by_id($row->kode);
         $row_wr = $this->Warehouse_model->get_by_id($row_del->wr_pengirim_id);
@@ -40,6 +41,9 @@ class Receive extends CI_Controller
         $date = $dt->format('Y-m-d');
         if ($row) {
             $data = array(
+                'logo' => $company->logo,
+                'name' => $company->name,
+                'tlp' => $company->tlp,
             'kode' => $row->kode,
             'receiver' => $row->receiver,
             'pdi' => $row->pdi,
@@ -106,6 +110,7 @@ class Receive extends CI_Controller
         if ($this->form_validation->run() == FALSE) {
             $this->create();
         } else {
+            if(!$this->Receive_model->exist_row_check('kode',$this->input->post('kode',TRUE))>0){
             $data = array(
           		'kode' => $this->input->post('kode',TRUE),
           		'receiver' => $this->input->post('receiver',TRUE),
@@ -122,7 +127,7 @@ class Receive extends CI_Controller
             $qty = $this->input->post('qty'); // Ambil data nama dan masukkan ke variabel qyt
             $keterangan = $this->input->post('keterangan');
             $itemdata = array();
-
+    
             $index = 0; // Set index array awal dengan 0
             foreach($keterangan as $keterangans){ // Kita buat perulangan berdasarkan nis sampai data terakhir
               array_push($itemdata, array(
@@ -141,6 +146,11 @@ class Receive extends CI_Controller
             $this->Delivery_model->update($kode, $data);
             $this->session->set_flashdata('message', 'Create Record Success');
             redirect(site_url('index.php/receive'));
+            }
+            else {
+                
+                $this->create();
+             }
         }
     }
 
@@ -176,13 +186,12 @@ class Receive extends CI_Controller
     
     public function update_action() 
     {
-        $this->_rules();
+        $this->_update_rules();
 
         if ($this->form_validation->run() == FALSE) {
             $this->update($this->input->post('id', TRUE));
         } else {
             $data = array(
-		'kode' => $this->input->post('kode',TRUE),
 		'receiver' => $this->input->post('receiver',TRUE),
 		'pdi' => $this->input->post('pdi',TRUE),
 		'pic' => $this->input->post('pic',TRUE),
@@ -191,7 +200,6 @@ class Receive extends CI_Controller
 
         $this->Receive_model->update($this->input->post('id', TRUE), $data);
 
-        $kode = $this->input->post('kode');
         $id_detail = $this->input->post('id_detail'); // Ambil data nis dan masukkan ke variabel item
         $qty = $this->input->post('qty'); // Ambil data nama dan masukkan ke variabel qyt
         $keterangan = $this->input->post('keterangan');
@@ -200,7 +208,6 @@ class Receive extends CI_Controller
         $index = 0; // Set index array awal dengan 0
         foreach($keterangan as $keterangans){ // Kita buat perulangan berdasarkan nis sampai data terakhir
           array_push($itemdata, array(
-            'kode'=>$kode,
             'delivery_detail_id'=>$id_detail[$index],
             'qty_received'=>$qty[$index],  
             'keterangan'=>$keterangan[$index]
@@ -230,15 +237,36 @@ class Receive extends CI_Controller
         }
     }
 
+    public function check_default($value)
+    {
+        if(!$this->Receive_model->exist_row_check('kode',$value)>0){
+            return TRUE;
+        }
+        else{
+            $this->form_validation->set_message('check_default', 'Kode has been created');
+            return FALSE;
+        }
+    }
+
     public function _rules() 
     {
-	$this->form_validation->set_rules('kode', 'kode', 'trim|required');
+	$this->form_validation->set_rules('kode', 'kode', 'trim|required|callback_check_default');
 	$this->form_validation->set_rules('receiver', 'receiver', 'trim|required');
 	$this->form_validation->set_rules('pdi', 'pdi', 'trim|required');
 	$this->form_validation->set_rules('pic', 'pic', 'trim|required');
 
 	$this->form_validation->set_rules('id', 'id', 'trim');
 	$this->form_validation->set_error_delimiters('<span class="text-danger">', '</span>');
+    }
+
+    public function _update_rules() 
+    {
+    $this->form_validation->set_rules('receiver', 'receiver', 'trim|required');
+    $this->form_validation->set_rules('pdi', 'pdi', 'trim|required');
+    $this->form_validation->set_rules('pic', 'pic', 'trim|required');
+
+    $this->form_validation->set_rules('id', 'id', 'trim');
+    $this->form_validation->set_error_delimiters('<span class="text-danger">', '</span>');
     }
 
 }

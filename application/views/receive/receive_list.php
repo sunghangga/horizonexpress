@@ -59,7 +59,7 @@
             return temp;
           }
           var table = $('#mytable').DataTable( {
-              scrollY: "400px",
+              scrollY: "800px",
               scrollX: true,
               scrollCollapse: true,
               destroy: true,
@@ -105,10 +105,9 @@
               ],
               "columnDefs": [
                   { targets: 0, "width": "150px"},
-                  { targets: [1,2,3], "width": "20%"},
-                  { targets: -2, "width": "90px", render: function(data){return moment(data).format('D MMM YYYY'); }},
+                  { targets: [1,2,3,4], "width": "150px"},
+                  { targets: 5, "width": "90px", render: function(data){return moment(data).format('D MMM YYYY'); }},
                   { targets: -1, "width": "100px" },
-                  { targets: 4, "width": "65px" },
               ]
           } );
 

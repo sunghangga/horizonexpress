@@ -100,5 +100,9 @@
         return false;
       },
     });
+
+  if ('<?php echo $button?>' == 'Update') {
+              document.getElementById("tire_id").disabled = true;
+          } 
 </script>
 </section><!-- /.content -->

@@ -18,6 +18,10 @@
                                     <div class='col-sm-10'><input type="text" class="form-control" name="amount" id="amount" placeholder="Amount" value="<?php echo $amount; ?>" disabled/>
                                    </div> 
                                 </div>
+                                <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Created By <?php echo form_error('user_name') ?></label>
+                                    <div class='col-sm-10'><input type="text" class="form-control" name="user_name" id="user_name" placeholder="Created By" value="<?php echo $user_name; ?>" disabled/>
+                                   </div> 
+                                </div>
 	  <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Create At <?php echo form_error('create_at') ?></label>
                                     <div class='col-sm-10'><input type="text" class="form-control" name="create_at" id="create_at" placeholder="Create At" value="<?php echo $create_at; ?>" disabled/>
                                    </div> 

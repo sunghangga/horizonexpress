@@ -8,10 +8,10 @@
 	<table class="form-p-all">
 		<tr>
 			<td style="padding-bottom: 18px;">
-				<p class="form-p"><b>PT. Horison Nusa Jaya Transport</b></p>
+				<p class="form-p"><b><?php echo $name ?></b></p>
 				<!-- <p class="form-p">Jl. Pohgading Timur Lingk. Perarudan</p>
 				<p class="form-p">Jimbaran - Kuta Selatan</p> -->
-				<p class="form-p">Telp. 085253703818</p>
+				<p class="form-p">Telp. <?php echo $tlp ?></p>
 				<!-- <p class="form-p">NPWP 94.206.799.2-905.000</p> -->
 			</td>
 			<td class="center-text" width="350px">
@@ -20,7 +20,7 @@
 				<!-- <p class="form-p"><b>No. : <?php echo $kode?></b></p> -->
 			</td>
 			<td >
-				<img src="template/dist/img/logo-red.png" alt="Logo" class="form-logo">
+				<img type="file" src="./upload/logo/<?php echo $logo ?>" alt="Logo" class="form-logo">
 			</td>
 		</tr>
 	</table>

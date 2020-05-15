@@ -9,7 +9,7 @@
                   <h3 class='card-title'>USER LIST <?php echo anchor('index.php/user/create/','Create',array('class'=>'btn btn-primary btn-sm'));?></h3>
                 </div><!-- /.box-header -->
                 <div class='card-body'>
-                <table class="table table-bordered table-striped" id="mytable">
+                <table class="table table-bordered table-striped" style="width:100%;" id="mytable">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -68,10 +68,9 @@
                   searching: true,
                   "columnDefs": [
                       { targets: -1, "width": "100px" },
-                      { targets: 5, "width": "150px" },
-                      { targets: 1, "width": "150px" },
+                      { targets: [4,5], "width": "150px" },
+                      { targets: 1, "width": "200px" },
                       { targets: 2, "width": "100px" },
-                      { targets: 4, "width": "100px" },
                     ]
                 });
             });

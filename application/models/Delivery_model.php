@@ -22,7 +22,7 @@ class Delivery_model extends CI_Model
 
     function get_regencies()
     {
-        $this->db->where('province_id', '51');
+        // $this->db->where('province_id', '51');
         $this->db->order_by('name', 'ASC');
         return $this->db->get('regencies')->result();
     }
@@ -78,7 +78,7 @@ class Delivery_model extends CI_Model
     {
         $this->db->where('delivery.status', $status);
         $this->db->order_by('kode', 'ASC');
-        $this->db->limit(10);
+        //$this->db->limit(10);
         return $this->db->get($this->table)->result();
     }
 
@@ -89,6 +89,18 @@ class Delivery_model extends CI_Model
         $this->db->join('check','delivery.kode=check.kode', 'LEFT');
         $this->db->where('delivery.status', $status);
         $this->db->where('check.kode', NULL, FALSE);
+        $this->db->order_by('delivery.kode', 'DESC');
+        $this->db->limit(10);
+        return $this->db->get()->result();
+    }
+
+    function get_kode_by_status_road_money($status1,$status2)
+    {
+        $this->db->select('delivery.status status, delivery.kode kode');
+        $this->db->from('delivery');
+        $this->db->join('road_money','delivery.kode=road_money.kode', 'LEFT');
+        $this->db->where("(delivery.status='".$status1."' OR delivery.status='".$status2."')", NULL, FALSE);
+        $this->db->where('road_money.kode', NULL, FALSE);
         $this->db->order_by('delivery.kode', 'DESC');
         $this->db->limit(10);
         return $this->db->get()->result();
@@ -121,6 +133,16 @@ class Delivery_model extends CI_Model
         return $this->db->get('delivery_detail')->result();
     }
 
+    function get_check_item_by_id($id){
+        $this->db->select('delivery_detail.qty as qty, delivery_detail.id as id, delivery_detail.category as category, delivery_detail.name as name, 
+          check_item.status as status, check_item.foto as foto, check_item.gejala as gejala, check_item.penyebab as penyebab, check_item.engine as engine, check_item.frame as frame, check_item.type as type, check_item.solusi as solusi, check_item.keterangan as keterangan');
+        $this->db->from('delivery_detail');
+        $this->db->join('check_item','check_item.id = delivery_detail.id','left');
+        $this->db->where('delivery_detail.kode', $id);
+        $this->db->order_by('delivery_detail.kode', 'ASC');
+        return $this->db->get()->result();
+    }
+
     function get_item($target=null,$search=null){
         $this->db->select('item.id, item.name, item.category, item.unit_id, item.create_at, item.update_at, unit.id id_u, unit.name name_u');
         $this->db->from('item');
@@ -143,6 +165,21 @@ class Delivery_model extends CI_Model
         $this->db->join('user','user.id=delivery.user_id', 'LEFT');
         $this->db->where('delivery.create_at>=', $first);
         $this->db->where('delivery.create_at<=', $last);
+        $this->db->order_by($this->id, $this->order);
+        return $this->db->get()->result();
+    }
+
+    function get_range_track($first,$last)
+    {
+        $this->db->select('delivery.kode, delivery.name_pengirim, delivery.address_pengirim, delivery.telephone_pengirim, delivery.wr_pengirim_id wr_pengirim_id, delivery.wr_penerima_id wr_penerima_id, delivery.name_penerima, delivery.address_penerima, delivery.telephone_penerima,delivery.driver,delivery.user_id, delivery.nopol,(SELECT SUM(qty*price) FROM delivery_detail WHERE kode=delivery.kode) as price, regencies.name, districts.name, villages.name, delivery.create_at, delivery.update_at,delivery.status,user.name as admin');
+        $this->db->from('delivery');
+        $this->db->join('regencies','delivery.regencies_id=regencies.id', 'LEFT');
+        $this->db->join('districts','delivery.districts_id=districts.id', 'LEFT');
+        $this->db->join('villages','delivery.villages_id=villages.id', 'LEFT');
+        $this->db->join('user','user.id=delivery.user_id', 'LEFT');
+        $this->db->where('delivery.create_at>=', $first);
+        $this->db->where('delivery.create_at<=', $last);
+        $this->db->where('delivery.status', 'warehouse');
         $this->db->order_by($this->id, $this->order);
         return $this->db->get()->result();
     }

@@ -26,7 +26,7 @@
                 </div>
             </div>
                 <div class='card-body'>
-        <table class="table table-bordered table-striped" id="mytable">
+        <table class="table table-bordered table-striped" style="width:100%;" id="mytable">
             <thead>
                 <tr>
 		    <th>Kode</th>

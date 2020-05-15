@@ -81,8 +81,6 @@ class Customer extends CI_Controller
     public function create_action() 
     {
         $this->_rules();
-        
-        
 
         if ($this->form_validation->run() == FALSE) {
             $this->create();
@@ -95,9 +93,16 @@ class Customer extends CI_Controller
             $this->load->library('upload', $config);
 
             //upload file
-            if ($this->upload->do_upload('photo')) {
-              $uploadData = $this->upload->data(); 
-              $filename = $uploadData['file_name'];
+            if ($this->upload->do_upload('photo') == false) {
+                $filename = "default.jpg";
+                $this->upload->do_upload('photo');
+            }
+            else {
+                $this->upload->do_upload('photo');
+                $uploadData = $this->upload->data();
+                $filename = $uploadData['file_name'];
+            }
+
               $data = array(
               'name' => $this->input->post('name',TRUE),
               'address' => $this->input->post('address',TRUE),
@@ -109,9 +114,7 @@ class Customer extends CI_Controller
 
                 $this->Customer_model->insert($data);
                 $this->session->set_flashdata('message', 'Create Record Success');
-            }else{
-                echo "gagal upload";
-            }
+
             
             redirect(site_url('index.php/customer'));
         }
@@ -216,7 +219,7 @@ class Customer extends CI_Controller
     {
 	$this->form_validation->set_rules('name', 'name', 'trim|required');
 	$this->form_validation->set_rules('address', 'address', 'trim|required');
-	$this->form_validation->set_rules('telephone', 'telephone', 'trim');
+	// $this->form_validation->set_rules('telephone', 'telephone', 'trim');
 	$this->form_validation->set_rules('id', 'id', 'trim');
 	$this->form_validation->set_error_delimiters('<span class="text-danger">', '</span>');
     }

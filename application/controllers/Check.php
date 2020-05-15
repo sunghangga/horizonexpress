@@ -10,7 +10,7 @@ class Check extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('Check_model','Delivery_model'));
+        $this->load->model(array('Check_model','Delivery_model','Company_model'));
         $this->load->library('form_validation');
         if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
@@ -29,6 +29,7 @@ class Check extends CI_Controller
     public function range(){
         $first = $_GET['first'];
         $last = $_GET['last'];
+        //echo json_encode($last);
         $data = $this->Check_model->get_range($first,$last);
         echo json_encode($data);
     }
@@ -54,14 +55,15 @@ class Check extends CI_Controller
     public function create() 
     {
         $data = array(
-            'button' => 'Create',
-            'action' => site_url('index.php/check/create_action'),
+          'button' => 'Create',
+          'action' => site_url('index.php/check/create_action'),
     	    'id' => set_value('id'),
     	    'kode' => set_value('kode'),
     	    'examiner' => set_value('examiner'),
-            'date_check' => set_value('date_check'),
-            'get_all_kode' => $this->Delivery_model->get_kode_by_status_check("received"),
-            'get_all_status' => array('RUSAK','TIDAK RUSAK')
+          'date_check' => set_value('date_check'),
+          'get_all_kode' => $this->Delivery_model->get_all_kode_by_status("received"),
+            //'get_all_kode' => $this->Delivery_model->get_all_kode(),
+          'get_all_status' => array('RUSAK','TIDAK RUSAK')
 	);
         $this->template->load('template','check/check_form', $data);
     }
@@ -85,6 +87,7 @@ class Check extends CI_Controller
             $status = $this->input->post('status_item');
             $kode = $this->input->post('kode');
             // $fotos = $_FILES['foto']['name'];
+            $itemID = $this->input->post('itemID'); 
             $name = $this->input->post('name_item'); 
             $gejala = $this->input->post('gejala_item');
             $penyebab = $this->input->post('penyebab_item');
@@ -127,6 +130,7 @@ class Check extends CI_Controller
                 }
 
                 array_push($itemdata, array(
+                  'id' => $itemID[$index],
                   'kode'=>$kode,
                   'status'=>$status[$index],
                   'item'=>$name[$index],  
@@ -143,6 +147,7 @@ class Check extends CI_Controller
               }
               else{
                 array_push($itemdata, array(
+                  'id' => $itemID[$index],
                   'kode'=>$kode,
                   'status'=>$status[$index],
                   'item'=>$name[$index],  
@@ -166,6 +171,7 @@ class Check extends CI_Controller
     }
 
     public function pdfPeriksa($id=null){
+        $company = $this->Company_model->get_all();
         $row = $this->Check_model->get_by_id($id);
         $row_del = $this->Delivery_model->get_by_id($row->kode);
         $row_detail = $this->Check_model->get_detail($row->kode);
@@ -176,6 +182,9 @@ class Check extends CI_Controller
 
         if ($row) {
             $data = array(
+                'logo' => $company->logo,
+                'name' => $company->name,
+                'tlp' => $company->tlp,
             'kode' => $row->kode,
             'examiner' => $row->examiner,
             'date_check' => date_indo($date2),
@@ -217,19 +226,114 @@ class Check extends CI_Controller
         $this->_rules();
 
         if ($this->form_validation->run() == FALSE) {
-            $this->update($this->input->post('id', TRUE));
+            $this->create();
         } else {
             $data = array(
-		'kode' => $this->input->post('kode',TRUE),
-		'examiner' => $this->input->post('examiner',TRUE),
-		'create_at' => $this->input->post('create_at',TRUE),
-		'update_at' => $this->input->post('update_at',TRUE),
-	    );
+            'kode' => $this->input->post('kode',TRUE),
+            'examiner' => $this->input->post('examiner',TRUE),
+            'date_check' => $this->input->post('date_item',TRUE),
+            'create_at' => $this->input->post('date_item',TRUE)
+              );
 
             $this->Check_model->update($this->input->post('id', TRUE), $data);
-            $this->session->set_flashdata('message', 'Update Record Success');
-            redirect(site_url('index.php/check'));
-        }
+
+            $status = $this->input->post('status_item');
+            $itemID = $this->input->post('itemID'); 
+            $name = $this->input->post('name_item'); 
+            $gejala = $this->input->post('gejala_item');
+            $penyebab = $this->input->post('penyebab_item');
+            $engine = $this->input->post('engine_item'); 
+            $frame = $this->input->post('frame_item'); 
+            $type = $this->input->post('type_item');
+            $solusi = $this->input->post('solusi_item'); 
+            $keterangan = $this->input->post('keterangan_item');
+
+            $itemdata = array();
+            $index = 0; // Set index array awal dengan 0
+
+            $files = $_FILES; 
+           
+            $row = $this->Delivery_model->get_check_item_by_id($this->input->post('kode',TRUE));
+
+            foreach($name as $names){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+              //get nama file foto
+
+              if($files['foto']['name'][$index]!="" && $status[$index] =="1"){  
+                $config['upload_path']          = './upload/check/';
+                $config['allowed_types']        = 'gif|jpg|png|jpeg';
+                
+                $dapatFoto = $row[$index]->foto;
+                if($dapatFoto!=null){
+                  $config['file_name']  = $dapatFoto;
+                }
+                else{
+                  $config['file_name']  = 'check-'.date('ymd').'-'.substr(md5(rand()), 0, 10);
+                }
+                
+                $config['overwrite']            = true;
+                $config['max_size']             = 2048;
+                $this->load->library('upload', $config);
+                $this->upload->initialize($config);
+
+                $_FILES['foto']['name'] = $files['foto']['name'][$index];
+                $_FILES['foto']['type'] = $files['foto']['type'][$index];
+                $_FILES['foto']['tmp_name'] = $files['foto']['tmp_name'][$index];
+                $_FILES['foto']['error'] = $files['foto']['error'][$index];
+                $_FILES['foto']['size'] = $files['foto']['size'][$index];
+
+                //upload file
+                if ($this->upload->do_upload('foto')) {
+                  $uploadData = $this->upload->data(); 
+                  $foto = $uploadData['file_name'];
+                }else{
+                   $error = array('error' => $this->upload->display_errors());
+                   echo json_encode($error);
+                  $foto = null;
+                }
+              }
+              else{
+                $foto = $row[$index]->foto;
+              }
+
+              if($status[$index] =="1"){
+                $itemdata = array(
+                  //'id' => $itemID[$index],
+                  'status'=>$status[$index],
+                  'item'=>$name[$index],  
+                  'foto'=>$foto,
+                  'gejala'=>$gejala[$index],
+                  'penyebab'=>$penyebab[$index],  
+                  'engine'=>$engine[$index],
+                  'frame'=>$frame[$index],
+                  'type'=>$type[$index],  
+                  'solusi'=>$solusi[$index],
+                  'keterangan'=>$keterangan[$index]
+                );
+              }
+              else{
+                $itemdata = array(
+                  //'id' => $itemID[$index],
+                  'status'=>$status[$index],
+                  'item'=>$name[$index],  
+                  'foto'=>null,
+                  'gejala'=>null,
+                  'penyebab'=>null,  
+                  'engine'=>null,
+                  'frame'=>null,
+                  'type'=>null,  
+                  'solusi'=>null,
+                  'keterangan'=>null
+                );
+              }
+              
+              $this->Check_model->update_batch($itemID[$index],$itemdata); 
+
+              $index++;
+             }
+
+            $this->session->set_flashdata('message', 'Create Record Success');
+            redirect(site_url('index.php/check'));    
+         }
     }
     
     public function delete($id) 

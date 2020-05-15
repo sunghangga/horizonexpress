@@ -88,6 +88,11 @@ class Check_model extends CI_Model
         $this->db->update($this->table, $data);
     }
 
+    public function update_batch($id,$data){
+        $this->db->where($this->id, $id);
+        $this->db->update('check_item', $data);  
+    }
+
     // delete data
     function delete($id)
     {

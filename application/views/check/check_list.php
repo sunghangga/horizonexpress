@@ -26,7 +26,7 @@
                 </div>
                 </div><!-- /.card-header -->
                 <div class='card-body'>
-        <table class="table table-bordered table-striped" id="mytable">
+        <table class="table table-bordered table-striped" style="width:100%;" id="mytable">
             <thead>
                 <tr>
 		    <th>Kode</th>
@@ -41,17 +41,26 @@
         <script src="<?php echo base_url('template/adminlte/plugins/jquery-ui/jquery-ui.min.js') ?>"></script>
         <script src="<?php echo base_url('template/adminlte/plugins/datatables/jquery.dataTables.js') ?>"></script>
         <script src="<?php echo base_url('template/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.js') ?>"></script>
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $("#mytable").dataTable();
-            });
-        </script>
+        <script src="<?php echo base_url() ?>assets/bootstrap/js/moment.js"></script>
                     </div><!-- /.box-body -->
               </div><!-- /.box -->
             </div><!-- /.col -->
           </div><!-- /.row -->
         </div><!-- /.container-fluid -->
         <script type="text/javascript">
+            $(function() {
+                data_range(moment().format('YYYY-MM-DD'),moment().format('YYYY-MM-DD'));
+              $('input[id="reservation"]').daterangepicker({
+                opens: 'left',
+                locale: {
+                  format: 'D MMM YYYY'
+                }
+              }, function(start, end, label) {
+                data_range(start.format('YYYY-MM-DD'),end.format('YYYY-MM-DD'));
+
+              });
+            });
+
         function data_range(first,last){
           var table = $('#mytable').DataTable( {
               scrollY: "400px",
@@ -68,6 +77,7 @@
                   data.last = last;
                 },
               },
+
               "columns": [
                   { "data": "kode" },
                   { "data": "examiner" },
@@ -88,8 +98,8 @@
               ],
               "columnDefs": [
                   { targets: 0, "width": "150px"},
-                  { targets: 1, "width": "250px"},
-                  { targets: [2,3], "width": "120px", render: function(data){return moment(data).format('D MMM YYYY'); }},
+                  { targets: 1, "width": "300px"},
+                  { targets: [2,3], "width": "140px", render: function(data){return moment(data).format('D MMM YYYY'); }},
                   { targets: -1, "width": "100px" },
               ]
           } );
@@ -118,18 +128,5 @@
         
         }
         </script>
-        <script type="text/javascript">
-            $(function() {
-                data_range(moment().format('YYYY-MM-DD'),moment().format('YYYY-MM-DD'));
-              $('input[id="reservation"]').daterangepicker({
-                opens: 'left',
-                locale: {
-                  format: 'D MMM YYYY'
-                }
-              }, function(start, end, label) {
-                data_range(start.format('YYYY-MM-DD'),end.format('YYYY-MM-DD'));
-
-              });
-            });
-        </script>
+        
       </section><!-- /.content -->

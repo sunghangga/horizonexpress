@@ -10,7 +10,7 @@ class Delivery extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('Delivery_model','Customer_model','User_model','Warehouse_model'));
+        $this->load->model(array('Delivery_model','Customer_model','User_model','Warehouse_model','Company_model'));
         $this->load->library('form_validation');
         if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
@@ -32,6 +32,12 @@ class Delivery extends CI_Controller
 
     public function get_delivery_by_id($id=null){
       $data = $this->Delivery_model->get_delivery_detail_by_id($id);
+      //$data = $this->Delivery_model->get_check_item_by_id($id);
+      echo json_encode($data);
+    }
+
+    public function get_check_item_by_id($id){
+      $data = $this->Delivery_model->get_check_item_by_id($id);
       echo json_encode($data);
     }
 
@@ -46,11 +52,15 @@ class Delivery extends CI_Controller
     }
     
     public function pdfTerima($id=null){
+        $company = $this->Company_model->get_all();
         $row = $this->Delivery_model->get_by_id($id);
         if ($row) {
             $data = $this->Delivery_model->get_price($row->kode);
             $user = $this->User_model->get_by_id($row->user_id);
             $data = array(
+                'logo' => $company->logo,
+                'name' => $company->name,
+                'tlp' => $company->tlp,
             'kode' => $row->kode,
             'name_pengirim' => $row->name_pengirim,
             'address_pengirim' => $row->address_pengirim,
@@ -192,25 +202,49 @@ class Delivery extends CI_Controller
         if ($this->form_validation->run() == FALSE) {
             $this->create();
         } else {
-            $data = array(
-            'kode' => $this->input->post('kode'),
-            'name_pengirim' => $this->input->post('name_pengirim',TRUE),
-            'address_pengirim' => $this->input->post('address_pengirim',TRUE),
-            'telephone_pengirim' => $this->input->post('telephone_pengirim',TRUE),
-            'wr_pengirim_id' => $this->input->post('wr_pengirim_id',TRUE),
-            'name_penerima' => $this->input->post('name_penerima',TRUE),
-            'address_penerima' => $this->input->post('address_penerima',TRUE),
-            'telephone_penerima' => $this->input->post('telephone_penerima',TRUE),
-            'wr_penerima_id' => $this->input->post('wr_penerima_id',TRUE),
-            'user_id' => $this->session->userdata('user_id'),
-            /*'driver' => $this->input->post('driver',TRUE),
-            'nopol' => $this->input->post('nopol',TRUE),*/
-            // 'price' => $this->input->post('price'),
-            'regencies_id' => $this->input->post('regencies_id',TRUE),
-            'districts_id' => $this->input->post('districts_id',TRUE),
-            'villages_id' => $this->input->post('villages_id',TRUE),
-            'create_at' => $date
-            );
+            if($_POST['driver'] != NULL && $_POST['nopol'] != NULL){
+              $data = array(
+              'kode' => $this->input->post('kode'),
+              'name_pengirim' => $this->input->post('name_pengirim',TRUE),
+              'address_pengirim' => $this->input->post('address_pengirim',TRUE),
+              'telephone_pengirim' => $this->input->post('telephone_pengirim',TRUE),
+              'wr_pengirim_id' => $this->input->post('wr_pengirim_id',TRUE),
+              'name_penerima' => $this->input->post('name_penerima',TRUE),
+              'address_penerima' => $this->input->post('address_penerima',TRUE),
+              'telephone_penerima' => $this->input->post('telephone_penerima',TRUE),
+              'wr_penerima_id' => $this->input->post('wr_penerima_id',TRUE),
+              'user_id' => $this->session->userdata('user_id'),
+              'driver' => $this->input->post('driver',TRUE),
+              'nopol' => $this->input->post('nopol',TRUE),
+              'status' => 'driver',
+              // 'price' => $this->input->post('price'),
+              'regencies_id' => $this->input->post('regencies_id',TRUE),
+              'districts_id' => $this->input->post('districts_id',TRUE),
+              'villages_id' => $this->input->post('villages_id',TRUE),
+              'create_at' => $date
+              );
+            }
+            else{
+                $data = array(
+              'kode' => $this->input->post('kode'),
+              'name_pengirim' => $this->input->post('name_pengirim',TRUE),
+              'address_pengirim' => $this->input->post('address_pengirim',TRUE),
+              'telephone_pengirim' => $this->input->post('telephone_pengirim',TRUE),
+              'wr_pengirim_id' => $this->input->post('wr_pengirim_id',TRUE),
+              'name_penerima' => $this->input->post('name_penerima',TRUE),
+              'address_penerima' => $this->input->post('address_penerima',TRUE),
+              'telephone_penerima' => $this->input->post('telephone_penerima',TRUE),
+              'wr_penerima_id' => $this->input->post('wr_penerima_id',TRUE),
+              'user_id' => $this->session->userdata('user_id'),
+              'driver' => $this->input->post('driver',TRUE),
+              'nopol' => $this->input->post('nopol',TRUE),
+              // 'price' => $this->input->post('price'),
+              'regencies_id' => $this->input->post('regencies_id',TRUE),
+              'districts_id' => $this->input->post('districts_id',TRUE),
+              'villages_id' => $this->input->post('villages_id',TRUE),
+              'create_at' => $date
+              );
+            }
 
            // echo json_encode($this->input->post('name_item'));
 

@@ -81,15 +81,17 @@
           function show_data(){
             var x = document.getElementById("kode").value;
             var datas = [];
-            $.ajax({
-                type : 'ajax',
-                url : '<?php echo base_url()?>index.php/receive/read_receive/'+x,
-                async : false,
-                dataType : 'json',
-                success : function(data){
-                  datas = data;
-                }
-            });
+            if('<?php echo $button?>' == 'Update'){
+                $.ajax({
+                  type : 'ajax',
+                  url : '<?php echo base_url()?>index.php/receive/read_receive/'+x,
+                  async : false,
+                  dataType : 'json',
+                  success : function(data){
+                    datas = data;
+                  }
+              });
+            }
 
             $.ajax({
                 type : 'ajax',
@@ -165,9 +167,15 @@
                             }
                             html += '<div class="col-sm">'+
                               '<div class="row">'+
-                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_items'+data[i].id+'" rel="rel_unit_item1" placeholder="Qty Receive" value="'+datas[i].qty_received+'"/>'+
-                                '</div>'+
+                                '<div class=".col-12 .col-sm-6 .col-lg-8">';
+                                if ('<?php echo $button?>' == 'Update') {
+                                  html += '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_items'+data[i].id+'" rel="rel_unit_item1" placeholder="Qty Receive" value="'+datas[i].qty_received+'"/>';
+                                }
+                                else{
+                                  html += '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_items'+data[i].id+'" rel="rel_unit_item1" placeholder="Qty Receive"/>';
+                                }
+                                  
+                                html += '</div>'+
                               '</div>'+
                             '</div>'+
                           '</div>'+
@@ -180,9 +188,15 @@
                             }
                             html += '<div class="col-sm">'+
                               '<div class="row">'+
-                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_item'+data[i].id+'" rel="rel_unit_item1" placeholder="Description" value="'+datas[i].keterangan+'"/>'+
-                                '</div>'+
+                                '<div class=".col-12 .col-sm-6 .col-lg-8">';
+                                if ('<?php echo $button?>' == 'Update') {
+                                  html += '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_item'+data[i].id+'" rel="rel_unit_item1" placeholder="Description" value="'+datas[i].keterangan+'"/>';
+                                }
+                                else{
+                                  html += '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_item'+data[i].id+'" rel="rel_unit_item1" placeholder="Description"/>';
+                                }
+
+                                html += '</div>'+
                               '</div>'+
                             '</div>'+
                           '</div>'+
@@ -257,9 +271,14 @@
                             }
                             html += '<div class="col-sm">'+
                               '<div class="row">'+
-                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_received_item'+data[i].id+'" rel="rel_qty_received_kelengkapan1" placeholder="Qty Receive" value="'+datas[i].qty_received+'"/>'+
-                                '</div>'+
+                                '<div class=".col-12 .col-sm-6 .col-lg-8">';
+                                if ('<?php echo $button?>' == 'Update') {
+                                  html += '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_received_item'+data[i].id+'" rel="rel_qty_received_kelengkapan1" placeholder="Qty Receive" value="'+datas[i].qty_received+'"/>';
+                                }
+                                else{
+                                  html += '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_received_item'+data[i].id+'" rel="rel_qty_received_kelengkapan1" placeholder="Qty Receive"/>';
+                                }
+                                html += '</div>'+
                               '</div>'+
                             '</div>'+
                           '</div>'+
@@ -272,9 +291,14 @@
                             }
                             html += '<div class="col-sm">'+
                               '<div class="row">'+
-                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_kelengkapan'+data[i].id+'" rel="rel_keterangan_kelengkapan1" placeholder="Description" value="'+datas[i].keterangan+'"/>'+
-                                '</div>'+
+                                '<div class=".col-12 .col-sm-6 .col-lg-8">';
+                                if ('<?php echo $button?>' == 'Update') {
+                                  html += '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_kelengkapan'+data[i].id+'" rel="rel_keterangan_kelengkapan1" placeholder="Description" value="'+datas[i].keterangan+'"/>';
+                                }
+                                else{
+                                  html += '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_kelengkapan'+data[i].id+'" rel="rel_keterangan_kelengkapan1" placeholder="Description"/>';
+                                }
+                                html += '</div>'+
                               '</div>'+
                             '</div>'+
                           '</div>'+
@@ -350,9 +374,14 @@
                             }
                             html += '<div class="col-sm">'+
                               '<div class="row">'+
-                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_received_other'+data[i].id+'" rel="rel_qty_received_other1" placeholder="Qty Receive" value="'+datas[i].qty_received+'"/>'+
-                                '</div>'+
+                                '<div class=".col-12 .col-sm-6 .col-lg-8">';
+                                if ('<?php echo $button?>' == 'Update') {
+                                  html += '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_received_other'+data[i].id+'" rel="rel_qty_received_other1" placeholder="Qty Receive" value="'+datas[i].qty_received+'"/>';
+                                }
+                                else{
+                                  html += '<input type="number" class="form-control" autocomplete="off" spellcheck="false" name="qty[]" id="qty_received_other'+data[i].id+'" rel="rel_qty_received_other1" placeholder="Qty Receive"/>';
+                                }
+                                html += '</div>'+
                               '</div>'+
                             '</div>'+
                           '</div>'+
@@ -365,9 +394,14 @@
                             }
                             html += '<div class="col-sm">'+
                               '<div class="row">'+
-                                '<div class=".col-12 .col-sm-6 .col-lg-8">'+
-                                  '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_other'+data[i].id+'" rel="rel_keterangan_other1" placeholder="Description" value="'+datas[i].keterangan+'"/>'+
-                                '</div>'+
+                                '<div class=".col-12 .col-sm-6 .col-lg-8">';
+                                if ('<?php echo $button?>' == 'Update') {
+                                  html += '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_other'+data[i].id+'" rel="rel_keterangan_other1" placeholder="Description" value="'+datas[i].keterangan+'"/>';
+                                }
+                                else{
+                                  html += '<input type="text" class="form-control" autocomplete="off" spellcheck="false" name="keterangan[]" id="keterangan_other'+data[i].id+'" rel="rel_keterangan_other1" placeholder="Description"/>';
+                                }
+                                html += '</div>'+
                               '</div>'+
                             '</div>'+
                           '</div>'+

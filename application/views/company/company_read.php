@@ -15,18 +15,19 @@
                                    </div> 
                                 </div>
 	  <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Logo <?php echo form_error('logo') ?></label>
-                                    <div class='col-sm-10'><input type="text" class="form-control" name="logo" id="logo" placeholder="Logo" value="<?php echo $logo; ?>" disabled/>
+                                    <div class='col-sm-10'>
+                                      <img type="file" style="height: 200px;" name="logo" id="logo" src="<?php echo base_url('./upload/logo/'.$logo) ?>" />
                                    </div> 
                                 </div>
-	  <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Tlp <?php echo form_error('tlp') ?></label>
+	  <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Telephone <?php echo form_error('tlp') ?></label>
                                     <div class='col-sm-10'><input type="text" class="form-control" name="tlp" id="tlp" placeholder="Tlp" value="<?php echo $tlp; ?>" disabled/>
                                    </div> 
                                 </div>
-                                <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Tlp <?php echo form_error('update_at') ?></label>
+                                <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Update At <?php echo form_error('update_at') ?></label>
                                     <div class='col-sm-10'><input type="text" class="form-control" name="update_at" id="update_at" placeholder="Update At" value="<?php echo $update_at; ?>" disabled/>
                                    </div> 
                                 </div>
-	 <div style='text-align: left;'>
+	 <div style='text-align: right;'>
 	    <a href="<?php echo site_url('index.php/company') ?>" class="btn btn-default">Cancel</a>
 	</div>
                         </div>

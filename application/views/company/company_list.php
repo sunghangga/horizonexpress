@@ -9,7 +9,7 @@
                   <h3 class='card-title'>COMPANY LIST</h3>
                 </div><!-- /.card-header -->
                 <div class='card-body'>
-        <table class="table table-bordered table-striped" id="mytable">
+        <table class="table table-bordered table-striped" style="width:100%;" id="mytable">
             <thead>
                 <tr>
 		    <th>Name</th>
@@ -26,10 +26,10 @@
                 ?>
                 <tr>
 		    <td><?php echo $company->name ?></td>
-		    <td><img type="file" style="width: 80px;height: 80px;" name="photo" id="photo" src="<?php echo base_url('upload/logo/'.$company->logo) ?>" /></td>
+		    <td><img type="file" style="height: 80px;" name="photo" id="photo" src="<?php echo base_url('upload/logo/'.$company->logo) ?>" /></td>
 		    <td><?php echo $company->tlp ?></td>
             <td><?php echo $company->update_at ?></td>
-		    <td style="text-align:center" width="140px">
+		    <td style="text-align:center">
 			<?php 
 			echo anchor(site_url('index.php/company/read/'.$company->id),'<i class="fa fa-eye"></i>',array('title'=>'detail','class'=>'btn btn-info btn-sm')); 
 			echo '  '; 
@@ -48,7 +48,19 @@
         <script src="<?php echo base_url('template/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.js') ?>"></script>
         <script type="text/javascript">
             $(document).ready(function () {
-                $("#mytable").dataTable();
+                $("#mytable").dataTable({
+                    scrollY: "500px",
+                    scrollX: true,
+                    scrollCollapse: true,
+                  destroy: true,
+                  paging: true,
+                  searching: true,
+                  "columnDefs": [
+                      { targets: -1, "width": "80px" },
+                      { targets: 0, "width": "300px" },
+                      { targets: [2,3], "width": "150px" },
+                    ]
+                });
             });
         </script>
                     </div><!-- /.box-body -->

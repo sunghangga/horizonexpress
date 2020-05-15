@@ -18,17 +18,31 @@ class Tire_in_model extends CI_Model
     // get all
     function get_all()
     {
-        $this->db->select('tire_in.id id, tire_in.tire_id tire_id, tire_in.amount amount, tire_in.user_id user_id, tire_in.create_at create_at, tire.id ids_tire, tire.name tire_name');
+        $this->db->select('tire_in.id id, tire_in.tire_id tire_id, tire_in.amount amount, tire_in.user_id user_id, tire_in.create_at create_at, tire.id ids_tire, tire.name tire_name, user.username user_name');
         $this->db->join('tire', 'tire.id=tire_in.tire_id');
+        $this->db->join('user', 'user.id=tire_in.user_id');
         $this->db->order_by('tire.name', $this->order);
         return $this->db->get($this->table)->result();
+    }
+
+    function get_range($first,$last)
+    {
+        $this->db->select('tire_in.id id, tire_in.tire_id tire_id, tire_in.amount amount, tire_in.user_id user_id, tire_in.create_at create_at, tire.id ids_tire, tire.name tire_name, user.username user_name');
+        $this->db->from('tire_in');
+        $this->db->join('tire', 'tire.id=tire_in.tire_id', 'LEFT');
+        $this->db->join('user', 'user.id=tire_in.user_id', 'LEFT');
+        $this->db->where('tire_in.create_at>=', $first);
+        $this->db->where('tire_in.create_at<=', $last);
+        $this->db->order_by($this->id, $this->order);
+        return $this->db->get()->result();
     }
 
     // get data by id
     function get_by_id($id)
     {
-        $this->db->select('tire_in.id id, tire_in.tire_id tire_id, tire_in.amount amount, tire_in.user_id user_id, tire_in.create_at create_at, tire.id ids_tire, tire.name tire_name');
+        $this->db->select('tire_in.id id, tire_in.tire_id tire_id, tire_in.amount amount, tire_in.user_id user_id, tire_in.create_at create_at, tire.id ids_tire, tire.name tire_name, user.username user_name');
         $this->db->join('tire', 'tire.id=tire_in.tire_id');
+        $this->db->join('user', 'user.id=tire_in.user_id');
         $this->db->order_by('tire.name', $this->order);
         $this->db->where('tire_in.id', $id);
         return $this->db->get($this->table)->row();
