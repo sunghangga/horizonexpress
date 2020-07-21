@@ -14,7 +14,8 @@
                 <tr>
                     <th>No</th>
 		    <th>Name</th>
-            <th>Photo</th>
+        <th>No Identitas</th>
+        <th>Photo</th>
 		    <th>Address</th>
 		    <th>Telephone</th>
 		    <th>Create At</th>
@@ -30,10 +31,12 @@
                 <tr>
 		    <td><?php echo ++$start ?></td>
 		    <td><?php echo $customer->name ?></td>
+        <td><?php echo $customer->no_identitas ?></td>
             <td><img type="file" style="width: 80px;height: 80px;" name="photo" id="photo" src="<?php echo base_url('assets/img/'.$customer->photo) ?>" /></td>
 		    <td><?php echo $customer->address ?></td>
 		    <td><?php echo $customer->telephone ?></td>
-		    <td><?php echo $customer->create_at ?></td>
+        <?php $newDate = date('d M Y', strtotime($customer->create_at));  ?>
+		    <td><?php echo $newDate ?></td>
 		    <td style="text-align:center">
 			<?php 
 			echo anchor(site_url('index.php/customer/read/'.$customer->id),'<i class="fa fa-eye"></i>',array('title'=>'detail','class'=>'btn btn-info btn-sm')); 
@@ -65,11 +68,13 @@
                   paging: true,
                   searching: true,
                   "columnDefs": [
-                      { targets: -1, "width": "100px" },
-                      { targets: 3, "width": "220px" },
-                      { targets: 1, "width": "200px" },
-                      { targets: 4, "width": "90px" },
-                      { targets: -2, "width": "80px" },
+                      { targets: 0, "width": "15px" },
+                      { targets: 1, "width": "100px" },
+                      { targets: 2, "width": "100px" },
+                      { targets: 3, "width": "75px" },
+                      { targets: 4, "width": "125px" },
+                      { targets: 5, "width": "75px" },
+                      { targets: 6, "width": "65px" },
                     ]
                 });
             });

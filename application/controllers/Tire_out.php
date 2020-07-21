@@ -1,5 +1,5 @@
 <?php
-
+ 
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -162,13 +162,14 @@ class Tire_out extends CI_Controller
     
     public function update_action($tambah) 
     {
-        $this->_rules();
+        $this->update_rules();
+        $row = $this->Tire_out_model->get_by_id($this->input->post('id', TRUE));
 
         if ($this->form_validation->run() == FALSE) {
             $this->update($this->input->post('id', TRUE));
         } else {
             $data = array(
-    		'tire_id' => $this->input->post('tire_id',TRUE),
+    		'tire_id' => $row->tire_id,
     		'amount' => $this->input->post('amount',TRUE),
     		'driver_id' => $this->input->post('driver_id',TRUE),
     		'nopol' => $this->input->post('nopol',TRUE),
@@ -176,7 +177,7 @@ class Tire_out extends CI_Controller
     		'km_after' => $this->input->post('km_after',TRUE),
             'keterangan' => $this->input->post('keterangan',TRUE),
 	    );
-            $ids = $this->input->post('tire_id',TRUE);
+            $ids = $row->tire_id;
             $mount = $this->input->post('amount',TRUE);
             $tires = $this->Tire_model->get_by_id($ids);
             $hasil = $tambah - $mount;
@@ -188,7 +189,7 @@ class Tire_out extends CI_Controller
                 $mount = abs($hasil);
                 $stok = array('stock' => ($tires->stock + $mount));
             }
-            $this->Tire_model->update($this->input->post('tire_id', TRUE), $stok);
+            $this->Tire_model->update($row->tire_id, $stok);
 
             $this->Tire_out_model->update($this->input->post('id', TRUE), $data);
             $this->session->set_flashdata('message', 'Update Record Success');
@@ -212,6 +213,19 @@ class Tire_out extends CI_Controller
             $this->session->set_flashdata('message', 'Record Not Found');
             redirect(base_url().'index.php/tire_out');
         }
+    }
+
+       public function update_rules() 
+    {
+  //$this->form_validation->set_rules('tire_id', 'tire id', 'trim|required');
+  $this->form_validation->set_rules('amount', 'amount', 'trim|required');
+  // $this->form_validation->set_rules('driver_id', 'driver id', 'trim|required');
+  $this->form_validation->set_rules('nopol', 'nopol', 'trim|required');
+  $this->form_validation->set_rules('km_before', 'km before', 'trim|required');
+  $this->form_validation->set_rules('km_after', 'km after', 'trim|required');
+
+  $this->form_validation->set_rules('id', 'id', 'trim');
+  $this->form_validation->set_error_delimiters('<span class="text-danger">', '</span>');
     }
 
     public function _rules() 

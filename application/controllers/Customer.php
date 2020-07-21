@@ -10,7 +10,7 @@ class Customer extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model('Customer_model');
+        $this->load->model(array('Customer_model','Delivery_model'));
         $this->load->library('form_validation');
         $this->load->helper(array('form', 'url'));
         if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
@@ -35,7 +35,7 @@ class Customer extends CI_Controller
               $arr_result[] = array(
               'label' => $row->name,
               'address' => $row->address,
-              'telephone' => $row->telephone,
+              'telephone' => $row->telephone,              
             );
               echo json_encode($arr_result);
           }
@@ -47,14 +47,40 @@ class Customer extends CI_Controller
         $row = $this->Customer_model->get_by_id($id);
         if ($row) {
             $data = array(
-        		'id' => $row->id,
-        		'name' => $row->name,
-        		'address' => $row->address,
-        		'telephone' => $row->telephone,
-                'nip' => $row->nip,
+            		'id' => $row->id,
+            		'name' => $row->name,
+            		'address' => $row->address,
+            		'telephone' => $row->telephone,
+                'cust_type' => $row->cust_type,
+                'no_identitas' => $row->no_identitas,
                 'photo' => $row->photo,
                 'create_at' => $row->create_at,
-                'update_at' => $row->update_at
+                'update_at' => $row->update_at,
+                'address_ktp' => set_value('address', $row->address_ktp),
+                
+                'regencies_id' => set_value('regencies_id', $row->regencies_id),
+                'regencies_name' => set_value('regencies_name', $row->name_regencies),
+                'get_regencies' => $this->Delivery_model->get_regencies(),
+
+                'districts_id' => set_value('districts_id', $row->districts_id),
+                'districts_name' => set_value('districts_name', $row->name_districts),
+                'get_districts' => $this->Delivery_model->get_districts($row->regencies_id),
+
+                'villages_id' => set_value('villages_id', $row->villages_id),
+                'villages_name' => set_value('villages_name', $row->name_villages),
+                'get_villages' => $this->Delivery_model->get_villages($row->districts_id),
+
+                'regencies_ktp' => set_value('regencies_ktp', $row->regencies_ktp),
+                'regencies_name_ktp' => set_value('regencies_name_ktp', $row->name_regencies_ktp),
+                'get_regencies_ktp' => $this->Delivery_model->get_regencies(),
+
+                'districts_ktp' => set_value('districts_ktp', $row->districts_ktp),
+                'districts_name_ktp' => set_value('districts_name_ktp', $row->name_districts_ktp),
+                'get_districts_ktp' => $this->Delivery_model->get_districts($row->regencies_ktp),
+
+                'villages_ktp' => set_value('villages_ktp', $row->villages_ktp),
+                'villages_name_ktp' => set_value('villages_name_ktp', $row->name_villages_ktp),
+                'get_villages_ktp' => $this->Delivery_model->get_villages($row->districts_ktp),
         	    );
             $this->template->load('template','customer/customer_read', $data);
         } else {
@@ -68,12 +94,23 @@ class Customer extends CI_Controller
         $data = array(
             'button' => 'Create',
             'action' => site_url('index.php/customer/create_action'),
-    	    'id' => set_value('id'),
-    	    'name' => set_value('name'),
-    	    'address' => set_value('address'),
-    	    'telephone' => set_value('telephone'),
-            'nip' => set_value('nip'),
+      	    'id' => set_value('id'),
+      	    'name' => set_value('name'),
+      	    'address' => set_value('address'),
+      	    'telephone' => set_value('telephone'),
+            'cust_type' => set_value('cust_type'),
+            'no_identitas' => set_value('no_identitas'),
             'photo' => set_value('photo'),
+            'regencies_id' => set_value('regencies_id'),
+            'districts_id' => set_value('districts_id'),
+            'villages_id' => set_value('villages_id'),
+            'address_ktp' => set_value('address_ktp'),
+            'regencies_ktp' => set_value('regencies_ktp'),
+            'districts_ktp' => set_value('districts_ktp'),
+            'villages_ktp' => set_value('villages_ktp'),
+            'get_regencies' => $this->Delivery_model->get_regencies(),
+            'get_regencies_ktp' => $this->Delivery_model->get_regencies(),
+           
 	    );
         $this->template->load('template','customer/customer_form', $data);
     }
@@ -106,8 +143,16 @@ class Customer extends CI_Controller
               $data = array(
               'name' => $this->input->post('name',TRUE),
               'address' => $this->input->post('address',TRUE),
+              'regencies_id' => $this->input->post('regencies_id',TRUE),
+              'districts_id' => $this->input->post('districts_id',TRUE),
+              'villages_id' => $this->input->post('villages_id',TRUE),
+              'address_ktp' => $this->input->post('address_ktp',TRUE),
+              'regencies_ktp' => $this->input->post('regencies_ktp',TRUE),
+              'districts_ktp' => $this->input->post('districts_ktp',TRUE),
+              'villages_ktp' => $this->input->post('villages_ktp',TRUE),
               'telephone' => $this->input->post('telephone',TRUE),
-              'nip' => $this->input->post('nip',TRUE),
+              'cust_type' => $this->input->post('cust_type',TRUE),
+              'no_identitas' => $this->input->post('no_identitas',TRUE),
               'photo' => $filename,
               'create_at' => date('Y-m-d h:m:s')
                 );
@@ -128,12 +173,39 @@ class Customer extends CI_Controller
             $data = array(
                 'button' => 'Update',
                 'action' => site_url('index.php/customer/update_action'),
-        		'id' => set_value('id', $row->id),
-                'nip' => set_value('id', $row->nip),
+        		    'id' => set_value('id', $row->id),
+                'no_identitas' => set_value('id', $row->no_identitas),
                 'photo' => set_value('photo', $row->photo),
-        		'name' => set_value('name', $row->name),
-        		'address' => set_value('address', $row->address),
-        		'telephone' => set_value('telephone', $row->telephone)
+        		    'name' => set_value('name', $row->name),
+        		    'address' => set_value('address', $row->address),
+                'address_ktp' => set_value('address', $row->address_ktp),
+                
+                'regencies_id' => set_value('regencies_id', $row->regencies_id),
+                'regencies_name' => set_value('regencies_name', $row->name_regencies),
+                'get_regencies' => $this->Delivery_model->get_regencies(),
+
+                'districts_id' => set_value('districts_id', $row->districts_id),
+                'districts_name' => set_value('districts_name', $row->name_districts),
+                'get_districts' => $this->Delivery_model->get_districts($row->regencies_id),
+
+                'villages_id' => set_value('villages_id', $row->villages_id),
+                'villages_name' => set_value('villages_name', $row->name_villages),
+                'get_villages' => $this->Delivery_model->get_villages($row->districts_id),
+
+                'regencies_ktp' => set_value('regencies_id', $row->regencies_ktp),
+                'regencies_name_ktp' => set_value('regencies_name', $row->name_regencies_ktp),
+                'get_regencies_ktp' => $this->Delivery_model->get_regencies(),
+
+                'districts_ktp' => set_value('districts_id', $row->districts_ktp),
+                'districts_name_ktp' => set_value('districts_name', $row->name_districts_ktp),
+                'get_districts_ktp' => $this->Delivery_model->get_districts($row->regencies_ktp),
+
+                'villages_ktp' => set_value('villages_id', $row->villages_ktp),
+                'villages_name_ktp' => set_value('villages_name', $row->name_villages_ktp),
+                'get_villages_ktp' => $this->Delivery_model->get_villages($row->districts_ktp),
+
+                'cust_type' => set_value('cust_type', $row->cust_type),
+        		    'telephone' => set_value('telephone', $row->telephone)
         	    );
             $this->template->load('template','customer/customer_form', $data);
         } else {
@@ -183,8 +255,16 @@ class Customer extends CI_Controller
           $data = array(
           'name' => $this->input->post('name',TRUE),
           'address' => $this->input->post('address',TRUE),
+          'regencies_id' => $this->input->post('regencies_id',TRUE),
+          'districts_id' => $this->input->post('districts_id',TRUE),
+          'villages_id' => $this->input->post('villages_id',TRUE),
+          'address_ktp' => $this->input->post('address_ktp',TRUE),
+          'regencies_ktp' => $this->input->post('regencies_ktp',TRUE),
+          'districts_ktp' => $this->input->post('districts_ktp',TRUE),
+          'villages_ktp' => $this->input->post('villages_ktp',TRUE),
           'telephone' => $this->input->post('telephone',TRUE),
-          'nip' => $this->input->post('nip',TRUE),
+          'cust_type' => $this->input->post('cust_type',TRUE),
+          'no_identitas' => $this->input->post('no_identitas',TRUE),
           'photo' => $present_photo,
             );
 

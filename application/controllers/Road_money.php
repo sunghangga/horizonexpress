@@ -10,7 +10,7 @@ class Road_money extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('Road_money_model','Delivery_model','Receive_model','Company_model'));
+        $this->load->model(array('Road_money_model','Delivery_model','Receive_model','Company_model','Driver_model','Truck_model'));
         $this->load->library('form_validation');
         if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
@@ -48,8 +48,10 @@ class Road_money extends CI_Controller
 
     public function pdfJalan($id=null){
         $company = $this->Company_model->get_all();
-        $row = $this->Road_money_model->get_by_id($id);
+        $row = $this->Road_money_model->get_by_id_complete($id);
         $row_del = $this->Delivery_model->get_by_id($row->kode);
+        $row_driver = $this->Driver_model->get_by_id($row_del->driver);
+        $row_truck = $this->Truck_model->get_by_id($row_del->nopol);
         $row_price = $this->Road_money_model->get_price($row->kode);
         $dt = new DateTime($row->create_at);
         $date = $dt->format('Y-m-d');
@@ -60,14 +62,16 @@ class Road_money extends CI_Controller
                 'tlp' => $company->tlp,
             'kode' => $row->kode,
             'table' => $row->table_money,
-            'driver' => $row_del->driver,
-            'nopol' => $row_del->nopol,
+            'nopol' => $row_truck->nopol,
+            'driver' => $row_driver->name,
             'pulse' => $row->pulse,
             'price' => $row_price['price'] + $row->table_money + $row->pulse,
             'kota' => $row_del->name_regency,
             'create_at' => date_indo($date),
             'update_at' => $row->update_at,
             'get_roadmoney_detail_by_id' => $this->Road_money_model->get_roadmoney_detail_by_id($row->kode),
+            'kode_month'=>date('m', strtotime($row->create_kode)),
+            'kode_year'=>date('Y', strtotime($row->create_kode)),
         );
             $this->load->library("mypdf");
             $this->mypdf->generate("laporan/uangJalan","A5","landscape","Bukti Uang Jalan - ".$data['kode'],$data);
@@ -198,44 +202,87 @@ class Road_money extends CI_Controller
     
     public function update_action() 
     {
-        $this->_update_rules();
+      $this->_update_rules(); 
+
+      
+
+      if ($this->form_validation->run() == FALSE) {
+          $this->update($this->input->post('id', TRUE));
+      } else {
 
         $row = $this->Road_money_model->get_by_id($this->input->post('id', TRUE));
 
-        if ($this->form_validation->run() == FALSE) {
-            $this->update($this->input->post('id', TRUE));
-        } else {
+      $this->Road_money_model->deleteKode($row->kode);
+      $this->Road_money_model->deleteKodeDetail($row->kode);
+
             $data = array(
-    		'kode' => $row->kode,
-    		'table_money' => $this->input->post('table_money',TRUE),
-    		'pulse' => $this->input->post('pulse',TRUE),
-	    );
+              'kode' => $row->kode,
+              'table_money' => $this->input->post('table_money',TRUE),
+              'pulse' => $this->input->post('pulse',TRUE),
+              'create_at' => date('Y-m-d h:m:s')
+              );
 
-            $this->Road_money_model->update($this->input->post('id', TRUE), $data);
+              $this->Road_money_model->insert($data);
 
-            $kode = $row->kode;
-            $id_detail = $this->input->post('id_detail');
-            $postage = $this->input->post('postage'); 
-            $money = $this->input->post('money'); 
-            $roadmoney = array();
-            
-            $index = 0; // Set index array awal dengan 0
-            foreach($postage as $postages){ // Kita buat perulangan berdasarkan nis sampai data terakhir
-              array_push($roadmoney, array(
-                'id'=>$id_detail[$index],
-                'kode'=>$kode,
-                'postage'=>$postage[$index],  
-                'price'=>$money[$index],
-              ));
+              $kode = $row->kode;
+              $postage = $this->input->post('postage'); 
+              $money = $this->input->post('money'); 
+              $roadmoney = array();
               
-              $index++;
-            }
-            echo json_encode($roadmoney);
-            $this->Road_money_model->update_batch($roadmoney); 
+              $index = 0; // Set index array awal dengan 0
+              foreach($postage as $postages){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+                array_push($roadmoney, array(
+                  'kode'=>$kode,
+                  'postage'=>$postage[$index],  
+                  'price'=>$money[$index],
+                ));
+                
+                $index++;
+              }
+              
+              $this->Road_money_model->insert_batch($roadmoney); 
 
-            $this->session->set_flashdata('message', 'Update Record Success');
-            redirect(site_url('index.php/road_money'));
-        }
+              $this->session->set_flashdata('message', 'Create Record Success');
+              redirect(site_url('index.php/road_money'));
+      }
+     //    $this->_update_rules();
+
+     //    $row = $this->Road_money_model->get_by_id($this->input->post('id', TRUE));
+
+     //    if ($this->form_validation->run() == FALSE) {
+     //        $this->update($this->input->post('id', TRUE));
+     //    } else {
+     //        $data = array(
+    	// 	'kode' => $row->kode,
+    	// 	'table_money' => $this->input->post('table_money',TRUE),
+    	// 	'pulse' => $this->input->post('pulse',TRUE),
+	    // );
+
+     //        $this->Road_money_model->update($this->input->post('id', TRUE), $data);
+
+     //        $kode = $row->kode;
+     //        $id_detail = $this->input->post('id_detail');
+     //        $postage = $this->input->post('postage'); 
+     //        $money = $this->input->post('money'); 
+     //        $roadmoney = array();
+            
+     //        $index = 0; // Set index array awal dengan 0
+     //        foreach($postage as $postages){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+     //          array_push($roadmoney, array(
+     //            'id'=>$id_detail[$index],
+     //            'kode'=>$kode,
+     //            'postage'=>$postage[$index],  
+     //            'price'=>$money[$index],
+     //          ));
+              
+     //          $index++;
+     //        }
+     //        echo json_encode($roadmoney);
+     //        $this->Road_money_model->update_batch($roadmoney); 
+
+     //        $this->session->set_flashdata('message', 'Update Record Success');
+     //        redirect(site_url('index.php/road_money'));
+     //    }
     }
     
     public function delete($id) 
@@ -250,6 +297,13 @@ class Road_money extends CI_Controller
             $this->session->set_flashdata('message', 'Record Not Found');
             redirect(site_url('index.php/road_money'));
         }
+    }
+
+    public function deleteAll($id){
+          $this->Road_money_model->deleteKode($id);
+          $this->Road_money_model->deleteKodeDetail($id);
+          $this->session->set_flashdata('message', 'Delete Record Success');
+          redirect(site_url('index.php/road_money'));
     }
 
     public function _rules() 

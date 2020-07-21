@@ -21,7 +21,7 @@
                                         <?php if($category != null){ 
                                              echo '<option value="'.$category.'">'.strtoupper($category).'</option>';
                                          } ?>
-                                        <option value="barang">BARANG</option>
+                                        <option value="motor">SEPEDA MOTOR</option>
                                         <option value="kelengkapan">KELENGKAPAN</option>
                                       </select>
                                    </div> 

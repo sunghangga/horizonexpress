@@ -68,7 +68,9 @@ class Driver extends CI_Controller
             'action' => site_url('index.php/driver/create_action'),
 	    'id' => set_value('id'),
 	    'name' => set_value('name'),
-	    'address' => set_value('address'),
+	    'username' => set_value('username'),
+      'password' => set_value('password'),
+      'address' => set_value('address'),
 	    'telephone' => set_value('telephone'),
 	    'name_wife' => set_value('name_wife'),
 	    'telephone_wife' => set_value('telephone_wife'),
@@ -88,7 +90,9 @@ class Driver extends CI_Controller
         } else {
             $data = array(
 		'name' => $this->input->post('name',TRUE),
-		'address' => $this->input->post('address',TRUE),
+		'username' => $this->input->post('username',TRUE),
+    'password' => md5($this->input->post('password',TRUE)),
+    'address' => $this->input->post('address',TRUE),
 		'telephone' => $this->input->post('telephone',TRUE),
 		'name_wife' => $this->input->post('name_wife',TRUE),
 		'telephone_wife' => $this->input->post('telephone_wife',TRUE),
@@ -119,6 +123,8 @@ class Driver extends CI_Controller
 		'sim_expire' => set_value('sim_expire', $row->sim_expire),
 		'create_at' => set_value('create_at', $row->create_at),
 		'update_at' => set_value('update_at', $row->update_at),
+    'username' => set_value('username', $row->username),
+    'password' => set_value('password', $row->password),
 	    );
             $this->template->load('template','driver/driver_form', $data);
         } else {
@@ -134,14 +140,33 @@ class Driver extends CI_Controller
         if ($this->form_validation->run() == FALSE) {
             $this->update($this->input->post('id', TRUE));
         } else {
+
+          $row = $this->Driver_model->get_by_id($this->input->post('id', TRUE));
+          if($row->password!=$this->input->post('password')){
             $data = array(
-		'name' => $this->input->post('name',TRUE),
-		'address' => $this->input->post('address',TRUE),
-		'telephone' => $this->input->post('telephone',TRUE),
-		'name_wife' => $this->input->post('name_wife',TRUE),
-		'telephone_wife' => $this->input->post('telephone_wife',TRUE),
-		'sim_expire' => $this->input->post('sim_expire',TRUE)
-	    );
+            'name' => $this->input->post('name',TRUE),
+            'username' => $this->input->post('username',TRUE),
+            'password' => md5($this->input->post('password',TRUE)),
+            'address' => $this->input->post('address',TRUE),
+            'telephone' => $this->input->post('telephone',TRUE),
+            'name_wife' => $this->input->post('name_wife',TRUE),
+            'telephone_wife' => $this->input->post('telephone_wife',TRUE),
+            'sim_expire' => $this->input->post('sim_expire',TRUE)
+              );
+          }
+          else{
+            $data = array(
+                'name' => $this->input->post('name',TRUE),
+                'username' => $this->input->post('username',TRUE),
+                'address' => $this->input->post('address',TRUE),
+                'telephone' => $this->input->post('telephone',TRUE),
+                'name_wife' => $this->input->post('name_wife',TRUE),
+                'telephone_wife' => $this->input->post('telephone_wife',TRUE),
+                'sim_expire' => $this->input->post('sim_expire',TRUE)
+              );
+          }
+
+            
 
             $this->Driver_model->update($this->input->post('id', TRUE), $data);
             $this->session->set_flashdata('message', 'Update Record Success');

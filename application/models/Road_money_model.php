@@ -29,6 +29,21 @@ class Road_money_model extends CI_Model
         return $this->db->get($this->table)->row();
     }
 
+     function get_by_id_complete($id)
+    {
+         $this->db->select  ("road_money.id,
+                            road_money.kode,
+                            road_money.table_money,
+                            road_money.pulse,
+                            road_money.create_at,
+                            road_money.update_at,
+                            delivery.create_at AS create_kode");
+        $this->db->from('road_money');
+        $this->db->join('delivery','road_money.kode=delivery.kode', 'LEFT');
+        $this->db->where('road_money.id', $id);
+        return $this->db->get()->row();
+    }
+
     function get_by_kode($id)
     {
         $this->db->where('road_money.kode', $id);
@@ -53,8 +68,9 @@ class Road_money_model extends CI_Model
 
     function get_range($first,$last)
     {
-        $this->db->select('road_money.id id, road_money.kode kode, road_money.table_money table_money, road_money.pulse pulse, road_money.create_at create_at, road_money.update_at update_at');
+        $this->db->select('road_money.id id, road_money.kode kode, road_money.table_money table_money, road_money.pulse pulse, road_money.create_at create_at, road_money.update_at update_at,delivery.create_at AS create_kode');
         $this->db->from('road_money');
+        $this->db->join('delivery','road_money.kode=delivery.kode', 'LEFT');
         $this->db->where('road_money.create_at>=', $first);
         $this->db->where('road_money.create_at<=', $last);
         $this->db->order_by($this->id, $this->order);
@@ -129,6 +145,17 @@ class Road_money_model extends CI_Model
         $this->db->delete($this->table);
     }
 
+    function deleteKode($id)
+    {
+        $this->db->where('kode', $id);
+        $this->db->delete($this->table);
+    }
+
+    function deleteKodeDetail($id)
+    {
+        $this->db->where('kode', $id);
+        $this->db->delete('road_money_detail');
+    }
 }
 
 /* End of file Road_money_model.php */

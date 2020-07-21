@@ -10,7 +10,7 @@ class Receive extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('Receive_model','Delivery_model','Warehouse_model','Company_model'));
+        $this->load->model(array('Receive_model','Delivery_model','Warehouse_model','Company_model','Driver_model','Truck_model'));
         $this->load->library('form_validation');
         if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
@@ -34,9 +34,11 @@ class Receive extends CI_Controller
 
     public function pdfReceive($id=null){
         $company = $this->Company_model->get_all();
-        $row = $this->Receive_model->get_by_id($id);
+        $row = $this->Receive_model->get_by_id_complete($id);
         $row_del = $this->Delivery_model->get_by_id($row->kode);
         $row_wr = $this->Warehouse_model->get_by_id($row_del->wr_pengirim_id);
+        $row_driver = $this->Driver_model->get_by_id($row_del->driver);
+        $row_truck = $this->Truck_model->get_by_id($row_del->nopol);
         $dt = new DateTime($row->create_at);
         $date = $dt->format('Y-m-d');
         if ($row) {
@@ -50,9 +52,11 @@ class Receive extends CI_Controller
             'pic' => $row->pic,
             'catatan' => $row->catatan,
             'dealer' => $row_wr->name,
-            'nopol' => $row_del->nopol,
-            'supir' => $row_del->driver,
+            'nopol' => $row_truck->nopol,
+            'supir' => $row_driver->name,
             'create_at' => date_indo($date),
+            'kode_month'=>date('m', strtotime($row->create_kode)),
+            'kode_year'=>date('Y', strtotime($row->create_kode)),
             'get_delivery_detail_by_id' => $this->Receive_model->get_detail_by_kode($row->kode),
         );
             $this->load->library("mypdf");
@@ -98,7 +102,7 @@ class Receive extends CI_Controller
     	    'pdi' => set_value('pdi'),
     	    'pic' => set_value('pic'),
             'catatan' => set_value('catatan'),
-            'get_all_kode' => $this->Delivery_model->get_all_kode_by_status("driver"),
+            'get_all_kode' => $this->Delivery_model->get_all_kode_by_status(),
 	);
         $this->template->load('template','receive/receive_form', $data);
     }
@@ -132,6 +136,7 @@ class Receive extends CI_Controller
             foreach($keterangan as $keterangans){ // Kita buat perulangan berdasarkan nis sampai data terakhir
               array_push($itemdata, array(
                 'kode'=>$kode,
+                'id'=>$id_detail[$index],
                 'delivery_detail_id'=>$id_detail[$index],
                 'qty_received'=>$qty[$index],  
                 'keterangan'=>$keterangan[$index]
@@ -142,8 +147,14 @@ class Receive extends CI_Controller
             
             $this->Receive_model->insert_batch($itemdata); 
 
-            $data = array('status' => 'received');
+            $data = array(
+              'status' => 'received',
+              'driver_delivery_status'=>'2',
+              'driver_location'=>'',
+
+          );
             $this->Delivery_model->update($kode, $data);
+            $this->Receive_model->change_bike_status($kode,'sold');
             $this->session->set_flashdata('message', 'Create Record Success');
             redirect(site_url('index.php/receive'));
             }
@@ -208,7 +219,7 @@ class Receive extends CI_Controller
         $index = 0; // Set index array awal dengan 0
         foreach($keterangan as $keterangans){ // Kita buat perulangan berdasarkan nis sampai data terakhir
           array_push($itemdata, array(
-            'delivery_detail_id'=>$id_detail[$index],
+            'id'=>$id_detail[$index],
             'qty_received'=>$qty[$index],  
             'keterangan'=>$keterangan[$index]
           ));
@@ -228,7 +239,7 @@ class Receive extends CI_Controller
         $row = $this->Receive_model->get_by_id($id);
 
         if ($row) {
-            $this->Receive_model->delete($id);
+
             $this->session->set_flashdata('message', 'Delete Record Success');
             redirect(site_url('index.php/receive'));
         } else {
@@ -237,10 +248,23 @@ class Receive extends CI_Controller
         }
     }
 
+    public function deleteAll($id){
+      $this->Receive_model->change_bike_status($id,'booked');
+      $this->Delivery_model->rollbackstatus($id,"driver drop item to warehouse");
+      $this->Delivery_model->deleteReceive($id);
+      $this->Delivery_model->deleteReceiveItem($id);
+      $this->Delivery_model->deleteRoadMoney($id);
+      $this->Delivery_model->deleteRoadMoneyDetail($id);
+      $this->Delivery_model->deleteCheck($id);
+      $this->Delivery_model->deleteCheckItem($id);
+      $this->session->set_flashdata('message', 'Delete Record Success');
+      redirect(site_url('index.php/receive')); 
+    }
+
     public function check_default($value)
     {
         if(!$this->Receive_model->exist_row_check('kode',$value)>0){
-            return TRUE;
+            return TRUE; 
         }
         else{
             $this->form_validation->set_message('check_default', 'Kode has been created');

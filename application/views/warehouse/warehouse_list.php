@@ -30,8 +30,10 @@
 		    <td><?php echo ++$start ?></td>
 		    <td><?php echo $warehouse->name ?></td>
 		    <td><?php echo $warehouse->alamat ?></td>
-		    <td><?php echo $warehouse->create_at ?></td>
-		    <td><?php echo $warehouse->update_at ?></td>
+        <?php $newDate = date('d M Y', strtotime($warehouse->create_at));  ?>
+		    <td><?php echo $newDate ?></td>
+         <?php $newDate = date('d M Y h:i:s', strtotime($warehouse->update_at));  ?>
+		    <td><?php echo $newDate ?></td>
 		    <td style="text-align:center" width="140px">
 			<?php 
 			echo anchor(site_url('index.php/warehouse/read/'.$warehouse->id),'<i class="fa fa-eye"></i>',array('title'=>'detail','class'=>'btn btn-info btn-sm')); 

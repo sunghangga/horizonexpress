@@ -16,13 +16,13 @@ class Mypdf {
     	$dompdf = new Dompdf();
 
     	$dompdf->loadHtml($html);
+      $dompdf->set_option('isRemoteEnabled', TRUE);
+  		// (Optional) Setup the paper size and orientation
+  		$dompdf->setPaper($paper, $orientation);
 
-		// (Optional) Setup the paper size and orientation
-		$dompdf->setPaper($paper, $orientation);
-
-		// Render the HTML as PDF
-		$dompdf->render();
-	    ob_clean();
+  		// Render the HTML as PDF
+  		$dompdf->render();
+  	    ob_clean();
 	    $dompdf->stream($filename.".pdf", array("Attachment" => FALSE));
     }
 }

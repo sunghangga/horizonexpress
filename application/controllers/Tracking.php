@@ -10,14 +10,26 @@ class Tracking extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('Delivery_model','Customer_model','User_model','Warehouse_model','Company_model'));
+        $this->load->model(array('Delivery_model','Customer_model','User_model','Warehouse_model','Company_model','Driver_model','Truck_model'));
         $this->load->library('form_validation');
         if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
     
     public function index()
     {
-        $this->template->load('template','tracking/tracking_list');
+        $driver = $this->Driver_model->get_all();
+        $truck = $this->Truck_model->get_all();
+
+        $data = array(
+            'driver_data' => $driver,
+            'truck_data'  => $truck
+        );
+        
+        $this->template->load('template','tracking/tracking_list', $data);
+    }
+
+    public function pengiriman(){
+        $this->template->load('template','tracking/pengiriman_list');
     }
 
     public function range(){
@@ -27,8 +39,53 @@ class Tracking extends CI_Controller
         echo json_encode($data);
     }
 
-    public function search(){
-        $this->template->load('template','tracking/cek_alamat');
+    public function range_update(){
+        $first = $_GET['first'];
+        $last = $_GET['last'];
+        $data = $this->Delivery_model->get_range_update_track($first,$last);
+        echo json_encode($data);
+    }
+
+    public function range_pengiriman(){
+        $first = $_GET['first'];
+        $last = $_GET['last'];
+        $data = $this->Delivery_model->get_range_track_pengiriman($first,$last);
+        echo json_encode($data);
+    }
+
+    public function range_update_pengiriman(){
+        $first = $_GET['first'];
+        $last = $_GET['last'];
+        $data = $this->Delivery_model->get_range_track_update_pengiriman($first,$last);
+        echo json_encode($data);
+    }
+
+    public function search($kode){
+      
+        $address = $this->Delivery_model->get_delivery_by_id($kode);
+
+        $data = array(
+            'address_data' => $address
+        );
+
+        $this->template->load('template','tracking/cek_alamat', $data);
+    }
+
+    public function monitoring($kode){
+      
+        $address = $this->Delivery_model->get_delivery_by_id($kode);
+
+        $data = array(
+            'address_data' => $address
+        );
+
+        $this->template->load('template','tracking/monitoring', $data);
+    }
+
+    public function get_driver_location($kode){
+      //$kode=42;
+      $checkloc=$this->Delivery_model->get_driver_location($kode);      
+      echo json_encode($checkloc);
     }
 
     public function read($id) 
@@ -71,6 +128,41 @@ class Tracking extends CI_Controller
             redirect(site_url('index.php/tracking'));
         }
     }
+
+    public function change_driver($id){
+        $driver = $this->Driver_model->get_all();
+        $truck = $this->Truck_model->get_all();
+        $row=$this->Delivery_model->get_by_id($id);
+        $status=$row->status;
+        $driver_id=$row->driver;
+        $nopol_id=$row->nopol;
+
+
+        $data = array(
+            'action' => site_url('index.php/tracking/change_driver_action'),
+            'driver_data' => $driver,
+            'truck_data'  => $truck,
+            'status'=> $status,
+            'driver_id'=> $driver_id,
+            'nopol_id'=> $nopol_id,
+            'kode'=>$id
+        );
+          $this->template->load('template','tracking/tracking_form',$data);
+    } 
+
+    public function change_driver_action(){
+      $kode=$this->input->post('kode',TRUE);
+        $data = array(
+            'driver' => $this->input->post('driver',TRUE),
+            'nopol' => $this->input->post('nopol',TRUE),
+            'status' => $this->input->post('status_delivery',TRUE),
+        );
+
+        $this->Delivery_model->update($this->input->post('kode', TRUE), $data);
+        $this->session->set_flashdata('message', 'Update Record Success');
+        redirect(site_url('index.php/tracking/pengiriman/'));
+
+    } 
     
     public function update($id) 
     {
@@ -125,6 +217,38 @@ class Tracking extends CI_Controller
         $this->session->set_flashdata('message', 'Update Record Success');
         redirect(site_url('index.php/tracking'));
     }
+
+    public function update_action_check() 
+    {   
+        if(isset($_POST['pilihan'])){
+          $kode = $_POST['pilihan'];
+          $driver = $_POST['driver'];
+          $nopol = $_POST['truck'];
+          for($i=0; $i<count($kode); $i++){
+             $this->Delivery_model->updateDriver($kode[$i], $driver, $nopol);
+          }
+          redirect(site_url('index.php/tracking')); 
+        }
+        else{
+          redirect(site_url('index.php/tracking')); 
+        }
+        // $data = array(
+        //     'driver' => $this->input->post('driver',TRUE),
+        //     'nopol' => $this->input->post('nopol',TRUE),
+        //     'status' => 'driver',
+        // );
+
+        // $this->Delivery_model->update($this->input->post('kode', TRUE), $data);
+        // $this->session->set_flashdata('message', 'Update Record Success');
+        // redirect(site_url('index.php/tracking'));
+    } 
+
+    public function simpan_alamat(){
+      $alamat = $_POST['end'];
+      $id = $_POST['kode'];
+      $this->Delivery_model->update_alamat($alamat, $id);
+      redirect(site_url('index.php/tracking')); 
+    }   
     
     public function delete($id) 
     {

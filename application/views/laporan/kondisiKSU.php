@@ -26,7 +26,7 @@
 			<td class="center-text" width="350px">
 				<h3 class="form-p"><b><u>LAPORAN KONDISI KSU</u></b></h3>
 				<!-- <hr class="line-title"> -->
-				<p class="form-p"><b>No. : <?php echo $kode?></b></p>
+				<p class="form-p"><b>No. : <?php echo $kode."/".$kode_month."/".$kode_year ?></b></p>
 			</td>
 			<td >
 				<img type="file" src="./upload/logo/<?php echo $logo ?>" alt="Logo" class="form-logo">

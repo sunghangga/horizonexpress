@@ -24,6 +24,7 @@ class Customer_model extends CI_Model
     // get all
     function get_all()
     {
+
         $this->db->order_by($this->id, $this->order);
         return $this->db->get($this->table)->result();
     }
@@ -43,11 +44,47 @@ class Customer_model extends CI_Model
         return $this->db->get($this->table)->result();
     }
 
+    function search_customer($title)
+    {
+        $this->db->like('name', $title , 'both');
+        $this->db->order_by('name', 'ASC');
+        $this->db->limit(10);
+        return $this->db->get($this->table)->result();
+    }
+
     // get data by id
     function get_by_id($id)
     {
-        $this->db->where($this->id, $id);
-        return $this->db->get($this->table)->row();
+        $this->db->select('customer.id,customer.name,customer.address,customer.address_ktp,customer.telephone,
+                  customer.no_identitas,customer.photo,customer.create_at,customer.update_at,
+                  customer.cust_type,customer.regencies_id,customer.districts_id,customer.villages_id,
+                  regencies.name as name_regencies,districts.name as name_districts,villages.name as name_villages,
+                  `customer`.`regencies_ktp`, `customer`.`districts_ktp`, `customer`.`villages_ktp`, 
+                  (SELECT `name` FROM `regencies` WHERE id=`regencies_ktp`) AS `name_regencies_ktp`, 
+                  (SELECT `name` FROM `districts` WHERE id=`districts_ktp`) AS `name_districts_ktp`, 
+                  (SELECT `name` FROM `villages` WHERE id=`villages_ktp`) AS `name_villages_ktp` 
+                  ');
+        $this->db->from('customer');
+        $this->db->join('regencies','customer.regencies_id=regencies.id', 'LEFT');
+        $this->db->join('districts','customer.districts_id=districts.id', 'LEFT');
+        $this->db->join('villages','customer.villages_id=villages.id', 'LEFT');
+        $this->db->where('customer.id', $id);
+        return $this->db->get()->row();
+    }
+
+
+    function get_cutomer_withlocation($id)
+    {
+        $this->db->select('customer.id,customer.name,customer.address,customer.telephone,
+                  customer.no_identitas,customer.photo,customer.create_at,customer.update_at,
+                  customer.cust_type,customer.regencies_id,customer.districts_id,customer.villages_id,
+                  regencies.name as name_regencies,districts.name as name_districts,villages.name as name_villages');
+        $this->db->from('customer');
+        $this->db->join('regencies','customer.regencies_id=regencies.id', 'LEFT');
+        $this->db->join('districts','customer.districts_id=districts.id', 'LEFT');
+        $this->db->join('villages','customer.villages_id=villages.id', 'LEFT');
+         $this->db->where('customer.id', $id);
+        return $this->db->get()->row();
     }
     
     // get total rows

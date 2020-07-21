@@ -5,7 +5,7 @@
             <div class='col-12'>
               <div class='card'>
                 <div class='card-header'>
-                  <h3 class='card-title'>ROAD MONEY</h3>
+                  <h3 class='card-title'>TRANSPORTATION EXPENSE</h3>
                 </div>
                   <div class='card-body'>
                     <div class='row'>
@@ -14,26 +14,25 @@
 	                           <div class='form-group row'>
                               <label for='label' class='col-sm-2 col-form-label'>Kode <?php echo form_error('kode') ?></label>
                                     <div class='col-sm-10'>
-                                      <select class="form-control select2bs4" id="kode" name="kode" onchange="show_data()">
+                                      <select class="form-control select2bs4" id="kode" name="kode" >
                                         <?php if($kode != null){ 
-                                             echo '<option value="'.$kode.'">'.$kode.'</option>';
+                                             echo '<option value="'.$kode.'">'.$kode.'/'.date('m', strtotime($row->create_at)).'/'.date('Y', strtotime($row->create_at)).'</option>';
                                          } 
                                         foreach ($get_all_kode as $row)
                                             {
                                               if($kode != $row->kode){
-                                                echo '<option value="'.$row->kode.'">'.$row->kode.'</option>';
+                                                echo '<option value="'.$row->kode.'">'.$row->kode.'/'.date('m', strtotime($row->create_at)).'/'.date('Y', strtotime($row->create_at)).'</option>';
                                               }
-                                            } ?>
-                                        
+                                            } ?>        
                                       </select>
                                    </div> 
                                 </div>
-	                             <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Table Money <?php echo form_error('table_money') ?></label>
-                                    <div class='col-sm-10'><input type="number" class="form-control" name="table_money" id="table_money" placeholder="Table Money" value="<?php echo $table_money; ?>" />
+	                             <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Uang Makan <?php echo form_error('table_money') ?></label>
+                                    <div class='col-sm-10'><input type="number" class="form-control" name="table_money" id="table_money" placeholder="Uang Makan" value="<?php echo $table_money; ?>" />
                                    </div> 
                                 </div>
-	                             <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Pulse Money<?php echo form_error('pulse') ?></label>
-                                    <div class='col-sm-10'><input type="number" class="form-control" name="pulse" id="pulse" placeholder="Pulse Money" value="<?php echo $pulse; ?>" />
+	                             <div class='form-group row'><label for='label' class='col-sm-2 col-form-label'>Uang Pulsa<?php echo form_error('pulse') ?></label>
+                                    <div class='col-sm-10'><input type="number" class="form-control" name="pulse" id="pulse" placeholder="Uang Pulsa" value="<?php echo $pulse; ?>" />
                                    </div> 
                                 </div>
 
@@ -66,12 +65,12 @@
                                 </div>
                               </div>
                               <?php } else { ?>
-                              <?php $iter = 0; foreach ($get_roadmoney_detail_by_id as $row) { ?>
+                              <?php $iter = 0; 
+                              foreach ($get_roadmoney_detail_by_id as $row) { 
+                                if($iter == 0){ ?>
                               <div class="col-md-6">
                                 <div class="form-group">
-                                  <?php if ($iter == 0) { ?>
                                   <label for="staticEmail" class="col-12 col-form-label">Postage (Kota Asal - Kota Tujuan)</label>
-                                <?php } ?>
                                   <div class="col-sm">
                                     <input type="text" class="form-control name-item" autocomplete="off" spellcheck="false" name="postage[]" id="postage" rel="rel_postage" placeholder="Postage" value="<?php echo $row->postage; ?>" />
                                   </div>
@@ -79,31 +78,54 @@
                               </div>
                               <div class="col-md-4">
                                 <div class="form-group">
-                                  <?php if ($iter == 0) { ?>
                                   <label for="staticEmail" class="col-8 col-form-label">Money</label>
-                                  <?php } ?>
                                   <div class="col-sm">
                                     <div class="row">
                                       <div class=".col-12 .col-sm-6 .col-lg-8">
                                         <input type="number" class="form-control" autocomplete="off" spellcheck="false" name="money[]" id="money" rel="rel_money" placeholder="Money" value="<?php echo $row->price; ?>" />
                                       </div>
                                       <div class=".col-6 .col-lg-4" style="margin-left: 16px; margin-top: 5px;">
-                                        <?php if ($button == 'Create') { ?>
                                         <a href="" class=" btn-sm btn-info" id="add_postage_money"><i class="fas fa-plus"></i></a>
-                                      <?php } ?>
                                       </div>
                                     </div>
                                   </div>
                                 </div>
                               </div>
                               <input type="hidden" name="id_detail[]" value="<?php echo $row->id; ?>" /> 
-                            <?php $iter+=1; } ?>
+                            <?php $iter+=1; }} ?>
                             <?php } ?>
                             </div>
                               <div class="postage_money_field">
-                                
+                                <?php 
+                                if($button != 'Create'){
+                                $iter = 0; 
+                                foreach ($get_roadmoney_detail_by_id as $row) { 
+                                  if($iter != 0){ ?>
+                                    <div><div class="row">
+                                      <div class="col-md-6">
+                                        <div class="form-group">
+                                          <div class="col-sm">
+                                            <input type="text" class="form-control name-item" autocomplete="off" spellcheck="false" name="postage[]" id="postage'+counterA+'" rel="rel_postage'+counterA+'" placeholder="Postage" value="<?php echo $row->postage; ?>" />
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="col-md-4">
+                                        <div class="form-group">
+                                          <div class="col-sm">
+                                            <div class="row">
+                                              <div class=".col-12 .col-sm-6 .col-lg-8">
+                                                <input type="number" class="form-control" autocomplete="off" spellcheck="false" name="money[]" id="money'+counterA+'" rel="rel_money'+counterA+'" placeholder="Money" value="<?php echo $row->price; ?>" />
+                                              </div>
+                                              <div class=".col-6 .col-lg-4" style="margin-left: 16px; margin-top: 5px;">
+                                                <a href="" id="remove_postage"><i class="far fa-times-circle"></i></a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div></div>
+                                  <?php }$iter+=1;} }?>
                               </div>
-
                         	    <input type="hidden" name="id" value="<?php echo $id; ?>" /> 
                         	 <div style='text-align: right;'> 
                               <button type="submit" class="btn btn-primary"><?php echo $button ?></button> 

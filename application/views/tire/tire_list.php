@@ -33,8 +33,10 @@
 		    <td><?php echo $tire->name ?></td>
 		    <td><?php echo $tire->noseri ?></td>
 		    <td><?php echo $tire->stock ?></td>
-		    <td><?php echo $tire->create_at ?></td>
-		    <td><?php echo $tire->update_at ?></td>
+        <?php $newDate = date('d M Y', strtotime($tire->create_at));  ?>
+		    <td><?php echo $newDate ?></td>
+        <?php $newDate = date('d M Y h:i:s', strtotime($tire->update_at));  ?>
+		    <td><?php echo $newDate ?></td>
 		    <td style="text-align:center" width="140px">
 			<?php 
 			echo anchor(site_url('index.php/tire/read/'.$tire->id),'<i class="fa fa-eye"></i>',array('title'=>'detail','class'=>'btn btn-info btn-sm')); 

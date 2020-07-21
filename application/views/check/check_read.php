@@ -52,7 +52,7 @@
             var x = document.getElementById("kode").value;
             $.ajax({
                 type : 'ajax',
-                url : '<?php echo base_url()?>index.php/delivery/get_check_item_by_id/'+x,
+                url : '<?php echo base_url()?>index.php/delivery/get_check_item_read/'+x,
                 async : false,
                 dataType : 'json',
                 success : function(data){
@@ -62,7 +62,7 @@
                     var iter = 0;
                     for (var i = 0; i < data.length; i++) {
                       if(data[i].category == 1){
-                        for (var j = 0; j < data[i].qty; j++) {
+                        //for (var j = 0; j < data[i].qty; j++) {
                         if(iter == 0){
                            html = '<div class="row">'+
                           '<div class="col-md-12">'+
@@ -88,8 +88,8 @@
                             }
                               html += '<select class="form-control select2bs4" value='+data[i].status+' id="status_item'+data[i].id+iter.toString()+'" name="status_item[]" disabled>';
                                         if(data[i].status == 1){
-                                           html +='<option value="0" >TIDAK RUSAK</option>'+
-                                          '<option value="1" selected>RUSAK</option>';  
+                                           html +='<option value="1" selected>RUSAK</option>'+
+                                          '<option value="0" >TIDAK RUSAK</option>';  
                                         }
                                         else{
                                            html +='<option value="0" selected>TIDAK RUSAK</option>'+
@@ -169,7 +169,7 @@
                         // end modal
                         
                       iter += 1;
-                        }
+                       // }
                       }
                     }
                     html += '</div>';
@@ -178,7 +178,7 @@
                     var iter = 0;
                     for (var i = 0; i < data.length; i++) {
                       if(data[i].category == 2){
-                        for (var j = 0; j < data[i].qty; j++) {
+                       // for (var j = 0; j < data[i].qty; j++) {
                           if(iter == 0){
                          html += '<div class="row">'+
                           '<div class="col-md-12">'+
@@ -203,9 +203,9 @@
                             html += '<label for="staticEmail" class="col-form-label">Status</label>';
                             }
                               html += '<select class="form-control select2bs4" value='+data[i].status+' id="status_kelengkapan'+data[i].id+iter.toString()+'" name="status_item[]" disabled>';
-                                        if(data[i].status == 1){
-                                           html +='<option value="0" >TIDAK RUSAK</option>'+
-                                          '<option value="1" selected>RUSAK</option>';  
+                                       if(data[i].status == 1){
+                                           html +='<option value="1"  selected>RUSAK</option>'+
+                                          '<option value="0">TIDAK RUSAK</option>';  
                                         }
                                         else{
                                            html +='<option value="0" selected>TIDAK RUSAK</option>'+
@@ -285,7 +285,7 @@
                         // end modal
                         
                       iter += 1;
-                        }
+                     //   }
                       }
                     }
                     html += '</div>';
@@ -293,7 +293,7 @@
                     var iter = 0;
                     for (var i = 0; i < data.length; i++) { 
                       if(data[i].category == 0){
-                        for (var j = 0; j < data[i].qty; j++) { 
+                      //  for (var j = 0; j < data[i].qty; j++) { 
                           if(iter == 0){ 
                          html += '<div class="row">'+
                           '<div class="col-md-12">'+
@@ -319,8 +319,8 @@
                             }
                               html += '<select class="form-control select2bs4" value='+data[i].status+' id="status_other'+data[i].id+iter.toString()+'" name="status_item[]" disabled>';
                                         if(data[i].status == 1){
-                                           html +='<option value="0" >TIDAK RUSAK</option>'+
-                                          '<option value="1" selected>RUSAK</option>';  
+                                           html +='<option value="1"  selected>RUSAK</option>'+
+                                          '<option value="0" >TIDAK RUSAK</option>';  
                                         }
                                         else{
                                            html +='<option value="0" selected>TIDAK RUSAK</option>'+
@@ -401,7 +401,7 @@
                         // end modal
                         
                       iter += 1;
-                        }
+                       // }
                       }
                     }
                     html += '</div>';

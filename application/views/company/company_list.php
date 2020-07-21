@@ -28,7 +28,8 @@
 		    <td><?php echo $company->name ?></td>
 		    <td><img type="file" style="height: 80px;" name="photo" id="photo" src="<?php echo base_url('upload/logo/'.$company->logo) ?>" /></td>
 		    <td><?php echo $company->tlp ?></td>
-            <td><?php echo $company->update_at ?></td>
+        <?php $newDate = date('d M Y h:i:s', strtotime($company->update_at));  ?>
+        <td><?php echo $newDate ?></td>
 		    <td style="text-align:center">
 			<?php 
 			echo anchor(site_url('index.php/company/read/'.$company->id),'<i class="fa fa-eye"></i>',array('title'=>'detail','class'=>'btn btn-info btn-sm')); 

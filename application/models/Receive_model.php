@@ -29,6 +29,23 @@ class Receive_model extends CI_Model
         return $this->db->get($this->table)->row();
     }
 
+    function get_by_id_complete($id)
+    {   
+        $this->db->select ("receive.id,
+                            receive.kode,
+                            receive.receiver,
+                            receive.pdi,
+                            receive.pic,
+                            receive.catatan,
+                            receive.create_at,
+                            receive.update_at,
+                            delivery.create_at AS create_kode");
+        $this->db->from('receive');
+        $this->db->join('delivery','receive.kode=delivery.kode', 'LEFT');
+        $this->db->where('receive.id', $id);
+        return $this->db->get()->row();
+    }
+
     function exist_row_check($field,$data){
         $this->db->where($field,$data);
         $this->db->from($this->table);
@@ -61,7 +78,11 @@ class Receive_model extends CI_Model
 
     function get_range($first,$last)
     {
-        $this->db->select('receive.id id, receive.kode kode, receive.receiver receiver, receive.pdi pdi, receive.pic pic, receive.create_at create_at, receive.update_at update_at, delivery.status status, delivery.wr_penerima_id wr_penerima_id');
+        $this->db->select('receive.id id, receive.kode kode, receive.receiver receiver, receive.pdi pdi, receive.pic pic, receive.create_at create_at, receive.update_at update_at, delivery.status status, delivery.wr_penerima_id,delivery.create_at AS create_kode, 
+          MONTH(delivery.create_at) AS bulan, YEAR(delivery.create_at) AS tahun,
+          (SELECT`name` FROM `warehouse` WHERE id=delivery.wr_pengirim_id) AS nama_wr_pengirim,
+          (SELECT`name` FROM `warehouse` WHERE id=delivery.wr_penerima_id) AS nama_wr_penerima
+         ');
         $this->db->from('receive');
         $this->db->join('delivery','receive.kode=delivery.kode', 'LEFT');
         $this->db->where('receive.create_at>=', $first);
@@ -95,7 +116,7 @@ class Receive_model extends CI_Model
     }
 
     public function update_batch($data){
-      return $this->db->update_batch('receive_item', $data, 'delivery_detail_id');
+      return $this->db->update_batch('receive_item', $data, 'id');
     }
 
     // update data
@@ -103,6 +124,16 @@ class Receive_model extends CI_Model
     {
         $this->db->where($this->id, $id);
         $this->db->update($this->table, $data);
+    }
+
+    function change_bike_status($id,$status)
+    {
+        $this->db->query("
+              UPDATE `pending_bike` p 
+              INNER JOIN  (SELECT bike_id FROM delivery_detail WHERE bike_id<>'0' AND kode='".$id."') d
+              ON d.bike_id=p.bike_id
+              SET `status`='".$status."'
+          ");
     }
 
     // delete data

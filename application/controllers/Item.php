@@ -68,12 +68,47 @@ class Item extends CI_Controller
         if ($this->form_validation->run() == FALSE) {
             $this->create();
         } else {
+
+          $description=$this->input->post('name',TRUE);
+          $category= $this->input->post('category',TRUE);
+
+          if($category=="motor"){
+
+            $code_unit = $description;
+            $code_unit_detail=explode(' ', $code_unit);
+            $varian=explode(")", $code_unit_detail[0]);
+            $code_warna=explode('-', $code_unit_detail[1]);
+            preg_match_all('/\(([^\)]*)\)/', $code_unit_detail[0], $type);
+            //echo "Jenis Kendaraan: ".$type[1][0]."</br>";
+            //echo "Varian: ".$varian[1]."</br>";
+            //echo "Transimi: ".$code_warna[0]."</br>";
+            //echo "Warna: ".$code_warna[1]."</br>";
+            $type_unit=$type[1][0];
+            $color_unit=$code_warna[1];
+            $varian_unit=$varian[1];
+            $transmisi_unit=$code_warna[0];
+
             $data = array(
-        		'name' => $this->input->post('name',TRUE),
-        		'category' => $this->input->post('category',TRUE),
-        		'unit_id' => $this->input->post('unit_id',TRUE),
-        		'create_at' => date('Y-m-d h:m:s')
-        	    );
+              'name' => $this->input->post('name',TRUE),
+              'category' => $this->input->post('category',TRUE),
+              'unit_id' => $this->input->post('unit_id',TRUE),
+              'type_unit' => $type_unit,
+              'color_unit' => $color_unit,
+              'varian_unit' => $varian_unit,
+              'transmisi_unit' =>$transmisi_unit,
+              'create_at' => date('Y-m-d h:m:s'),
+            );
+
+          }
+          else{
+            $data = array(
+              'name' => $this->input->post('name',TRUE),
+              'category' => $this->input->post('category',TRUE),
+              'unit_id' => $this->input->post('unit_id',TRUE),
+              'create_at' => date('Y-m-d h:m:s'),
+            );
+          }
+          
 
             $this->Item_model->insert($data);
             $this->session->set_flashdata('message', 'Create Record Success');            
@@ -95,7 +130,8 @@ class Item extends CI_Controller
           		'name' => set_value('name', $row->name),
           		'category' => set_value('category', $row->category),
           		'unit_id' => set_value('unit_id', $row->unit_id),
-                'unit' => set_value('unit', $row->unit)
+                'unit' => set_value('unit', $row->unit),
+
           	    );
             $this->template->load('template','item/item_form', $data);
         } else {
@@ -114,7 +150,8 @@ class Item extends CI_Controller
             $data = array(
         		'name' => $this->input->post('name',TRUE),
         		'category' => $this->input->post('category',TRUE),
-        		'unit_id' => $this->input->post('unit_id',TRUE)
+        		'unit_id' => $this->input->post('unit_id',TRUE),
+            'update_at' => date('Y-m-d h:m:s')
         	    );
 
             $this->Item_model->update($this->input->post('id', TRUE), $data);

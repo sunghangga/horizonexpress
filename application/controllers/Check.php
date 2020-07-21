@@ -10,7 +10,7 @@ class Check extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('Check_model','Delivery_model','Company_model'));
+        $this->load->model(array('Check_model','Delivery_model','Company_model','Driver_model','Truck_model'));
         $this->load->library('form_validation');
         if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
@@ -22,6 +22,7 @@ class Check extends CI_Controller
         $data = array(
             'check_data' => $check
         );
+
 
         $this->template->load('template','check/check_list', $data);
     }
@@ -61,7 +62,7 @@ class Check extends CI_Controller
     	    'kode' => set_value('kode'),
     	    'examiner' => set_value('examiner'),
           'date_check' => set_value('date_check'),
-          'get_all_kode' => $this->Delivery_model->get_all_kode_by_status("received"),
+          'get_all_kode' => $this->Delivery_model->get_all_kode_by_status_check(),
             //'get_all_kode' => $this->Delivery_model->get_all_kode(),
           'get_all_status' => array('RUSAK','TIDAK RUSAK')
 	);
@@ -96,6 +97,7 @@ class Check extends CI_Controller
             $type = $this->input->post('type_item');
             $solusi = $this->input->post('solusi_item'); 
             $keterangan = $this->input->post('keterangan_item');
+            $category= $this->input->post('category_item');
 
             $itemdata = array();
             $index = 0; // Set index array awal dengan 0
@@ -124,13 +126,13 @@ class Check extends CI_Controller
                   $uploadData = $this->upload->data(); 
                   $foto = $uploadData['file_name'];
                 }else{
-                   $error = array('error' => $this->upload->display_errors());
-                   echo json_encode($error);
+                  $error = array('error' => $this->upload->display_errors());
+                  echo json_encode($error);
                   $foto = null;
                 }
 
                 array_push($itemdata, array(
-                  'id' => $itemID[$index],
+                  //'id' => $itemID[$index],
                   'kode'=>$kode,
                   'status'=>$status[$index],
                   'item'=>$name[$index],  
@@ -141,13 +143,14 @@ class Check extends CI_Controller
                   'frame'=>$frame[$index],
                   'type'=>$type[$index],  
                   'solusi'=>$solusi[$index],
-                  'keterangan'=>$keterangan[$index]
+                  'keterangan'=>$keterangan[$index],
+                  'category'=>$category[$index]
                 ));
                 
               }
               else{
                 array_push($itemdata, array(
-                  'id' => $itemID[$index],
+                  //'id' => $itemID[$index],
                   'kode'=>$kode,
                   'status'=>$status[$index],
                   'item'=>$name[$index],  
@@ -158,12 +161,16 @@ class Check extends CI_Controller
                   'frame'=>null,
                   'type'=>null,  
                   'solusi'=>null,
-                  'keterangan'=>null
+                  'keterangan'=>null,
+                  'category'=>$category[$index]
                 ));
               }
               $index++;
             }
             $this->Check_model->insert_batch($itemdata); 
+
+            $data = array('status' => 'checked');
+            $this->Delivery_model->update($kode, $data);
             
             $this->session->set_flashdata('message', 'Create Record Success');
             redirect(site_url('index.php/check'));
@@ -172,9 +179,11 @@ class Check extends CI_Controller
 
     public function pdfPeriksa($id=null){
         $company = $this->Company_model->get_all();
-        $row = $this->Check_model->get_by_id($id);
+        $row = $this->Check_model->get_by_id_complete($id);
         $row_del = $this->Delivery_model->get_by_id($row->kode);
         $row_detail = $this->Check_model->get_detail($row->kode);
+        $row_driver = $this->Driver_model->get_by_id($row_del->driver);
+        $row_truck = $this->Truck_model->get_by_id($row_del->nopol);
         $dt = new DateTime($row->create_at);
         $dt2 = new DateTime($row->date_check);
         $date = $dt->format('Y-m-d');
@@ -189,9 +198,11 @@ class Check extends CI_Controller
             'examiner' => $row->examiner,
             'date_check' => date_indo($date2),
             'create_at' => date_indo($date),
-            'nopol' => $row_del->nopol,
-            'driver' => $row_del->driver,
+            'nopol' => $row_truck->nopol,
+            'driver' => $row_driver->name,
             'get_check_detail_by_id' => $row_detail,
+            'kode_month'=>date('m', strtotime($row->create_kode)),
+            'kode_year'=>date('Y', strtotime($row->create_kode)),
         );
             $this->load->library("mypdf");
             $this->mypdf->generate("laporan/periksaUnit","A4","landscape","Pemeriksaan Unit - ".$data['kode'],$data);
@@ -214,7 +225,7 @@ class Check extends CI_Controller
 		'examiner' => set_value('examiner', $row->examiner),
         'date_check' => set_value('date_check', $row->date_check),
 	    );
-            $this->template->load('template','check/check_form', $data);
+            $this->template->load('template','check/check_update_form', $data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
             redirect(site_url('index.php/check'));
@@ -348,6 +359,15 @@ class Check extends CI_Controller
             $this->session->set_flashdata('message', 'Record Not Found');
             redirect(site_url('index.php/check'));
         }
+    }
+
+    public function deleteAll($id){
+
+      $this->Check_model->deleteKode($id);
+      $this->Check_model->deleteKodeDetail($id);
+      $this->Delivery_model->rollbackstatus($id,"received");
+      $this->session->set_flashdata('message', 'Delete Record Success');
+      redirect(site_url('index.php/check'));
     }
 
     public function _rules() 

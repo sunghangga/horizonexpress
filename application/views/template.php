@@ -145,6 +145,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
             <ul class="nav nav-treeview"> 
               <li class="nav-item">
+                <a href="<?php echo base_url('index.php/pending_bike') ?>" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Pending</p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="<?php echo base_url('index.php/delivery') ?>" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Delivery</p>
@@ -163,9 +169,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </a>
               </li>
               <li class="nav-item">
+                <a href="<?php echo base_url('index.php/handover') ?>" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Handover Receipt</p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="<?php echo base_url('index.php/road_money') ?>" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Road Money</p>
+                  <p>Transportation Expenses</p>
                 </a>
               </li>
               <li class="nav-item">
@@ -398,6 +410,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="<?php echo base_url() ?>template/adminlte/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
 <script src="<?php echo base_url() ?>template/adminlte/dist/js/adminlte.min.js"></script>
 <script src="<?php echo base_url('template/adminlte/plugins/select2/js/select2.full.min.js')?>"></script>
+<script src="<?php echo base_url('template/plugins/sweetalert/sweetalert.min.js')?>"></script>
+
 <!-- <script src="<?php echo base_url() ?>template/adminlte/datepicker/js/bootstrap-datepicker.min.js"></script> -->
 
 <!-- <script src="<?php echo base_url() ?>template/plugins/datatables/jquery.dataTables.min.js"></script>

@@ -89,8 +89,8 @@ class Driver_model extends CI_Model
     // delete data
     function delete($id)
     {
-        $this->db->where($this->id, $id);
-        $this->db->delete($this->table);
+      $this->db->where($this->id, $id);
+      $this->db->delete($this->table);
     }
 
 }

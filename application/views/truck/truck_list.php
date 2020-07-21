@@ -39,11 +39,14 @@
 		    <td><?php echo $truck->nosin ?></td>
 		    <td><?php echo $truck->norangka ?></td>
 		    <td><?php echo $truck->production_year ?></td>
-		    <td><?php echo $truck->jto_samsat ?></td>
+        <?php $newDate = date('d M Y', strtotime($truck->jto_samsat));  ?>
+		    <td><?php echo $newDate ?></td>
 		    <td><?php echo $truck->kir ?></td>
 		    <td><?php echo $truck->km ?></td>
-		    <td><?php echo $truck->create_at ?></td>
-		    <td><?php echo $truck->update_at ?></td>
+        <?php $newDate = date('d M Y', strtotime($truck->create_at));  ?>
+		    <td><?php echo $newDate; ?></td>
+        <?php $newDate = date('d M Y h:i:s', strtotime($truck->update_at));  ?>
+		    <td><?php echo $newDate; ?></td>
 		    <td style="text-align:center">
 			<?php 
 			echo anchor(site_url('index.php/truck/read/'.$truck->id),'<i class="fa fa-eye"></i>',array('title'=>'detail','class'=>'btn btn-info btn-sm')); 
@@ -68,7 +71,7 @@
                 $("#mytable").dataTable({
                   // scrollY: "400px",
                   // scrollX: true,
-                  scrollCollapse: true,
+                  //scrollCollapse: true,
                   destroy: true,
                   paging: true,
                   searching: true,

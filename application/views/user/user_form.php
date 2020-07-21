@@ -47,6 +47,7 @@
                                 <input type="password" class="form-control" name="password" id="password" placeholder="Password" value="<?php echo $password; ?>" />
                               </div>
                             </div>
+                             <input type="hidden" name="id" value="<?php echo $id; ?>" /> 
                             <div style="text-align: right;">
                         <button type="submit" class="btn btn-primary"><?php echo $button ?></button> 
                         <a href="<?php echo site_url('index.php/user') ?>" class="btn btn-default">Cancel</a>

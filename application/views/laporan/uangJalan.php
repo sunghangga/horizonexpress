@@ -32,7 +32,7 @@
 	    			<p class="form-p" style="margin-left: 3px;"><b>No. Tanda Terima</b></p>
 	    		</td>
 	    		<td>
-	    			<p class="form-p">: <?php echo $kode?></p>
+	    			<p class="form-p">: <?php echo $kode."/".$kode_month."/".$kode_year ?></p>
 	    		</td>
 	    	</tr>
 	    	<tr>

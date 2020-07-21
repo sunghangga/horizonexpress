@@ -79,7 +79,11 @@
               },
 
               "columns": [
-                  { "data": "kode" },
+                  { "data": null,
+                      render: function ( data, type, row ) { 
+                            return data.kode + "/" + data.bulan + "/" + data.tahun;
+                        }
+                      },
                   { "data": "examiner" },
                   { "data": "date_check" },
                   { "data": "create_at" },
@@ -93,6 +97,8 @@
                         '<button id="update" style="margin-left: 5px;" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button></div>'+
                         '<div class="btn-group" role="group" aria-label="Third group">'+
                         '<button id="print" style="margin-left: 5px;" class="btn btn-primary btn-sm"><i class="fas fa-print"></i></button></div>'+
+                        '<div class="btn-group" role="group" aria-label="fourth group">'+
+                            '<button id="delete" style="margin-left: 5px;" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></i></button></div>'+
                     '</div>';
                   } }
               ],
@@ -100,7 +106,7 @@
                   { targets: 0, "width": "150px"},
                   { targets: 1, "width": "300px"},
                   { targets: [2,3], "width": "140px", render: function(data){return moment(data).format('D MMM YYYY'); }},
-                  { targets: -1, "width": "100px" },
+                  { targets: -1, "width": "150px" },
               ]
           } );
 
@@ -125,7 +131,31 @@
                 window.open('<?php echo base_url()?>index.php/check/pdfPeriksa/'+data.id,'_blank');
               }
           } );
-        
+          $('#mytable').on( 'click', '#delete', function (e) {
+            e.preventDefault();
+              var data = table.row( $(this).parents('tr') ).data();
+              if (data != null) {
+                
+                swal({
+                      title: "Confirmation",
+                      text: "Are your sure want to delete Checked Delivery No."+data.kode + "/" + data.bulan + "/" + data.tahun+ " ?",
+                      icon: "warning",
+                      buttons: true,
+                      dangerMode: true,
+                    })
+                    .then((willDelete) => {
+                      if (willDelete) {
+
+                        swal("Your receipt has been deleted!", {
+                          icon: "success",
+                        });
+                      window.location= '<?php echo base_url()?>index.php/check/deleteAll/'+data.kode;
+                      } else {
+                        swal("Your request has been canceled");
+                      }
+                    });
+              }
+          } );
         }
         </script>
         

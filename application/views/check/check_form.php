@@ -16,12 +16,12 @@
                                     <div class='col-sm-10'>
                                       <select class="form-control select2bs4" id="kode" name="kode" onchange="show_data()">
                                         <?php if($kode != null){ 
-                                             echo '<option value="'.$kode.'">'.$kode.'</option>';
+                                             echo '<option value="'.$kode.'">'.$kode.'/'.date('m', strtotime($row->create_at)).'/'.date('Y', strtotime($row->create_at)).'</option>';
                                          } 
                                         foreach ($get_all_kode as $row)
                                             {
                                               if($kode != $row->kode){
-                                                echo '<option value="'.$row->kode.'">'.$row->kode.'</option>';
+                                                echo '<option value="'.$row->kode.'">'.$row->kode.'/'.date('m', strtotime($row->create_at)).'/'.date('Y', strtotime($row->create_at)).'</option>';
                                               }
                                             } ?>
                                         
@@ -30,13 +30,13 @@
                                 </div>
                                 <div class='form-group row'>
                                   <label for='label' class='col-sm-2 col-form-label'>Examiner <?php echo form_error('examiner') ?></label>
-                                    <div class='col-sm-10'><input type="text" class="form-control" name="examiner" id="examiner" placeholder="Examiner" value="<?php echo $examiner; ?>" />
+                                    <div class='col-sm-10'><input type="text" class="form-control" name="examiner" id="examiner" placeholder="Examiner" value="<?php echo $examiner; ?>" required/>
                                    </div> 
                                 </div>
                                 <div class="form-group row">
                                     <label for="recipient-name" class="col-sm-2 col-form-label">Date Check</label>
                                     <div class="col-sm-4 input-group date" data-target-input="nearest" id="inputDate">
-                                      <input type="text" class="form-control datetimepicker-input" data-target="#inputDate" placeholder="Date Check"  name="date_item" id="date_item" value="<?php echo $date_check; ?>" />
+                                      <input type="text" class="form-control datetimepicker-input" data-target="#inputDate" placeholder="Date Check"  name="date_item" id="date_item" value="<?php echo $date_check; ?>" required/>
                                       <div class="input-group-append" data-target="#inputDate" data-toggle="datetimepicker">
                                           <div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
                                       </div>
@@ -116,6 +116,7 @@
                             }
                             html += '<div class="col-sm">'+
                               '<input type="hidden" class="form-control" name="id_detail[]" value="'+data[i].id+'" disabled/>'+
+                              '<input type="hidden" class="form-control" name="category_item[]" value="'+data[i].category+'"/>'+
                               '<input type="text" class="form-control name-item" autocomplete="off" spellcheck="false" name="name_item[]" id="name_item'+data[i].id+iter.toString()+'" rel="rel_name_item1" placeholder="Name Item" value="'+data[i].name+'"/>'+
                             '</div>'+
                           '</div>'+
@@ -134,12 +135,12 @@
                           if('<?php echo $button?>' == 'Update'){
                               html += '<select class="form-control select2bs4" value='+data[i].status+' id="status_item'+data[i].id+iter.toString()+'" name="status_item[]">';
                                         if(data[i].status == 1){
-                                           html +='<option value="0" >TIDAK RUSAK</option>'+
-                                          '<option value="1" selected>RUSAK</option>';  
+                                           html +='<option value="1" selected>RUSAK</option>'+
+                                          '<option value="0" >TIDAK RUSAK</option>';  
                                         }
                                         else{
                                            html +='<option value="0" selected>TIDAK RUSAK</option>'+
-                                          '<option value="1" >RUSAK</option>'; 
+                                          '<option value="1" > RUSAK</option>'; 
                                         }
                                        html +='</select>';
                             }
@@ -289,6 +290,7 @@
                         }
                         html += '<div class="col-sm">'+
                         '<input type="hidden" class="form-control" name="id_detail[]" value="'+data[i].id+'"/>'+
+                        '<input type="hidden" class="form-control" name="category_item[]" value="'+data[i].category+'"/>'+
                           '<input type="text" class="form-control name-kelengkapan" autocomplete="off" spellcheck="false" name="name_item[]" id="name_kelengkapan'+data[i].id+iter.toString()+'" rel="rel_name_kelengkapan1" placeholder="Name Item" value="'+data[i].name+'"/>'+
                         '</div>'+
                       '</div>'+
@@ -306,12 +308,12 @@
                             if('<?php echo $button?>' == 'Update'){
                               html += '<select class="form-control select2bs4" value='+data[i].status+' id="status_kelengkapan'+data[i].id+iter.toString()+'" name="status_item[]">';
                                         if(data[i].status == 1){
-                                           html +='<option value="0" >TIDAK RUSAK</option>'+
-                                          '<option value="1" selected>RUSAK</option>';  
+                                           html +='<option value="1" selected>RUSAK</option>'+
+                                          '<option value="0" >TIDAK RUSAK</option>';  
                                         }
                                         else{
                                            html +='<option value="0" selected>TIDAK RUSAK</option>'+
-                                          '<option value="1" >RUSAK</option>'; 
+                                          '<option value="1" > RUSAK</option>'; 
                                         }
                                        html +='</select>';
                             }
@@ -460,6 +462,7 @@
                         }
                         html += '<div class="col-sm">'+
                         '<input type="hidden" class="form-control" name="id_detail[]" value="'+data[i].id+'"/>'+
+                       '<input type="hidden" class="form-control" name="category_item[]" value="'+data[i].category+'"/>'+
                           '<input type="text" class="form-control name-other" autocomplete="off" spellcheck="false" name="name_item[]" id="name_other'+data[i].id+iter.toString()+'" rel="rel_name_other1" placeholder="Name Item" value="'+data[i].name+'"/>'+ 
                         '</div>'+
                       '</div>'+ 
@@ -478,13 +481,13 @@
                         // '</div>';
                         if('<?php echo $button?>' == 'Update'){
                               html += '<select class="form-control select2bs4" value='+data[i].status+' id="status_other'+data[i].id+iter.toString()+'" name="status_item[]">';
-                                        if(data[i].status == 1){
-                                           html +='<option value="0" >TIDAK RUSAK</option>'+
-                                          '<option value="1" selected>RUSAK</option>';  
+                                       if(data[i].status == 1){
+                                           html +='<option value="1" selected>RUSAK</option>'+
+                                          '<option value="0" >TIDAK RUSAK</option>';  
                                         }
                                         else{
                                            html +='<option value="0" selected>TIDAK RUSAK</option>'+
-                                          '<option value="1" >RUSAK</option>'; 
+                                          '<option value="1" > RUSAK</option>'; 
                                         }
                                        html +='</select>';
                             }

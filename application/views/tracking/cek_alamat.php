@@ -1,33 +1,62 @@
 <!--Main content -->
-        <style>
-        #mapid{
-          width: 1025px;
-          height: 500px;
-          z-index: 1;
-        }
-        .overlay {     
-          width: 250px;
-          height: 350px;
-          position: absolute;
-          top: 1;
-          right: 1;
-          bottom: 0;      
-          background-color: rgba(255, 50, 50, 0.5);     
-          z-index: 2;
-        }
-        .square {
-          height: 20px;
-          width: 20px;
-        }
-        </style>
 
-        <link rel="stylesheet" href="<?php echo base_url() ?>map_library/leaflet/leaflet.css">
-        <script src="<?php echo base_url() ?>map_library/leaflet/leaflet.js"></script>
-        <script src="<?php echo base_url() ?>map_library/leaflet-ajax/dist/leaflet.ajax.min.js"></script>
+<style type="text/css">
+    
+    #map {
+      height: 500px;
+    }
+     .btn-save {
+      background-color: #1d84d6;
+      border-radius: 5px;
+      color: white;
+      padding: .5em;
+      text-decoration: none;
+      position: absolute;
+      z-index: 6;
+      bottom: 5px;
+      left: 7px;
+      width: 10%;
+      height: 30px;
+      text-align: center;
+    }
 
-        <script src="<?php echo base_url() ?>map_library/Control.OSMGeocoder.js"></script>
-        <link rel="stylesheet" type="text/css" href="<?php echo base_url() ?>map_library/Control.OSMGeocoder.css">
+    /*.btn-save:focus,
+    .btn-save:hover {
+      background-color: #356992;
+      color: White;
+    }*/
 
+    #floating-panel {
+      position: absolute;
+      top: 10px;
+      left: 2%;
+      z-index: 5;
+      background-color: #fff;
+      border: 1px solid #999;
+      text-align: center;
+    }
+
+    .float-button{
+      position: absolute;
+      bottom: 10px;
+      left: 2%;
+      z-index: 5;
+      /*background-color: #fff;
+      border: 1px solid #999;*/
+      text-align: center;
+    }
+
+    #start {
+      display: none;
+    }
+
+    #end {
+      height: 25px;
+      width: 26em;
+      
+    }
+
+  </style>
 
         <script src="<?php echo base_url() ?>template/adminlte/plugins/jquery/jquery.min.js"></script>
         <script src="<?php echo base_url() ?>template/adminlte/plugins/jquery-ui/jquery-ui.min.js"></script>
@@ -42,17 +71,38 @@
                 <div class='card-header'>
                   <div class="row">
                     <div class="col-md-6">    
-                      <h3 class='card-title'>Market Analysis/ Explore</h3>
+                      <h3 class='card-title'>Tracking/ Map</h3>
                     </div>
                   </div>
                 </div>
                 <div class='card-body'>
                   <div class="row">
-                  <div class="col-12">
-                    <br>
-                    <div id="mapid">  
+                    <div class="col-6">
+                      <h5>Estimasi Jarak:</h5>
+                      <p id="jarak"></p>
                     </div>
-                  </div>
+                    <div class="col-6">
+                      <h5>Estimasi Waktu:</h5>
+                      <p id="waktu"></p>
+                    </div>
+                    <div class="col-12">
+                      <div id="floating-panel">
+                      <form method="POST" action="<?php echo site_url("index.php/tracking/simpan_alamat") ?>">
+                        <input type="hidden" name="<?=$this->security->get_csrf_token_name();?>" value="<?=$this->security->get_csrf_hash();?>" style="display: none" id="token">
+                        <!-- <input tye="text" id="start" value="CV. Mitra Krida Mandiri, Jalan By Pass Ngurah Rai, Jimbaran, Kabupaten Badung, Bali"> --><!-- Starting Location -->
+                        <!-- <input type="text" id="end" value="<?= $this->input->get('tujuan');  ?>"> -->
+                      <?php foreach ($address_data as $item) {?>
+                        <input type="hidden" name="kode" value="<?php echo $item->kode; ?>">
+                        <input tye="text" id="start" name="start" value="<?php echo $item->address_pengirim; ?>">
+                        <b>Tujuan Pengiriman: </b>
+                        <input type="text" id="end" name="end" value="<?php echo $item->address_penerima; ?>"><!-- Ending Location -->
+                      <?php } ?>
+                      </div>
+                      <div id="map"></div>
+                      <button type="Submit" class="btn btn-primary">Simpan Alamat</button>
+                      </form>
+                      <!-- <a href="javascript:void(0)" class="btn btn-primary" onclick="save()">Simpan Alamat</a> -->
+                    </div>
                   </div>
                 </div><!-- /.box-body -->
               </div><!-- /.box -->
@@ -62,37 +112,159 @@
         <!-- jQuery -->
         <script src="<?php echo base_url() ?>assets/bootstrap/js/moment.js"></script>
 
-        <script src="https://unpkg.com/esri-leaflet@2.4.0/dist/esri-leaflet.js"
-          integrity="sha512-kq0i5Xvdq0ii3v+eRLDpa++uaYPlTuFaOYrfQ0Zdjmms/laOwIvLMAxh7cj1eTqqGG47ssAcTY4hjkWydGt6Eg=="
-          crossorigin=""></script>
+  <!--=========================================================================-->
+  <script type="text/javascript">
 
-        <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.3.2/dist/esri-leaflet-geocoder.css"
-          integrity="sha512-IM3Hs+feyi40yZhDH6kV8vQMg4Fh20s9OzInIIAc4nx7aMYMfo+IenRUekoYsHZqGkREUgx0VvlEsgm7nCDW9g=="
-          crossorigin="">
-        <script src="https://unpkg.com/esri-leaflet-geocoder@2.3.2/dist/esri-leaflet-geocoder.js"
-          integrity="sha512-8twnXcrOGP3WfMvjB0jS5pNigFuIWj4ALwWEgxhZ+mxvjF5/FBPVd5uAxqT8dd2kUmTVK9+yQJ4CmTmSg/sXAQ=="
-          crossorigin=""></script>
+    var x = -8.7830633;
+    var y = 115.179433;
+    var shipment_address = "";
+    var estimasi_jarak = "";
+    var estimasi_waktu = "";
 
-        <script type="text/javascript">
-          var map = L.map('mapid').setView([-8.5, 115], 9);
+    var map;
 
-          L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-              attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-              maxZoom: 18,
-              id: 'mapbox.streets',
-              accessToken: 'pk.eyJ1Ijoia3VybmlhYW1lcnRhIiwiYSI6ImNrOXA3NmFycDA4MXYza28xNDN6cDJpZTIifQ.x9M-0dGMA-9lU6BQ22IfMg'
-          }).addTo(map);
+    function initMap(){
+      map = new google.maps.Map(document.getElementById('map'), {
+        mapTypeControl: false,
+        center: {lat: x, lng: y},
+        zoom: 16
+      });
 
-          var searchControl = L.esri.Geocoding.geosearch().addTo(map);
+      var autocomplete = new google.maps.places.Autocomplete(document.getElementById('end'));
 
-          var results = L.layerGroup().addTo(map);
+      var directionsService = new google.maps.DirectionsService;
+      var directionsDisplay = new google.maps.DirectionsRenderer({
+        draggable: true,
+        polylineOptions: {strokeColor: "blue"},
+        map: map
+      });
 
-          searchControl.on('results', function (data) {
-            results.clearLayers();
-            for (var i = data.results.length - 1; i >= 0; i--) {
-              results.addLayer(L.marker(data.results[i].latlng));
-              console.log(data.results[i]);
-            }
-          });
-        </script>
-        </section>
+      directionsDisplay.addListener('directions_changed', function() {
+        computeTotalDistance(directionsDisplay.getDirections());
+        // console.log(directionsDisplay.getPosition())
+
+      });
+
+      directionsDisplay.setMap(map);
+
+      
+      var geocoder = new google.maps.Geocoder();
+      var address = $("#end").val();
+      var awal = $("#start").val();
+
+      // untuk mendapatkan coordinate dari alamat yang di inputkan
+      geocoder.geocode( { 'address': address}, function(results, status) {
+
+      if (status == google.maps.GeocoderStatus.OK) {
+          var latitude = results[0].geometry.location.lat();
+          var longitude = results[0].geometry.location.lng();
+          // alert(latitude);
+          console.log("latitude tujuan : "+latitude+", longitude tujuan : "+longitude)
+          } 
+      });
+
+      geocoder.geocode( { 'address': awal}, function(results, status) {
+
+      if (status == google.maps.GeocoderStatus.OK) {
+        var latitude = results[0].geometry.location.lat();
+        var longitude = results[0].geometry.location.lng();
+        } 
+      });
+
+      var onChangeHandler = function(){
+        calculateAndDisplayRoute(directionsService, directionsDisplay, $('#start'), $('#end'));
+      }
+
+      if($("#end").val()!=''){
+        calculateAndDisplayRoute(directionsService, directionsDisplay, $('#start'), $('#end'));
+        $('#end').change(onChangeHandler)
+      }else{
+        $('#end').change(onChangeHandler)  
+      }      
+    }
+
+    function calculateAndDisplayRoute(directionsService, directionsDisplay, start, end){
+      directionsService.route({
+        origin: start.val(),
+        destination: end.val(),
+        travelMode: 'DRIVING',
+
+      }, function(response, status){
+        if(status==="OK"){
+          directionsDisplay.setDirections(response);
+        }else{
+          window.alert('Directions request failed due to '+status);
+        }
+      })
+    }
+
+    function computeTotalDistance(result) {
+      var myroute = result.routes[0];
+      for (var i = 0; i < myroute.legs.length; i++) {
+        $('#end').val(myroute.legs[0].end_address)
+        estimasi_waktu = myroute.legs[0].duration.value;
+        estimasi_jarak = myroute.legs[0].distance.value;        
+      }
+
+      document.getElementById('waktu').innerHTML = konversiWaktu(estimasi_waktu);
+      document.getElementById('jarak').innerHTML = konversiJarak(estimasi_jarak);
+    }
+
+    function konversiWaktu(d){
+      d = Number(d);
+      var h = Math.floor(d / 3600);
+      var m = Math.floor(d % 3600 / 60);
+      var s = Math.floor(d % 3600 % 60);
+
+      var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+      var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+      var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+      return hDisplay + mDisplay + sDisplay;
+    }
+
+    function konversiJarak(d){
+      d =  Number(d);
+      var km = Math.floor(d/1000);
+      var m = d%1000;
+
+      var kmDisplay = km > 0 ? km + " km, " : "";
+      var mDisplay = m > 0 ? m + " m" : "";
+      return kmDisplay + mDisplay;
+    }
+
+    // function save(){
+      
+    //   var sm_no = "<?php echo $this->input->get('sm_no'); ?>";
+    //   var token = $("#token").val()
+
+      // $.ajax({
+      //   url: "<?php echo site_url("index.php/tracking/simpan_alamat") ?>",
+      //   type: "post",
+      //   data: {
+      //           sm_no: sm_no,
+      //           shipment_address: $("#end").val(), 
+      //           estimasi_jarak: estimasi_jarak, 
+      //           estimasi_waktu: estimasi_waktu,
+      //           csrf_sess_name: token
+      //         },
+      //   dataType: "json",
+      //   success: function(data){
+      //     if(data){
+      //       if("<?= $this->session->userdata("user_name")?>"){
+      //         document.location.replace("lists");
+      //       }else{
+      //         document.location.replace("list_motor");  
+      //       }
+      //     }else{
+      //       alert("Terjadi kesalahan, silahkan coba lagi!!!")
+      //     }
+      //   }
+      // })
+
+    //}
+  </script>
+  <!--=======================================================================-->
+
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrhdvZDWKYeeQALfZSFbRH1GvWL2QfnhY&callback=initMap&libraries=places,geometry"></script>
+
+</section>

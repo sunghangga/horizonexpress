@@ -12,6 +12,11 @@
 	width: 20%;
     height: auto;
 }
+
+.form-logo-inv{
+	width: 25%;
+    height: auto;
+}
 .line-title{
 	border: 0;
 	border-style: inset;
@@ -43,3 +48,15 @@
     overflow-x: auto;
     white-space: nowrap;
 }
+
+.htitle{
+	margin-bottom: 0; 
+	margin-left: 3px;
+	width:50px;
+}
+
+.hcontent{
+	font-size:10px;
+	
+}
+

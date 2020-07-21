@@ -32,8 +32,10 @@
                     		    <td><?php echo $user->name ?></td>
                             <td><?php echo $user->username ?></td>
                             <td><?php echo $user->group ?></td>
-                            <td><?php echo $user->create_at ?></td>
-                		    <td><?php echo $user->update_at ?></td>
+                            <?php $newDate = date('d M Y', strtotime($user->create_at));  ?>
+                            <td><?php echo $newDate ?></td>
+                		        <?php $newDate = date('d M Y h:i:s', strtotime($user->update_at));  ?>
+                            <td><?php echo $newDate ?></td>
                 		    <td style="text-align:center">
                 			<?php 
                 			echo anchor(site_url('index.php/user/read/'.$user->id),'<i class="fa fa-eye"></i>',array('title'=>'detail','class'=>'btn btn-info btn-sm')); 

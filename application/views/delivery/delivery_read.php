@@ -4,7 +4,36 @@
             <div class='col-12'>
               <div class='card'>
                 <div class='card-header'>
-                
+                <style>
+                    .motor .col-2{
+                      padding-right: 3.5px;
+                      padding-left: 3.5px;                    
+                    }
+
+                    .motor .col-1{
+                      padding-right: 3.5px;
+                      padding-left: 3.5px;                    
+                    }
+
+                    .motor .faktur{
+                      max-width: 10%;                   
+                    }
+
+                    .motor .price{
+                      max-width: 15%;            
+                    }
+
+                    .motor .col-sm{
+                      padding-right: 3.5px;
+                      padding-left: 3.5px; 
+                    }
+
+                    .motor .form-control {
+                      padding-right: 4.5px;
+                      padding-left: 4.5px; 
+                    }
+
+                  </style>
                   <h3 class='card-title'>DELIVERY</h3>
                   </div>
                       <div class='card-body'>
@@ -16,9 +45,9 @@
                           <li class="nav-item">
                             <a class="nav-link" id="custom-content-below-profile-tab" data-toggle="pill" href="#custom-content-below-profile" role="tab" aria-controls="custom-content-below-profile" aria-selected="false">Items</a>
                           </li>
-                          <li class="nav-item">
+                          <!-- <li class="nav-item">
                             <a class="nav-link" id="custom-content-below-profile-tab" data-toggle="pill" href="#custom-content-below-driver" role="tab" aria-controls="custom-content-below-driver" aria-selected="false">Accept Driver</a>
-                          </li>
+                          </li> -->
                         </ul>
                         <div class="tab-content" id="custom-content-below-tabContent">
                           <div class="tab-pane fade show active" id="custom-content-below-home" role="tabpanel" aria-labelledby="custom-content-below-home-tab">
@@ -122,7 +151,9 @@
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Regencies <?php echo form_error('regencies_id') ?></label>
                                   <div class="col-sm">
-                                   <select class="form-control select2bs4" onchange="districts_list()" name="regencies_id" id="regencies_id" placeholder="Regencies" value="<?php echo $regencies_id; ?>" /></select>
+                                   <select class="form-control select2bs4" onchange="districts_list()" name="regencies_id" id="regencies_id" placeholder="Regencies" value="<?php echo $regencies_id; ?>" />
+                                     <option selected><?php echo $regencies_name; ?></option>
+                                   </select>
                                   </div>
                                 </div>
                               </div>
@@ -130,7 +161,9 @@
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Districts <?php echo form_error('districts_id') ?></label>
                                   <div class="col-sm">
-                                   <select class="form-control select2bs4" onchange="villages_list()" name="districts_id" id="districts_id" placeholder="Districts" value="<?php echo $districts_id; ?>" /></select>
+                                   <select class="form-control select2bs4" onchange="villages_list()" name="districts_id" id="districts_id" placeholder="Districts" value="<?php echo $districts_id; ?>" />
+                                     <option selected><?php echo $districts_name; ?></option>
+                                   </select>
                                   </div>
                                 </div>
                               </div>
@@ -138,7 +171,9 @@
                                 <div class="form-group">
                                   <label for="staticEmail" class="col-12 col-form-label">Villages <?php echo form_error('villages_id') ?></label>
                                   <div class="col-sm">
-                                   <select class="form-control select2bs4" name="villages_id" id="villages_id" placeholder="Villages" value="<?php echo $villages_id; ?>" /></select>
+                                   <select class="form-control select2bs4" name="villages_id" id="villages_id" placeholder="Villages" value="<?php echo $villages_id; ?>" />
+                                     <option selected><?php echo $villages_name; ?></option>
+                                   </select>
                                   </div>
                                 </div>
                               </div>
@@ -148,16 +183,30 @@
                           <div class="tab-pane fade" id="custom-content-below-profile" role="tabpanel" aria-labelledby="custom-content-below-profile-tab">
 
                             <div class="row">
-                              <div class="col-md-12">
-                                <h4 class="mt-6 ">Data Items</h4>
+                              <div class="row">
+                                <h4 class="mt-6 ">Data Unit Sepeda Motor</h4>
                               </div>
+                              <div class="row motor">
                               <?php 
                               $iter = 0;
                               if ($button == "Update") {
                               foreach ($get_delivery_detail_by_id as $row)
                                 if ($row->category == 1) {
                               { ?>
-                              <div class="col-md-4">
+
+
+                              <div class="col-2 faktur">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-12 col-form-label">Faktur</label>
+                                <?php }?>
+                                  <div class="col-sm">
+                                    <input type="text" class="form-control name-item" autocomplete="off" spellcheck="false" name="faktur_item[]" id="faktur_item1" rel="rel_faktur_item1" placeholder="Faktur" value="<?php echo $row->faktur;?>" disabled/>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-2">
                                 <div class="form-group">
                                   <?php if($iter == 0){?>
                                   <label for="staticEmail" class="col-12 col-form-label">Name</label>
@@ -168,7 +217,29 @@
                                 </div>
                               </div>
 
-                              <div class="col-md-2">
+                              <div class="col-2">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-12 col-form-label">No. Mesin</label>
+                                <?php }?>
+                                  <div class="col-sm">
+                                    <input type="text" class="form-control nomesin-item" autocomplete="off" spellcheck="false" name="nomesin_item[]" id="nomesin_item1" rel="rel_nomesin_item1" placeholder="No. Mesin" value="<?php echo $row->no_mesin;?>" disabled/>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-2">
+                                <div class="form-group">
+                                  <?php if($iter == 0){?>
+                                  <label for="staticEmail" class="col-12 col-form-label">No. Rangka</label>
+                                <?php }?>
+                                  <div class="col-sm">
+                                    <input type="text" class="form-control norangka-item" autocomplete="off" spellcheck="false" name="norangka_item[]" id="norangka_item1" rel="rel_norangka_item1" placeholder="No. Rangka" value="<?php echo $row->no_rangka;?>" disabled/>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-2 price">
                                 <div class="form-group">
                                   <?php if($iter == 0){?>
                                   <label for="staticEmail" class="col-12 col-form-label">Price</label>
@@ -179,7 +250,7 @@
                                 </div>
                               </div>
 
-                              <div class="col-md-2">
+                              <div class="col-1">
                                 <div class="form-group">
                                   <?php if($iter == 0){?>
                                   <label for="staticEmail" class="col-12 col-form-label">Qty </label>
@@ -189,14 +260,14 @@
                                   </div>
                                 </div>
                               </div>
-                              <div class="col-md-3">
+                              <div class="col-2">
                                 <div class="form-group">
                                   <?php if($iter == 0){?>
                                   <label for="staticEmail" class="col-8 col-form-label">Unit</label>
                                   <?php }?>
                                   <div class="col-sm">
                                     <div class="row">
-                                      <div class=".col-12 .col-sm-6 .col-lg-8">
+                                      <div class="col-6">
                                         <input type="text" class="form-control" autocomplete="off" spellcheck="false" name="unit_item[]" id="unit_item1" rel="rel_unit_item1" placeholder="Unit" value="<?php echo $row->unit;?>" disabled/>
                                       </div>
                                       <?php if($iter == 0) { ?>
@@ -781,9 +852,9 @@
               },
             });
 
-            regencies_list();
-            districts_list();
-            villages_list();
+            // regencies_list();
+            // districts_list();
+            // villages_list();
             
             // var val_regencies = document.getElementById("regencies_id").getAttribute('value');
             // var val_districts = document.getElementById("districts_id").getAttribute('value');

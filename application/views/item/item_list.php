@@ -33,8 +33,10 @@
 		    <td><?php echo $item->name ?></td>
 		    <td><?php echo strtoupper($item->category) ?></td>
 		    <td><?php echo $item->unit ?></td>
-		    <td><?php echo $item->create_at ?></td>
-		    <td><?php echo $item->update_at ?></td>
+        <?php $newDate = date('d M Y', strtotime($item->create_at));  ?>
+		    <td><?php echo $newDate ?></td>
+        <?php $newDate = date('d M Y h:i:s', strtotime($item->update_at));  ?>
+		    <td><?php echo $newDate ?></td>
 		    <td style="text-align:center" width="140px">
 			<?php 
 			echo anchor(site_url('index.php/item/read/'.$item->id),'<i class="fa fa-eye"></i>',array('title'=>'detail','class'=>'btn btn-info btn-sm')); 

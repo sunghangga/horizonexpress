@@ -15,6 +15,7 @@
                 <tr>
                     <th>No</th>
 		    <th>Name</th>
+        <th>Username</th>
 		    <th>Address</th>
 		    <th>Telephone</th>
 		    <th>Name Wife</th>
@@ -33,12 +34,15 @@
                 <tr>
 		    <td><?php echo ++$start ?></td>
 		    <td><?php echo $driver->name ?></td>
+        <td><?php echo $driver->username ?></td>
 		    <td><?php echo $driver->address ?></td>
 		    <td><?php echo $driver->telephone ?></td>
 		    <td><?php echo $driver->name_wife ?></td>
 		    <td><?php echo $driver->telephone_wife ?></td>
-		    <td><?php echo $driver->sim_expire ?></td>
-		    <td><?php echo $driver->create_at ?></td>
+        <?php $newDate = date('d M Y', strtotime($driver->sim_expire));  ?>
+		    <td><?php echo $newDate ?></td>
+        <?php $newDate = date('d M Y', strtotime($driver->create_at));  ?>
+		    <td><?php echo $newDate ?></td>
 		    <td style="text-align:center">
 			<?php 
 			echo anchor(site_url('index.php/driver/read/'.$driver->id),'<i class="fa fa-eye"></i>',array('title'=>'detail','class'=>'btn btn-info btn-sm')); 

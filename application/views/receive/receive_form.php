@@ -15,12 +15,12 @@
                                     <div class='col-sm-10'>
                                       <select class="form-control select2bs4" id="kode" name="kode" onchange="show_data()">
                                         <?php if($kode != null){ 
-                                             echo '<option value="'.$kode.'">'.$kode.'</option>';
+                                             echo '<option value="'.$kode.'">'.$kode.'/'.date('m', strtotime($row->create_at)).'/'.date('Y', strtotime($row->create_at)).'</option>';
                                          } 
                                         foreach ($get_all_kode as $row)
                                             {
                                               if($kode != $row->kode){
-                                                echo '<option value="'.$row->kode.'">'.$row->kode.'</option>';
+                                                echo '<option value="'.$row->kode.'">'.$row->kode.'/'.date('m', strtotime($row->create_at)).'/'.date('Y', strtotime($row->create_at)).'</option>';
                                               }
                                             } ?>
                                         
@@ -74,6 +74,7 @@
               theme: 'bootstrap4'
             })  
             if ('<?php echo $button?>' == 'Update') {
+              show_data();
               document.getElementById("kode").disabled = true;
             }        
            })
@@ -81,21 +82,29 @@
           function show_data(){
             var x = document.getElementById("kode").value;
             var datas = [];
+            var uri='url';
+            if('<?php echo $button?>' == 'Update'){
+              uri='index.php/receive/read_receive/';
+            }
+            else{
+               uri='index.php/delivery/get_delivery_by_id/';
+            }
             if('<?php echo $button?>' == 'Update'){
                 $.ajax({
                   type : 'ajax',
-                  url : '<?php echo base_url()?>index.php/receive/read_receive/'+x,
+                  url : '<?php echo base_url()?>'+uri+x,
                   async : false,
                   dataType : 'json',
                   success : function(data){
                     datas = data;
                   }
               });
+            
             }
 
             $.ajax({
                 type : 'ajax',
-                url : '<?php echo base_url()?>index.php/delivery/get_delivery_by_id/'+x,
+                url : '<?php echo base_url()?>'+uri+x,
                 async : false,
                 dataType : 'json',
                 success : function(data){

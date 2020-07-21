@@ -29,6 +29,21 @@ class Check_model extends CI_Model
         return $this->db->get($this->table)->row();
     }
 
+    function get_by_id_complete($id)
+    {
+         $this->db->select  ("check.id,
+                              check.kode,
+                              check.examiner,
+                              check.date_check,
+                              check.create_at,
+                              check.update_at,
+                              delivery.create_at AS create_kode");
+        $this->db->from('check');
+        $this->db->join('delivery','check.kode=delivery.kode', 'LEFT');
+        $this->db->where('check.id', $id);
+        return $this->db->get()->row();
+    }
+
     function get_detail($kode)
     {
         $this->db->select('*');
@@ -40,8 +55,16 @@ class Check_model extends CI_Model
 
     function get_range($first,$last)
     {
-        $this->db->select('*');
+        $this->db->select('check.id,
+                    check.kode,
+                    check.examiner,
+                    check.date_check,
+                    check.create_at,
+                    check.update_at,
+                    delivery.create_at AS create_kode,
+                    MONTH(delivery.create_at) AS bulan, YEAR(delivery.create_at) AS tahun');
         $this->db->from('check');
+        $this->db->join('delivery','check.kode=delivery.kode', 'LEFT');
         $this->db->where('check.create_at>=', $first);
         $this->db->where('check.create_at<=', $last);
         $this->db->order_by($this->id, $this->order);
@@ -98,6 +121,18 @@ class Check_model extends CI_Model
     {
         $this->db->where($this->id, $id);
         $this->db->delete($this->table);
+    }
+
+    function deleteKode($id)
+    {
+        $this->db->where('kode', $id);
+        $this->db->delete($this->table);
+    }
+
+    function deleteKodeDetail($id)
+    {
+        $this->db->where('kode', $id);
+        $this->db->delete('check_item');
     }
 
 }

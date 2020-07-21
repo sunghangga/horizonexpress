@@ -8,7 +8,7 @@
                 <div class='card-header'>
                     <div class="row">
                     <div class="col-md-6">
-                  <h3 class='card-title'>ROAD MONEY LIST <?php echo anchor('index.php/road_money/create/','Create',array('class'=>'btn btn-primary btn-sm'));?></h3>
+                  <h3 class='card-title'>TRANSPORTATION EXPENSE LIST <?php echo anchor('index.php/road_money/create/','Create',array('class'=>'btn btn-primary btn-sm'));?></h3>
                     </div>
                     <div class="col-md-6">
                     <div class="input-group">
@@ -60,7 +60,13 @@
               },
               "columns": [
                   
-                  { "data": "kode" },
+                  { "data": null,
+                      render: function ( data, type, row ) { 
+                            var dt = data.create_kode;
+                            date  = dt.split("-");   
+                            return data.kode+"/"+date[1]+"/"+date[0];
+                        }
+                      },
                   { "data": "table_money" },
                   { "data": "pulse" },
                   { "data": "create_at" },
@@ -74,6 +80,8 @@
                         '<button id="update" style="margin-left: 5px;" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button></div>'+
                         '<div class="btn-group" role="group" aria-label="Third group">'+
                         '<button id="print" style="margin-left: 5px;" class="btn btn-primary btn-sm"><i class="fas fa-print"></i></i></button></div>'+
+                        '<div class="btn-group" role="group" aria-label="fourth group">'+
+                        '<button id="delete" style="margin-left: 5px;" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></i></button></div>'+
                     '</div>';
                   } }
               ],
@@ -81,7 +89,7 @@
                   { targets: -2, "width": "90px", render: function(data){return moment(data).format('D MMM YYYY'); }},
                   { targets: 0, "width": "150px"},
                   { targets: [1,2], "width": "30%", render: function(data){return new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(data); }},
-                  { targets: -1, "width": "100px" },
+                  { targets: -1, "width": "150px" },
               ]
           } );
 
@@ -106,7 +114,13 @@
                 window.open('<?php echo base_url()?>index.php/road_money/pdfJalan/'+data.id,'_blank');
               }
           } );
-        
+          $('#mytable').on( 'click', '#delete', function (e) {
+            e.preventDefault();
+              var data = table.row( $(this).parents('tr') ).data();
+              if (data != null) {
+                window.location= '<?php echo base_url()?>index.php/road_money/deleteAll/'+data.kode;
+              }
+          } )
         }
         </script>
         <script type="text/javascript">

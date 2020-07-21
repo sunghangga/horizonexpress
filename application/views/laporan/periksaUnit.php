@@ -36,7 +36,7 @@
 	    			<p class="form-p" style="margin-left: 3px;"><b>No. Pengiriman</b></p>
 	    		</td>
 	    		<td width="300px">
-	    			<p class="form-p">: <?php echo $kode?></p>
+	    			<p class="form-p">: <?php echo $kode."/".$kode_month."/".$kode_year ?></p>
 	    		</td>
 	    		<td width="50px">
 	    			<p class="form-p" style="margin-left: 3px;"><b>Supir</b></p>

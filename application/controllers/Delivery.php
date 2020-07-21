@@ -10,7 +10,7 @@ class Delivery extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('Delivery_model','Customer_model','User_model','Warehouse_model','Company_model'));
+        $this->load->model(array('Delivery_model','Customer_model','User_model','Warehouse_model','Company_model','Pending_bike_model'));
         $this->load->library('form_validation');
         if($this->session->userdata('user_logedin') != 'TRUE'){ redirect('index.php/login', 'refresh');}
     }
@@ -25,8 +25,19 @@ class Delivery extends CI_Controller
       echo json_encode($data);
     }
 
+    
     public function get_villages($id=null){
       $data = $this->Delivery_model->get_villages($id);
+      echo json_encode($data);
+    }
+
+    public function get_cutomer($id=null){
+      $data = $this->Customer_model->get_by_id($id);
+      echo json_encode($data);
+    }
+
+    public function get_cutomer_withlocation($id=null){
+      $data = $this->Customer_model->get_cutomer_withlocation($id);
       echo json_encode($data);
     }
 
@@ -38,6 +49,11 @@ class Delivery extends CI_Controller
 
     public function get_check_item_by_id($id){
       $data = $this->Delivery_model->get_check_item_by_id($id);
+      echo json_encode($data);
+    }
+
+    public function get_check_item_read($id){
+      $data = $this->Delivery_model->get_check_item_read($id);
       echo json_encode($data);
     }
 
@@ -77,17 +93,159 @@ class Delivery extends CI_Controller
             'name_district' => $row->name_district,
             'name_village' => $row->name_village,
             'create_at' => date_indo($row->create_at),
+            'received_date'=>date_indo($row->received_date),
+            'kode_month'=>date('m', strtotime($row->create_at)),
+            'kode_year'=>date('Y', strtotime($row->create_at)),
             'update_at' => $row->update_at,
+            'no_identitas' => $row->no_identitas,
             'get_delivery_detail_by_id' => $this->Delivery_model->get_delivery_detail_by_id($id),
+            'get_delivery_detail_motor'=> $this->Delivery_model->get_delivery_detail_motor($id),
+            'get_count_motor'=> $this->Delivery_model->get_count_motor($id),
+            'get_count_kelengkapan'=> $this->Delivery_model->get_count_kelengkapan($id),
+            'get_count_other'=> $this->Delivery_model->get_count_other($id)
         );
             $this->load->library("mypdf");
-            $this->mypdf->generate("laporan/tandaTerima","A5","landscape","Bukti Tanda Terima Pengiriman - ".$data['kode'],$data);
+            $this->mypdf->generate("laporan/tandaTerima","A4","potrait","Bukti Tanda Terima Pengiriman - ".$data['kode'],$data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
             redirect(site_url('index.php/delivery'));
         }
     }
-    
+
+    public function pdfInvoice($id=null){
+        $company = $this->Company_model->get_all();
+        $row = $this->Delivery_model->get_by_id($id);
+        if ($row) {
+            $data = $this->Delivery_model->get_price($row->kode);
+            $user = $this->User_model->get_by_id($row->user_id);
+            $data = array(
+                'logo' => $company->logo,
+                'name' => $company->name,
+                'tlp' => $company->tlp,
+            'kode' => $row->kode,
+            'name_pengirim' => $row->name_pengirim,
+            'address_pengirim' => $row->address_pengirim,
+            'telephone_pengirim' => $row->telephone_pengirim,
+            'name_penerima' => $row->name_penerima,
+            'address_penerima' => $row->address_penerima,
+            'telephone_penerima' => $row->telephone_penerima,
+            'admin' => $user->name,
+            'driver' => $row->driver,
+            'nopol' => $row->nopol,
+            'totalprice' => $data['price'],
+            'terbilang' => ucwords(to_word($data['price'])),
+            'name_regency' => $row->name_regency,
+            'name_district' => $row->name_district,
+            'name_village' => $row->name_village,
+            'create_at' => date_indo($row->create_at),
+            'received_date'=>date_indo($row->received_date),
+            'kode_month'=>date('m', strtotime($row->create_at)),
+            'kode_year'=>date('Y', strtotime($row->create_at)),
+            'update_at' => $row->update_at,
+            'no_identitas' => $row->no_identitas,
+            'get_delivery_detail_by_id' => $this->Delivery_model->get_delivery_detail_by_id($id),
+            'get_delivery_detail_motor'=> $this->Delivery_model->get_delivery_detail_motor($id),
+            'get_delivery_detail_invoice'=> $this->Delivery_model->get_delivery_detail_invoice($id),
+            'get_count_motor'=> $this->Delivery_model->get_count_motor($id),
+            'get_count_kelengkapan'=> $this->Delivery_model->get_count_kelengkapan($id),
+            'get_count_other'=> $this->Delivery_model->get_count_other($id)
+        );
+            $this->load->library("mypdf");
+            $this->mypdf->generate("laporan/invoice","A4","potrait","Invoice Pengiriman - ".$data['kode'],$data);
+        } else {
+            $this->session->set_flashdata('message', 'Record Not Found');
+            redirect(site_url('index.php/delivery'));
+        }
+    }
+
+
+    public function pdfKirim($id=null){
+        $company = $this->Company_model->get_all();
+        $row = $this->Delivery_model->get_by_id($id);
+        if ($row) {
+            $data = $this->Delivery_model->get_price($row->kode);
+            $user = $this->User_model->get_by_id($row->user_id);
+            $data = array(
+                'logo' => $company->logo,
+                'name' => $company->name,
+                'tlp' => $company->tlp,
+            'kode' => $row->kode,
+            'name_pengirim' => $row->name_pengirim,
+            'address_pengirim' => $row->address_pengirim,
+            'telephone_pengirim' => $row->telephone_pengirim,
+            'name_penerima' => $row->name_penerima,
+            'address_penerima' => $row->address_penerima,
+            'telephone_penerima' => $row->telephone_penerima,
+            'admin' => $user->name,
+            'driver' => $row->driver,
+            'nopol' => $row->nopol,
+            'price' => $data['price'],
+            'terbilang' => ucwords(to_word($data['price'])),
+            'name_regency' => $row->name_regency,
+            'name_district' => $row->name_district,
+            'name_village' => $row->name_village,
+            'create_at' => date_indo($row->create_at),
+            'kode_month'=>date('m', strtotime($row->create_at)),
+            'kode_year'=>date('Y', strtotime($row->create_at)),
+            'update_at' => $row->update_at,
+            'get_delivery_detail_by_id' => $this->Delivery_model->get_delivery_detail_by_id($id),
+            'get_delivery_detail_motor'=> $this->Delivery_model->get_delivery_detail_motor($id),
+            'get_count_motor'=> $this->Delivery_model->get_count_motor($id),
+            'get_count_kelengkapan'=> $this->Delivery_model->get_count_kelengkapan($id),
+            'get_count_other'=> $this->Delivery_model->get_count_other($id)
+        );
+            $this->load->library("mypdf");
+            $this->mypdf->generate("laporan/tandaPengiriman","A4","potrait","Bukti Tanda Terima Pengiriman - ".$data['kode'],$data);
+        } else {
+            $this->session->set_flashdata('message', 'Record Not Found');
+            redirect(site_url('index.php/delivery'));
+        }
+    }
+
+
+    public function pdfTerimaDetail($id=null){
+        $company = $this->Company_model->get_all();
+        $row = $this->Delivery_model->get_by_id($id);
+        if ($row) {
+            $data = $this->Delivery_model->get_price($row->kode);
+            $user = $this->User_model->get_by_id($row->user_id);
+            $data = array(
+                'logo' => $company->logo,
+                'name' => $company->name,
+                'tlp' => $company->tlp,
+            'kode' => $row->kode,
+            'name_pengirim' => $row->name_pengirim,
+            'address_pengirim' => $row->address_pengirim,
+            'telephone_pengirim' => $row->telephone_pengirim,
+            'name_penerima' => $row->name_penerima,
+            'address_penerima' => $row->address_penerima,
+            'telephone_penerima' => $row->telephone_penerima,
+            'admin' => $user->name,
+            'driver' => $row->driver,
+            'nopol' => $row->nopol,
+            'price' => $data['price'],
+            'terbilang' => ucwords(to_word($data['price'])),
+            'name_regency' => $row->name_regency,
+            'name_district' => $row->name_district,
+            'name_village' => $row->name_village,
+            'create_at' => date_indo($row->create_at),
+            'kode_month'=>date('m', strtotime($row->create_at)),
+            'kode_year'=>date('Y', strtotime($row->create_at)),
+            'update_at' => $row->update_at,
+            'get_delivery_detail_by_id' => $this->Delivery_model->get_delivery_detail_by_id($id),
+            'get_delivery_detail_motor'=> $this->Delivery_model->get_delivery_detail_motor($id),
+           
+
+        );
+            $this->load->library("mypdf");
+            $this->mypdf->generate("laporan/tandaTerimaDetail","A6","landscape","Bukti Tanda Terima Pengiriman - ".$data['kode'],$data);
+        } else {
+            $this->session->set_flashdata('message', 'Record Not Found');
+            redirect(site_url('index.php/delivery'));
+        }
+    }
+
+       
     public function index()
     {
         $this->template->load('template','delivery/delivery_list');
@@ -145,9 +303,12 @@ class Delivery extends CI_Controller
             // 'weight' => set_value('weight', $row->weight),
             // 'amount' => set_value('amount', $row->amount),
             // 'price' => set_value('price', $row->price),
-            'regencies_id' => set_value('regencies_id', $row->name_regency),
-            'districts_id' => set_value('districts_id', $row->name_district),
-            'villages_id' => set_value('villages_id', $row->name_village),
+            'regencies_id' => set_value('regencies_id', $row->id_regency),
+            'districts_id' => set_value('districts_id', $row->id_district),
+            'villages_id' => set_value('villages_id', $row->id_village),
+            'regencies_name' => set_value('regencies_id', $row->name_regency),
+            'districts_name' => set_value('districts_id', $row->name_district),
+            'villages_name' => set_value('villages_id', $row->name_village),
             'get_delivery_detail_by_id' => $this->Delivery_model->get_delivery_detail_by_id($id),
             'get_wr' => $this->Warehouse_model->get_by_id($id),
             // 'create_at' => set_value('create_at', $row->create_at),
@@ -164,17 +325,29 @@ class Delivery extends CI_Controller
     {
         $time = time();
         $time .= mt_rand(00, 99);
+        $delivery_jml=$this->Delivery_model->get_count();
+        if($delivery_jml>0){
+          $lastprimary=$this->Delivery_model->get_delivery_last_kode();
+          $kode_inv=$lastprimary->kode;
+          $kode_inv=$kode_inv+1;
+        }
+        else{
+          $kode_inv=42;
+        }
+
 
         $data = array(
             'button' => 'Create',
             'action' => site_url('index.php/delivery/create_action'),
-            'kode' => $time,
+            'kode' => $kode_inv,
             'name_pengirim' => set_value('name_pengirim'),
+            'pengirim_id' => set_value('pengirim_id'),
             'address_pengirim' => set_value('address_pengirim'),
             'telephone_pengirim' => set_value('telephone_pengirim'),
             'wr_pengirim_id' => set_value('wr_pengirim_id'),
             'wr_pengirim_name' => set_value('wr_pengirim_name'),
             'name_penerima' => set_value('name_penerima'),
+            'penerima_id' => set_value('penerima_id'),
             'address_penerima' => set_value('address_penerima'),
             'telephone_penerima' => set_value('telephone_penerima'),
             'wr_penerima_id' => set_value('wr_penerima_id'),
@@ -185,7 +358,11 @@ class Delivery extends CI_Controller
             'regencies_id' => set_value('regencies_id'),
             'districts_id' => set_value('districts_id'),
             'villages_id' => set_value('villages_id'),
+            'get_regencies' => $this->Delivery_model->get_regencies(),
             'get_wr' => $this->Warehouse_model->get_all(),
+            'get_cutomer'=>$this->Customer_model->get_all(),
+            'get_pending_bike'=>$this->Pending_bike_model->get_all_waiting(),
+            'get_pending_bike_model'=>$this->Pending_bike_model->get_all_waiting_model(),
             // 'create_at' => $date,
             // 'update_at' => set_value('update_at'),
     );
@@ -195,8 +372,9 @@ class Delivery extends CI_Controller
     
     public function create_action() 
     {
-        $date = date('Y-m-d');
+       
 
+        $date = date('Y-m-d');
         $this->_rules();
 
         if ($this->form_validation->run() == FALSE) {
@@ -206,10 +384,12 @@ class Delivery extends CI_Controller
               $data = array(
               'kode' => $this->input->post('kode'),
               'name_pengirim' => $this->input->post('name_pengirim',TRUE),
+              'pengirim_id' => $this->input->post('pengirim_id',TRUE),
               'address_pengirim' => $this->input->post('address_pengirim',TRUE),
               'telephone_pengirim' => $this->input->post('telephone_pengirim',TRUE),
               'wr_pengirim_id' => $this->input->post('wr_pengirim_id',TRUE),
               'name_penerima' => $this->input->post('name_penerima',TRUE),
+              'penerima_id' => $this->input->post('penerima_id',TRUE),
               'address_penerima' => $this->input->post('address_penerima',TRUE),
               'telephone_penerima' => $this->input->post('telephone_penerima',TRUE),
               'wr_penerima_id' => $this->input->post('wr_penerima_id',TRUE),
@@ -228,16 +408,18 @@ class Delivery extends CI_Controller
                 $data = array(
               'kode' => $this->input->post('kode'),
               'name_pengirim' => $this->input->post('name_pengirim',TRUE),
+              'pengirim_id' => $this->input->post('pengirim_id',TRUE),
               'address_pengirim' => $this->input->post('address_pengirim',TRUE),
               'telephone_pengirim' => $this->input->post('telephone_pengirim',TRUE),
               'wr_pengirim_id' => $this->input->post('wr_pengirim_id',TRUE),
               'name_penerima' => $this->input->post('name_penerima',TRUE),
+              'penerima_id' => $this->input->post('penerima_id',TRUE),
               'address_penerima' => $this->input->post('address_penerima',TRUE),
               'telephone_penerima' => $this->input->post('telephone_penerima',TRUE),
               'wr_penerima_id' => $this->input->post('wr_penerima_id',TRUE),
               'user_id' => $this->session->userdata('user_id'),
-              'driver' => $this->input->post('driver',TRUE),
-              'nopol' => $this->input->post('nopol',TRUE),
+              //'driver' => $this->input->post('driver',TRUE),
+              //'nopol' => $this->input->post('nopol',TRUE),
               // 'price' => $this->input->post('price'),
               'regencies_id' => $this->input->post('regencies_id',TRUE),
               'districts_id' => $this->input->post('districts_id',TRUE),
@@ -250,7 +432,8 @@ class Delivery extends CI_Controller
 
             $this->Delivery_model->insert($data);
 
-            if(!$this->Customer_model->exist_row_check('telephone',$this->input->post('telephone_pengirim',TRUE))>0){
+            if((!$this->Customer_model->exist_row_check('telephone',$this->input->post('telephone_pengirim',TRUE))>0)
+              || (!$this->Customer_model->exist_row_check('name',$this->input->post('name_pengirim',TRUE))>0)){
               $data = array(
               'name' => $this->input->post('name_pengirim',TRUE),
               'address' => $this->input->post('address_pengirim',TRUE),
@@ -259,7 +442,8 @@ class Delivery extends CI_Controller
                 );
               $this->Customer_model->insert($data);
             }
-            if(!$this->Customer_model->exist_row_check('telephone',$this->input->post('telephone_penerima',TRUE))>0){
+            if((!$this->Customer_model->exist_row_check('telephone',$this->input->post('telephone_penerima',TRUE))>0)
+              || (!$this->Customer_model->exist_row_check('name',$this->input->post('name_penerima',TRUE))>0)){
               $data = array(
               'name' => $this->input->post('name_penerima',TRUE),
               'address' => $this->input->post('address_penerima',TRUE),
@@ -270,43 +454,158 @@ class Delivery extends CI_Controller
             }
 
             $kode = $this->input->post('kode');
+            $itemfaktur = $this->input->post('faktur_item');
             $itemname = $this->input->post('name_item'); // Ambil data nis dan masukkan ke variabel item
+            $itemnomesin = $this->input->post('nomesin_item');
+            $itemnorangka = $this->input->post('norangka_item');
             $itemqyt = $this->input->post('qty_item'); // Ambil data nama dan masukkan ke variabel qyt
             $itemunit = $this->input->post('unit_item'); // Ambil data telp dan masukkan ke variabel satuan
             $itemprice = $this->input->post('price_item');
+            $bike_id = $this->input->post('bike_id_item');
             $itemdata = array();
+            //$pending_update= array();
+
             
-            $index = 0; // Set index array awal dengan 0
-            foreach($itemname as $itemnames){ // Kita buat perulangan berdasarkan nis sampai data terakhir
-              array_push($itemdata, array(
-                'kode'=>$kode,
-                'category'=>'1',
-                'name'=>$itemnames,
-                'qty'=>$itemqyt[$index],  
-                'price'=>$itemprice[$index],// Ambil dan set data nama sesuai index array dari $index
-                'unit'=>$itemunit[$index]  // Ambil dan set data telepon sesuai index array dari $index
-              ));
+            
+            $delivery_jml=$this->Delivery_model->get_count_delivery_detail();
+            if($delivery_jml>0){
+
+              $lastprimary=$this->Delivery_model->get_delivery_detail_last_id();
+              $lastId=$lastprimary->id;
+              $index = 0; // Set index array awal dengan 0
+              foreach($itemname as $itemnames){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+                
+                /*if($itemnomesin[$index]!=null){
+                    $this->load->library('zend');
+                    $this->zend->load('Zend/Barcode');
+                    $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$itemnomesin[$index]), array())->draw();
+                    $image_name     = $itemnomesin[$index].'.jpg';
+                    $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                    imagejpeg($image_resource, $image_dir.$image_name); 
+
+                }
+                else{
+                    $image_name="default.jpg";
+                }*/
+                $lastId++;
+
+                $this->load->library('zend');
+                $this->zend->load('Zend/Barcode');
+                $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$lastId), array())->draw();
+                $image_name     = $kode.$lastId.'.jpg';
+                $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                imagejpeg($image_resource, $image_dir.$image_name); 
+
+                if ($bike_id[$index]==0 || $bike_id[$index]==""){
+                  $bike_id[$index]=null;
+                }
+                array_push($itemdata, array(
+                  'id'=>$lastId,
+                  'kode'=>$kode,
+                  'faktur'=>$itemfaktur[$index],
+                  'category'=>'1',
+                  'name'=>$itemnames,
+                  'no_mesin'=>$itemnomesin[$index],
+                  'no_rangka'=>$itemnorangka[$index],
+                  'qty'=>$itemqyt[$index],  
+                  'price'=>$itemprice[$index],// Ambil dan set data nama sesuai index array dari $index
+                  'unit'=>$itemunit[$index],  // Ambil dan set data telepon sesuai index array dari $index
+                  'barcode'=>$image_name,
+                  'bike_id'=>$bike_id[$index],
+                ));
+
+                /*array_push($pending_update, array(
+                  'bike_id'=>$bike_id[$index],
+                  'status' => 'booked',
+                ));*/
+                
+                $index++;
+              }
               
-              $index++;
+            }
+            else{
+              $lastId=0;
+              $index = 0; // Set index array awal dengan 0
+              foreach($itemname as $itemnames){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+                
+                /*if($itemnomesin[$index]!=null){
+                    $this->load->library('zend');
+                    $this->zend->load('Zend/Barcode');
+                    $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$itemnomesin[$index]), array())->draw();
+                    $image_name     = $itemnomesin[$index].'.jpg';
+                    $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                    imagejpeg($image_resource, $image_dir.$image_name); 
+
+                }
+                else{
+                    $image_name="default.jpg";
+                }*/
+                $lastId++;
+
+                $this->load->library('zend');
+                $this->zend->load('Zend/Barcode');
+                $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$lastId), array())->draw();
+                $image_name     = $kode.$lastId.'.jpg';
+                $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                imagejpeg($image_resource, $image_dir.$image_name); 
+
+                if ($bike_id[$index]==0 || $bike_id[$index]==""){
+                  $bike_id[$index]=null;
+                }
+                array_push($itemdata, array(
+                  'id'=>$lastId,
+                  'kode'=>$kode,
+                  'faktur'=>$itemfaktur[$index],
+                  'category'=>'1',
+                  'name'=>$itemnames,
+                  'no_mesin'=>$itemnomesin[$index],
+                  'no_rangka'=>$itemnorangka[$index],
+                  'qty'=>$itemqyt[$index],  
+                  'price'=>$itemprice[$index],// Ambil dan set data nama sesuai index array dari $index
+                  'unit'=>$itemunit[$index],  // Ambil dan set data telepon sesuai index array dari $index
+                  'barcode'=>$image_name,
+                  'bike_id'=>$bike_id[$index],
+                ));
+                
+                $index++;
+              }
+              
             }
             
+            
+            
             $this->Delivery_model->insert_batch($itemdata); 
+            //$this->Pending_bike_model->update_batch($pending_update); 
+            $this->Pending_bike_model->change_bike_status($kode,'booked');
+
 
             $kelengkapanname = $this->input->post('name_kelengkapan'); // Ambil data nis dan masukkan ke variabel item
             $kelengkapanqyt = $this->input->post('qty_kelengkapan'); // Ambil data nama dan masukkan ke variabel qyt
             $kelengkapanunit = $this->input->post('unit_kelengkapan'); // Ambil data telp dan masukkan ke variabel satuan
             $kelengkapanprice = $this->input->post('price_kelengkapan');
             $kelengkapandata = array();
-            
+            $lastprimary=$this->Delivery_model->get_delivery_detail_last_id();
+            $lastId=$lastprimary->id;
             $index = 0; // Set index array awal dengan 0
             foreach($kelengkapanname as $kelengkapannames){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+              $lastId++;
+
+              $this->load->library('zend');
+              $this->zend->load('Zend/Barcode');
+              $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$lastId), array())->draw();
+              $image_name     = $kode.$lastId.'.jpg';
+              $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+              imagejpeg($image_resource, $image_dir.$image_name); 
+
               array_push($kelengkapandata, array(
+                'id'=>$lastId,
                 'kode'=>$kode,
                 'category'=>'2',
                 'name'=>$kelengkapannames,
                 'qty'=>$kelengkapanqyt[$index],  // Ambil dan set data nama sesuai index array dari $index
                 'price'=>$kelengkapanprice[$index], 
-                'unit'=>$kelengkapanunit[$index]  // Ambil dan set data telepon sesuai index array dari $index
+                'unit'=>$kelengkapanunit[$index],  // Ambil dan set data telepon sesuai index array dari $index
+                'barcode'=>$image_name
               ));
               
               $index++;
@@ -320,15 +619,27 @@ class Delivery extends CI_Controller
             $otherprice = $this->input->post('price_other'); 
             $otherdata = array();
             
+            
             $index = 0; // Set index array awal dengan 0
             foreach($othername as $othernames){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+              $lastId++;
+
+              $this->load->library('zend');
+              $this->zend->load('Zend/Barcode');
+              $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$lastId), array())->draw();
+              $image_name     = $kode.$lastId.'.jpg';
+              $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+              imagejpeg($image_resource, $image_dir.$image_name); 
+
               array_push($otherdata, array(
+                'id'=>$lastId,
                 'kode'=>$kode,
                 'category'=>'0',
                 'name'=>$othernames,
                 'qty'=>$otherqyt[$index],  // Ambil dan set data nama sesuai index array dari $index
                 'price'=>$otherprice[$index],
-                'unit'=>$otherunit[$index]  // Ambil dan set data telepon sesuai index array dari $index
+                'unit'=>$otherunit[$index],  // Ambil dan set data telepon sesuai index array dari $index
+                'barcode'=>$image_name
               ));
               
               $index++;
@@ -355,11 +666,15 @@ class Delivery extends CI_Controller
             'driver' => set_value('driver', $row->driver),
             'nopol' => set_value('driver', $row->nopol),
             'name_pengirim' => set_value('name_pengirim', $row->name_pengirim),
+            'pengirim_id' => set_value('pengirim_id', $row->pengirim_id),
+            'pengirim_name' => set_value('pengirim_name', $row->name_pengirim),
             'address_pengirim' => set_value('address_pengirim', $row->address_pengirim),
             'telephone_pengirim' => set_value('telephone_pengirim', $row->telephone_pengirim),
             'wr_pengirim_id' => set_value('wr_pengirim_id', $wr_pengirim->id),
             'wr_pengirim_name' => set_value('wr_pengirim_name', $wr_pengirim->name),
             'name_penerima' => set_value('name_penerima', $row->name_penerima),
+            'penerima_id' => set_value('penerima_id', $row->penerima_id),
+            'penerima_name' => set_value('penerima_name', $row->name_penerima),
             'address_penerima' => set_value('address_penerima', $row->address_penerima),
             'telephone_penerima' => set_value('telephone_penerima', $row->telephone_penerima),
             'wr_penerima_id' => set_value('wr_penerima_id', $wr_penerima->id),
@@ -367,15 +682,29 @@ class Delivery extends CI_Controller
             // 'weight' => set_value('weight', $row->weight),
             // 'amount' => set_value('amount', $row->amount),
             // 'price' => set_value('price', $row->price),
-            'regencies_id' => set_value('regencies_id', $row->name_regency),
-            'districts_id' => set_value('districts_id', $row->name_district),
-            'villages_id' => set_value('villages_id', $row->name_village),
+            'regencies_id' => set_value('regencies_id', $row->id_regency),
+            'regencies_name' => set_value('regencies_name', $row->name_regency),
+            'get_regencies' => $this->Delivery_model->get_regencies(),
+
+            'districts_id' => set_value('districts_id', $row->id_district),
+            'districts_name' => set_value('districts_name', $row->name_district),
+            'get_districts' => $this->Delivery_model->get_districts($row->id_regency),
+
+            'villages_id' => set_value('villages_id', $row->id_village),
+            'villages_name' => set_value('villages_name', $row->name_village),
+            'get_villages' => $this->Delivery_model->get_villages($row->id_district),
+
+            //'villages_id' => set_value('villages_id', $row->id_village),
             'get_delivery_detail_by_id' => $this->Delivery_model->get_delivery_detail_by_id($id),
-            'get_wr' => $this->Warehouse_model->get_by_id($id),
+            //'get_wr' => $this->Warehouse_model->get_by_id($id),
+            'get_wr' => $this->Warehouse_model->get_all(),
+            'get_cutomer'=>$this->Customer_model->get_all(),
             // 'create_at' => set_value('create_at', $row->create_at),
             // 'update_at' => set_value('update_at', $row->update_at),
+            'get_pending_bike'=>$this->Pending_bike_model->get_all_waiting_update($id),
+            'get_pending_bike_model'=>$this->Pending_bike_model->get_all_waiting_model(),
         );
-            $this->template->load('template','delivery/delivery_form', $data);
+           $this->template->load('template','delivery/delivery_form', $data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
             redirect(site_url('index.php/delivery'));
@@ -384,15 +713,397 @@ class Delivery extends CI_Controller
     
     public function update_action() 
     {
-        $data = array(
-            'driver' => $this->input->post('driver',TRUE),
-            'nopol' => $this->input->post('nopol',TRUE),
-            'status' => 'driver',
-        );
+        $date = $this->Delivery_model->get_delivery_by_id($this->input->post('kode', TRUE));
 
-        $this->Delivery_model->update($this->input->post('kode', TRUE), $data);
-        $this->session->set_flashdata('message', 'Update Record Success');
-        redirect(site_url('index.php/delivery'));
+        $date = $date[0]->create_at;
+
+        $barcode_img=$this->Delivery_model->get_delivery_detail_barcode($this->input->post('kode', TRUE));
+        foreach ($barcode_img as $row_imgs) {
+          if ($row_imgs->barcode != "default.jpg") {
+              $path = './assets/img/barcode/'.$row_imgs->barcode;
+              unlink($path);
+          }
+        }
+        $this->Delivery_model->delete($this->input->post('kode', TRUE));
+        $this->Delivery_model->deleteDetail($this->input->post('kode', TRUE));
+
+
+        
+        $this->_rules();
+
+        if ($this->form_validation->run() == FALSE) {
+            $this->update($this->input->post('kode', TRUE));
+        } else {
+            if($_POST['driver'] != NULL && $_POST['nopol'] != NULL){
+              $data = array(
+              'kode' => $this->input->post('kode'),
+              'name_pengirim' => $this->input->post('name_pengirim',TRUE),
+              'pengirim_id' => $this->input->post('pengirim_id',TRUE),
+              'address_pengirim' => $this->input->post('address_pengirim',TRUE),
+              'telephone_pengirim' => $this->input->post('telephone_pengirim',TRUE),
+              'wr_pengirim_id' => $this->input->post('wr_pengirim_id',TRUE),
+              'name_penerima' => $this->input->post('name_penerima',TRUE),
+              'penerima_id' => $this->input->post('penerima_id',TRUE),
+              'address_penerima' => $this->input->post('address_penerima',TRUE),
+              'telephone_penerima' => $this->input->post('telephone_penerima',TRUE),
+              'wr_penerima_id' => $this->input->post('wr_penerima_id',TRUE),
+              'user_id' => $this->session->userdata('user_id'),
+              'driver' => $this->input->post('driver',TRUE),
+              'nopol' => $this->input->post('nopol',TRUE),
+              'status' => 'driver',
+              // 'price' => $this->input->post('price'),
+              'regencies_id' => $this->input->post('regencies_id',TRUE),
+              'districts_id' => $this->input->post('districts_id',TRUE),
+              'villages_id' => $this->input->post('villages_id',TRUE),
+              'create_at' => $date
+              );
+            }
+            else{
+                $data = array(
+              'kode' => $this->input->post('kode'),
+              'name_pengirim' => $this->input->post('name_pengirim',TRUE),
+              'pengirim_id' => $this->input->post('pengirim_id',TRUE),
+              'address_pengirim' => $this->input->post('address_pengirim',TRUE),
+              'telephone_pengirim' => $this->input->post('telephone_pengirim',TRUE),
+              'wr_pengirim_id' => $this->input->post('wr_pengirim_id',TRUE),
+              'name_penerima' => $this->input->post('name_penerima',TRUE),
+              'penerima_id' => $this->input->post('penerima_id',TRUE),
+              'address_penerima' => $this->input->post('address_penerima',TRUE),
+              'telephone_penerima' => $this->input->post('telephone_penerima',TRUE),
+              'wr_penerima_id' => $this->input->post('wr_penerima_id',TRUE),
+              'user_id' => $this->session->userdata('user_id'),
+              //'driver' => $this->input->post('driver',TRUE),
+              //'nopol' => $this->input->post('nopol',TRUE),
+              // 'price' => $this->input->post('price'),
+              'regencies_id' => $this->input->post('regencies_id',TRUE),
+              'districts_id' => $this->input->post('districts_id',TRUE),
+              'villages_id' => $this->input->post('villages_id',TRUE),
+              'create_at' => $date
+              );
+            }
+
+           // echo json_encode($this->input->post('name_item'));
+
+            $this->Delivery_model->insert($data);
+
+             if((!$this->Customer_model->exist_row_check('telephone',$this->input->post('telephone_pengirim',TRUE))>0)
+              || (!$this->Customer_model->exist_row_check('name',$this->input->post('name_pengirim',TRUE))>0)){
+              $data = array(
+              'name' => $this->input->post('name_pengirim',TRUE),
+              'address' => $this->input->post('address_pengirim',TRUE),
+              'telephone' => $this->input->post('telephone_pengirim',TRUE),
+              'create_at' => date('Y-m-d h:m:s')
+                );
+              $this->Customer_model->insert($data);
+            }
+            if((!$this->Customer_model->exist_row_check('telephone',$this->input->post('telephone_penerima',TRUE))>0)
+              || (!$this->Customer_model->exist_row_check('name',$this->input->post('name_penerima',TRUE))>0)){
+              $data = array(
+              'name' => $this->input->post('name_penerima',TRUE),
+              'address' => $this->input->post('address_penerima',TRUE),
+              'telephone' => $this->input->post('telephone_penerima',TRUE),
+              'create_at' => date('Y-m-d h:m:s')
+                );
+              $this->Customer_model->insert($data);
+            }
+
+            $kode = $this->input->post('kode');
+            $itemfaktur = $this->input->post('faktur_item');
+            $itemname = $this->input->post('name_item'); // Ambil data nis dan masukkan ke variabel item
+            $itemnomesin = $this->input->post('nomesin_item');
+            $itemnorangka = $this->input->post('norangka_item');
+            $itemqyt = $this->input->post('qty_item'); // Ambil data nama dan masukkan ke variabel qyt
+            $itemunit = $this->input->post('unit_item'); // Ambil data telp dan masukkan ke variabel satuan
+            $itemprice = $this->input->post('price_item');
+            $itemid = $this->input->post('id_item');
+            $bike_id = $this->input->post('bike_id_item');
+            $itemdata = array();
+            $itemdata_new = array();
+            //$pending_update= array();
+            
+            $index = 0; // Set index array awal dengan 0
+            foreach($itemname as $itemnames){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+              
+              /*if($itemnomesin[$index]!=null){
+                  $this->load->library('zend');
+                  $this->zend->load('Zend/Barcode');
+                  $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$itemnomesin[$index]), array())->draw();
+                  $image_name     = $itemnomesin[$index].'.jpg';
+                  $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                  imagejpeg($image_resource, $image_dir.$image_name); 
+
+              }
+              else{
+                  $image_name="default.jpg";
+              }*/
+              /*array_push($pending_update, array(
+                  'bike_id'=>$bike_id[$index],
+                  'status' => 'booked',
+                ));*/
+
+              if($itemid[$index]!=0){
+                $this->load->library('zend');
+                $this->zend->load('Zend/Barcode');
+                $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$itemid[$index]), array())->draw();
+                $image_name     = $kode.$itemid[$index].'.jpg';
+                $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                imagejpeg($image_resource, $image_dir.$image_name); 
+                if ($bike_id[$index]==0 || $bike_id[$index]==""){
+                  $bike_id[$index]=null;
+                }
+                array_push($itemdata, array(
+                  'id'=>$itemid[$index],
+                  'kode'=>$kode,
+                  'faktur'=>$itemfaktur[$index],
+                  'category'=>'1',
+                  'name'=>$itemnames,
+                  'no_mesin'=>$itemnomesin[$index],
+                  'no_rangka'=>$itemnorangka[$index],
+                  'qty'=>$itemqyt[$index],  
+                  'price'=>$itemprice[$index],// Ambil dan set data nama sesuai index array dari $index
+                  'unit'=>$itemunit[$index],  // Ambil dan set data telepon sesuai index array dari $index
+                  'barcode'=>$image_name,
+                  'bike_id'=>$bike_id[$index],
+                ));
+                
+              }
+                             
+              $index++;
+            }
+            //$this->Pending_bike_model->update_batch($pending_update); 
+            $this->Delivery_model->insert_batch($itemdata); 
+            $this->Pending_bike_model->change_bike_status($kode,'booked');
+
+
+            
+            
+           
+
+            $kelengkapanname = $this->input->post('name_kelengkapan'); // Ambil data nis dan masukkan ke variabel item
+            $kelengkapanid = $this->input->post('id_kelengkapan');
+            $kelengkapanqyt = $this->input->post('qty_kelengkapan'); // Ambil data nama dan masukkan ke variabel qyt
+            $kelengkapanunit = $this->input->post('unit_kelengkapan'); // Ambil data telp dan masukkan ke variabel satuan
+            $kelengkapanprice = $this->input->post('price_kelengkapan');
+            $kelengkapandata = array();
+            $kelengkapandata_new = array();
+ 
+
+            $index = 0; // Set index array awal dengan 0
+            foreach($kelengkapanname as $kelengkapannames){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+
+              if($kelengkapanid[$index]!=0){
+                $this->load->library('zend');
+                $this->zend->load('Zend/Barcode');
+                $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$kelengkapanid[$index]), array())->draw();
+                $image_name     = $kode.$kelengkapanid[$index].'.jpg';
+                $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                imagejpeg($image_resource, $image_dir.$image_name); 
+
+                array_push($kelengkapandata, array(
+                  'id'=>$kelengkapanid[$index],
+                  'kode'=>$kode,
+                  'category'=>'2',
+                  'name'=>$kelengkapannames,
+                  'qty'=>$kelengkapanqyt[$index], 
+                  'price'=>$kelengkapanprice[$index], 
+                  'unit'=>$kelengkapanunit[$index],  
+                  'barcode'=>$image_name
+                ));
+              }
+              $index++;
+            }
+            
+            $this->Delivery_model->insert_batch($kelengkapandata);
+
+            $othername = $this->input->post('name_other'); // Ambil data nis dan masukkan ke variabel item
+            $otherid = $this->input->post('id_other');
+            $otherqyt = $this->input->post('qty_other'); // Ambil data nama dan masukkan ke variabel qty
+            $otherunit = $this->input->post('unit_other'); // Ambil data telp dan masukkan ke variabel satuan
+            $otherprice = $this->input->post('price_other'); 
+            $otherdata = array();
+            $otherdata_new = array();
+            
+            $index = 0; // Set index array awal dengan 0
+            foreach($othername as $othernames){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+              if($otherid[$index]!=0){
+                $this->load->library('zend');
+                $this->zend->load('Zend/Barcode');
+                $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$otherid[$index]), array())->draw();
+                $image_name     = $kode.$otherid[$index].'.jpg';
+                $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                imagejpeg($image_resource, $image_dir.$image_name); 
+                array_push($otherdata, array(
+                  'id'=>$otherid[$index],
+                  'kode'=>$kode,
+                  'category'=>'0',
+                  'name'=>$othernames,
+                  'qty'=>$otherqyt[$index],  // Ambil dan set data nama sesuai index array dari $index
+                  'price'=>$otherprice[$index],
+                  'unit'=>$otherunit[$index],  // Ambil dan set data telepon sesuai index array dari $index
+                  'barcode'=>$image_name
+                ));
+              }
+              $index++;
+            }
+              $this->Delivery_model->insert_batch($otherdata);
+
+
+
+            $lastprimary=$this->Delivery_model->get_delivery_detail_last_id();
+            $lastId=$lastprimary->id;
+
+            $index = 0; // Set index array awal dengan 0
+            foreach($itemname as $itemnames){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+
+              if($itemid[$index]==0){
+
+                $lastId++;
+
+                $this->load->library('zend');
+                $this->zend->load('Zend/Barcode');
+                $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$lastId), array())->draw();
+                $image_name     = $kode.$lastId.'.jpg';
+                $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                imagejpeg($image_resource, $image_dir.$image_name); 
+                if ($bike_id[$index]==0 || $bike_id[$index]==""){
+                  $bike_id[$index]=null;
+                }
+                array_push($itemdata_new, array(
+                  'kode'=>$kode,
+                  'faktur'=>$itemfaktur[$index],
+                  'category'=>'1',
+                  'name'=>$itemnames,
+                  'no_mesin'=>$itemnomesin[$index],
+                  'no_rangka'=>$itemnorangka[$index],
+                  'qty'=>$itemqyt[$index],  
+                  'price'=>$itemprice[$index],// Ambil dan set data nama sesuai index array dari $index
+                  'unit'=>$itemunit[$index],  // Ambil dan set data telepon sesuai index array dari $index
+                  'barcode'=>$image_name,
+                  'bike_id'=>$bike_id[$index],
+                ));
+              }
+
+              $index++;
+            }
+            if(!empty($itemdata_new)){
+              $this->Delivery_model->insert_batch($itemdata_new);
+            }
+
+
+            $lastprimary=$this->Delivery_model->get_delivery_detail_last_id();
+            $lastId=$lastprimary->id;
+
+            $index = 0; // Set index array awal dengan 0
+            foreach($kelengkapanname as $kelengkapannames){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+
+              if($kelengkapanid[$index]==0){
+
+                $lastId++;
+
+                $this->load->library('zend');
+                $this->zend->load('Zend/Barcode');
+                $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$lastId), array())->draw();
+                $image_name     = $kode.$lastId.'.jpg';
+                $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                imagejpeg($image_resource, $image_dir.$image_name); 
+
+                array_push($kelengkapandata_new, array(
+                  'id'=>$lastId,
+                  'kode'=>$kode,
+                  'category'=>'2',
+                  'name'=>$kelengkapannames,
+                  'qty'=>$kelengkapanqyt[$index], 
+                  'price'=>$kelengkapanprice[$index], 
+                  'unit'=>$kelengkapanunit[$index],  
+                  'barcode'=>$image_name
+                ));
+              }
+
+              $index++;
+            }
+
+            if(!empty($kelengkapandata_new)){
+              $this->Delivery_model->insert_batch($kelengkapandata_new);
+            }
+
+            
+            $lastprimary=$this->Delivery_model->get_delivery_detail_last_id();
+            $lastId=$lastprimary->id;
+
+            $index = 0; // Set index array awal dengan 0
+            foreach($othername as $othernames){ // Kita buat perulangan berdasarkan nis sampai data terakhir
+              if($otherid[$index]==0){
+                $lastId++;
+
+                $this->load->library('zend');
+                $this->zend->load('Zend/Barcode');
+                $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$lastId), array())->draw();
+                $image_name     = $kode.$lastId.'.jpg';
+                $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                imagejpeg($image_resource, $image_dir.$image_name); 
+                array_push($otherdata_new, array(
+                  'id'=>$lastId,
+                  'kode'=>$kode,
+                  'category'=>'0',
+                  'name'=>$othernames,
+                  'qty'=>$otherqyt[$index],  // Ambil dan set data nama sesuai index array dari $index
+                  'price'=>$otherprice[$index],
+                  'unit'=>$otherunit[$index],  // Ambil dan set data telepon sesuai index array dari $index
+                  'barcode'=>$image_name
+                ));
+              }
+              $index++;
+            }
+            
+            if(!empty($otherdata_new)){
+              $this->Delivery_model->insert_batch($otherdata_new);
+            }
+
+            $this->session->set_flashdata('message', 'Create Record Success');
+            redirect(site_url('index.php/delivery'));
+
+            $this->session->set_flashdata('message', 'Update Record Success');
+            redirect(site_url('index.php/delivery'));
+        }
+
+        // $data = array(
+        //     'driver' => $this->input->post('driver',TRUE),
+        //     'nopol' => $this->input->post('nopol',TRUE),
+        //     'status' => 'driver',
+        // );
+
+
+        // $this->Delivery_model->update($this->input->post('kode', TRUE), $data);
+    }
+
+    public function deleteAll($id){
+      $row = $this->Delivery_model->get_by_id($id);
+
+
+      if ($row) {
+          $this->Pending_bike_model->change_bike_status($id,'waiting');  
+          $barcode_img=$this->Delivery_model->get_delivery_detail_barcode($id);
+          foreach ($barcode_img as $row_imgs) {
+            if ($row_imgs->barcode != "default.jpg") {
+                $path = './assets/img/barcode/'.$row_imgs->barcode;
+                unlink($path);
+            }
+          $this->Delivery_model->delete($id);
+          }
+          $this->Delivery_model->deleteDetail($id);
+          $this->Delivery_model->deleteReceive($id);
+          $this->Delivery_model->deleteReceiveItem($id);
+          $this->Delivery_model->deleteRoadMoney($id);
+          $this->Delivery_model->deleteRoadMoneyDetail($id);
+          $this->Delivery_model->deleteCheck($id);
+          $this->Delivery_model->deleteCheckItem($id);
+
+          $this->session->set_flashdata('message', 'Delete Record Success');
+          redirect(site_url('index.php/delivery'));
+      } else {
+          $this->session->set_flashdata('message', 'Record Not Found');
+          redirect(site_url('index.php/delivery'));
+      }
     }
     
     public function delete($id) 
@@ -419,6 +1130,7 @@ class Delivery extends CI_Controller
     $this->form_validation->set_rules('telephone_penerima', 'telephone penerima', 'trim|required');
     $this->form_validation->set_rules('regencies_id', 'regencies name', 'trim|required');
     $this->form_validation->set_rules('districts_id', 'districts name', 'trim|required');
+
     //$this->form_validation->set_rules('price', 'price', 'trim|required');
     // $this->form_validation->set_rules('villages_id', 'villages id', 'trim|required');
 

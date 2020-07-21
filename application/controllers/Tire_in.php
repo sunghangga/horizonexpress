@@ -110,7 +110,7 @@ class Tire_in extends CI_Controller
             $this->session->set_flashdata('message', 'Record Not Found');
             redirect(base_url().'index.php/tire_in');
         }
-    }
+    } 
     
     public function update_action($tambah) 
     {
