@@ -28,7 +28,7 @@ CREATE TABLE `check` (
   `create_at` date DEFAULT NULL,
   `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `check` */
 
@@ -49,8 +49,9 @@ CREATE TABLE `check_item` (
   `type` varchar(25) DEFAULT NULL,
   `solusi` mediumtext,
   `keterangan` text,
+  `category` int(2) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `check_item` */
 
@@ -81,20 +82,28 @@ CREATE TABLE `customer` (
   `name` varchar(55) NOT NULL,
   `address` text,
   `telephone` varchar(12) NOT NULL,
-  `nip` varchar(25) NOT NULL,
+  `no_identitas` varchar(25) NOT NULL,
   `photo` varchar(30) DEFAULT 'default.jpg',
   `create_at` date NOT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `cust_type` enum('PERUSAHAAN','PERORANGAN') DEFAULT NULL,
+  `regencies_id` char(5) DEFAULT NULL,
+  `districts_id` char(8) DEFAULT NULL,
+  `villages_id` char(11) DEFAULT NULL,
+  `regencies_ktp` char(5) DEFAULT NULL,
+  `districts_ktp` char(8) DEFAULT NULL,
+  `villages_ktp` char(11) DEFAULT NULL,
+  `address_ktp` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 /*Data for the table `customer` */
 
-insert  into `customer`(`id`,`name`,`address`,`telephone`,`nip`,`photo`,`create_at`,`update_at`) values 
-(9,'PT MPM','SURABAYA','-','-','default.jpg','2020-04-23','2020-04-23 11:35:52'),
-(10,'CV NASIONAL MOTOR - RUTENG','RUTENG','-','-','default.jpg','2020-04-23','2020-04-23 11:36:31'),
-(11,'aaa','sss','ddd','','default.jpg','2020-05-02','2020-05-02 08:48:18'),
-(12,'fff','ggg','hhh','','default.jpg','2020-05-02','2020-05-02 08:48:18');
+insert  into `customer`(`id`,`name`,`address`,`telephone`,`no_identitas`,`photo`,`create_at`,`update_at`,`cust_type`,`regencies_id`,`districts_id`,`villages_id`,`regencies_ktp`,`districts_ktp`,`villages_ktp`,`address_ktp`) values 
+(1,'PT MPM','SURABAYA','-','-','default.jpg','2020-04-23','2020-04-23 11:35:52','PERUSAHAAN',NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(2,'CV NASIONAL MOTOR - RUTENG','RUTENG','-','-','default.jpg','2020-04-23','2020-04-23 11:36:31','PERUSAHAAN','','','','','','',''),
+(5,'EDUARDUS GENGGONG','LABUAN BAJO','085338243144','5310120706970003','profile-200618-4a0b51eb1f.jpeg','2020-06-18','2020-06-18 14:25:42','PERORANGAN','5315','5315010','5315010010','5313','5313110','5313110004','RANGKAT'),
+(6,'DEGA AJI UTAMA','BALI','081362559525','3671101704960004','profile-200618-d113755786.jpeg','2020-06-18','2020-06-18 14:41:57','PERORANGAN','5103','5103010','5103010006','3671','3671051','3671051001','KOMP. PAPA II BLOK. C I/I');
 
 /*Table structure for table `delivery` */
 
@@ -111,7 +120,7 @@ CREATE TABLE `delivery` (
   `telephone_penerima` varchar(12) NOT NULL,
   `wr_penerima_id` int(11) DEFAULT NULL,
   `user_id` int(5) NOT NULL,
-  `status` varchar(15) DEFAULT 'warehouse',
+  `status` varchar(50) DEFAULT 'warehouse',
   `driver` varchar(55) DEFAULT NULL,
   `nopol` varchar(55) DEFAULT NULL,
   `regencies_id` char(4) NOT NULL,
@@ -119,10 +128,20 @@ CREATE TABLE `delivery` (
   `villages_id` char(10) NOT NULL,
   `create_at` date NOT NULL,
   `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `pengirim_id` int(2) DEFAULT NULL,
+  `penerima_id` int(2) DEFAULT NULL,
+  `receive_customer_status` char(50) DEFAULT NULL,
+  `received_date` date DEFAULT NULL,
+  `driver_location` varchar(255) DEFAULT NULL,
+  `driver_delivery_status` int(1) DEFAULT '0',
+  `receipt` int(11) DEFAULT '0',
   PRIMARY KEY (`kode`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `delivery` */
+
+insert  into `delivery`(`kode`,`name_pengirim`,`address_pengirim`,`telephone_pengirim`,`wr_pengirim_id`,`name_penerima`,`address_penerima`,`telephone_penerima`,`wr_penerima_id`,`user_id`,`status`,`driver`,`nopol`,`regencies_id`,`districts_id`,`villages_id`,`create_at`,`update_at`,`pengirim_id`,`penerima_id`,`receive_customer_status`,`received_date`,`driver_location`,`driver_delivery_status`,`receipt`) values 
+('42','EDUARDUS GENGGONG','LABUAN BAJO','085338243144',4,'DEGA AJI UTAMA','BALI','081362559525',1,1,'received','1','1','5103','5103010','5103010006','2020-06-18','2020-06-19 13:49:19',5,6,'','2020-07-29','',2,1);
 
 /*Table structure for table `delivery_detail` */
 
@@ -133,26 +152,37 @@ CREATE TABLE `delivery_detail` (
   `kode` varchar(15) NOT NULL,
   `category` int(2) NOT NULL DEFAULT '0',
   `name` varchar(55) NOT NULL,
+  `no_mesin` varchar(50) DEFAULT NULL,
+  `no_rangka` varchar(50) DEFAULT NULL,
   `qty` float NOT NULL,
   `price` float DEFAULT NULL,
   `unit` varchar(15) NOT NULL,
+  `barcode` varchar(100) DEFAULT NULL,
+  `faktur` varchar(15) DEFAULT NULL,
+  `bike_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 
 /*Data for the table `delivery_detail` */
+
+insert  into `delivery_detail`(`id`,`kode`,`category`,`name`,`no_mesin`,`no_rangka`,`qty`,`price`,`unit`,`barcode`,`faktur`,`bike_id`) values 
+(10,'42',1,'','','',0,0,'','4210.jpg','',NULL),
+(11,'42',2,'',NULL,NULL,0,0,'','4211.jpg',NULL,NULL),
+(12,'42',0,'MOTOR1',NULL,NULL,1,400000,'UNIT','4212.jpg',NULL,NULL),
+(13,'42',0,'MOTOR2',NULL,NULL,1,400000,'UNIT','4213.jpg',NULL,NULL);
 
 /*Table structure for table `districts` */
 
 DROP TABLE IF EXISTS `districts`;
 
 CREATE TABLE `districts` (
-  `id` char(7) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `regency_id` char(4) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `id` char(7) NOT NULL,
+  `regency_id` char(4) NOT NULL,
+  `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `districts_id_index` (`regency_id`),
-  CONSTRAINT `districts_regency_id_foreign` FOREIGN KEY (`regency_id`) REFERENCES `regencies` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `regency_id` (`regency_id`),
+  CONSTRAINT `districts_ibfk_1` FOREIGN KEY (`regency_id`) REFERENCES `regencies` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `districts` */
 
@@ -7387,10 +7417,15 @@ CREATE TABLE `driver` (
   `sim_expire` date NOT NULL,
   `create_at` date NOT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `username` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 /*Data for the table `driver` */
+
+insert  into `driver`(`id`,`name`,`address`,`telephone`,`name_wife`,`telephone_wife`,`sim_expire`,`create_at`,`update_at`,`username`,`password`) values 
+(1,'HAMSA','fLORES','-','-','-','2020-05-15','2020-05-16','2020-05-16 15:07:03','hamsa','202cb962ac59075b964b07152d234b70');
 
 /*Table structure for table `group` */
 
@@ -7400,13 +7435,31 @@ CREATE TABLE `group` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(25) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 /*Data for the table `group` */
 
 insert  into `group`(`id`,`name`) values 
 (1,'Admin'),
 (2,'Karyawan');
+
+/*Table structure for table `handover` */
+
+DROP TABLE IF EXISTS `handover`;
+
+CREATE TABLE `handover` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kode` varchar(15) NOT NULL,
+  `status_receipt` enum('Receipt Printed','Signed By Customer') DEFAULT NULL,
+  `create_at` date DEFAULT NULL,
+  `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+/*Data for the table `handover` */
+
+insert  into `handover`(`id`,`kode`,`status_receipt`,`create_at`,`update_at`) values 
+(2,'42',NULL,'2020-06-29','2020-06-29 13:01:04');
 
 /*Table structure for table `item` */
 
@@ -7415,14 +7468,52 @@ DROP TABLE IF EXISTS `item`;
 CREATE TABLE `item` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `category` enum('kelengkapan','barang') NOT NULL DEFAULT 'barang',
+  `category` enum('kelengkapan','motor') NOT NULL DEFAULT 'motor',
   `unit_id` int(11) NOT NULL,
   `create_at` date NOT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `type_unit` varchar(10) DEFAULT NULL,
+  `color_unit` varchar(10) DEFAULT NULL,
+  `varian_unit` varchar(25) DEFAULT NULL,
+  `transmisi_unit` varchar(5) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 
 /*Data for the table `item` */
+
+insert  into `item`(`id`,`name`,`category`,`unit_id`,`create_at`,`update_at`,`type_unit`,`color_unit`,`varian_unit`,`transmisi_unit`) values 
+(1,'(HPL)F1C02N28S2AL A/T-CH','motor',1,'2020-06-16','2020-06-16 08:56:31','HPL','CH','F1C02N28S2AL','A/T'),
+(2,'(GDK)R2B02M01S1K M/T-MH','motor',1,'2020-06-16','2020-06-16 10:02:27','GDK','MH','R2B02M01S1K','M/T'),
+(3,'HELM','kelengkapan',2,'2020-06-16','2020-06-16 10:02:54',NULL,NULL,NULL,NULL),
+(4,'(LJJ)H1B02N43L0J A/T-SV','motor',1,'2020-06-16','2020-06-16 10:04:00','LJJ','SV','H1B02N43L0J','A/T'),
+(5,'(GBK)R2B02K01S1K M/T-BG','motor',1,'2020-06-16','2020-06-16 10:04:15','GBK','BG','R2B02K01S1K','M/T'),
+(6,'(HPM)F1C02N28S2BM A/T-MH','motor',1,'2020-06-16','2020-06-16 10:04:35','HPM','MH','F1C02N28S2BM','A/T'),
+(7,'(GBK)R2B02K01S1K M/T-BB','motor',1,'2020-06-16','2020-06-16 10:05:01','GBK','BB','R2B02K01S1K','M/T'),
+(8,'(LHJ)H1B02N41L0J A/T-WH','motor',1,'2020-06-16','2020-06-16 10:06:33','LHJ','WH','H1B02N41L0J','A/T'),
+(9,'(LHJ)H1B02N41L0J A/T-BK','motor',1,'2020-06-16','2020-06-16 10:06:56','LHJ','BK','H1B02N41L0J','A/T'),
+(10,'(ESN)T4G02T31S2AN M/T-BK','motor',1,'2020-06-16','2020-06-16 10:07:24','ESN','BK','T4G02T31S2AN','M/T'),
+(11,'(GFL)G2A02Q02S3L M/T-BK','motor',1,'2020-06-16','2020-06-16 10:07:33','GFL','BK','G2A02Q02S3L','M/T'),
+(12,'(ESO)T4G02T31S2BO M/T-GR','motor',1,'2020-06-16','2020-06-16 10:07:58','ESO','GR','T4G02T31S2BO','M/T');
+
+/*Table structure for table `pending_bike` */
+
+DROP TABLE IF EXISTS `pending_bike`;
+
+CREATE TABLE `pending_bike` (
+  `bike_id` int(11) NOT NULL AUTO_INCREMENT,
+  `bike_code` varchar(50) DEFAULT NULL,
+  `bike_color` varchar(25) DEFAULT NULL,
+  `bike_no_rangka` varchar(50) DEFAULT NULL,
+  `bike_no_mesin` varchar(50) DEFAULT NULL,
+  `bike_year` varchar(8) DEFAULT NULL,
+  `bike_faktur` varchar(50) DEFAULT NULL,
+  `status` enum('waiting','booked','sold') DEFAULT 'waiting',
+  `delete` int(1) DEFAULT '0',
+  `source` enum('umsl','mpm') DEFAULT NULL,
+  PRIMARY KEY (`bike_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+/*Data for the table `pending_bike` */
 
 /*Table structure for table `postage` */
 
@@ -7436,7 +7527,7 @@ CREATE TABLE `postage` (
   `create_at` date NOT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `postage` */
 
@@ -7445,10 +7536,10 @@ CREATE TABLE `postage` (
 DROP TABLE IF EXISTS `provinces`;
 
 CREATE TABLE `provinces` (
-  `id` char(2) COLLATE utf8_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `id` char(2) NOT NULL,
+  `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `provinces` */
 
@@ -7502,9 +7593,12 @@ CREATE TABLE `receive` (
   `create_at` date DEFAULT NULL,
   `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 /*Data for the table `receive` */
+
+insert  into `receive`(`id`,`kode`,`receiver`,`pdi`,`pic`,`catatan`,`create_at`,`update_at`) values 
+(1,'42','Emila','Putu Rusmayasa','Arisna','','2020-06-29','2020-06-29 10:09:00');
 
 /*Table structure for table `receive_item` */
 
@@ -7517,22 +7611,26 @@ CREATE TABLE `receive_item` (
   `qty_received` float NOT NULL,
   `keterangan` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 
 /*Data for the table `receive_item` */
+
+insert  into `receive_item`(`id`,`kode`,`delivery_detail_id`,`qty_received`,`keterangan`) values 
+(12,'42',12,1,''),
+(13,'42',13,1,'');
 
 /*Table structure for table `regencies` */
 
 DROP TABLE IF EXISTS `regencies`;
 
 CREATE TABLE `regencies` (
-  `id` char(4) COLLATE utf8_unicode_ci NOT NULL,
-  `province_id` char(2) COLLATE utf8_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `id` char(4) NOT NULL,
+  `province_id` char(2) NOT NULL,
+  `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `regencies_province_id_index` (`province_id`),
-  CONSTRAINT `regencies_province_id_foreign` FOREIGN KEY (`province_id`) REFERENCES `provinces` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  KEY `province_id` (`province_id`),
+  CONSTRAINT `regencies_ibfk_1` FOREIGN KEY (`province_id`) REFERENCES `provinces` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `regencies` */
 
@@ -8064,7 +8162,7 @@ CREATE TABLE `road_money` (
   `create_at` date DEFAULT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `road_money` */
 
@@ -8078,7 +8176,7 @@ CREATE TABLE `road_money_detail` (
   `postage` varchar(255) NOT NULL,
   `price` float DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `road_money_detail` */
 
@@ -8094,7 +8192,7 @@ CREATE TABLE `tire` (
   `create_at` date DEFAULT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `tire` */
 
@@ -8110,7 +8208,7 @@ CREATE TABLE `tire_in` (
   `create_at` date NOT NULL,
   `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `tire_in` */
 
@@ -8131,7 +8229,7 @@ CREATE TABLE `tire_out` (
   `create_at` date NOT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `tire_out` */
 
@@ -8152,9 +8250,12 @@ CREATE TABLE `truck` (
   `create_at` date DEFAULT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 /*Data for the table `truck` */
+
+insert  into `truck`(`id`,`name`,`nopol`,`nosin`,`norangka`,`production_year`,`jto_samsat`,`kir`,`km`,`create_at`,`update_at`) values 
+(1,'TRUCK DINO','DK 12345 G','98068965785484','98068965785484','2002','2020-05-30','32165465','32165','2020-05-16','2020-05-16 15:08:21');
 
 /*Table structure for table `unit` */
 
@@ -8164,9 +8265,15 @@ CREATE TABLE `unit` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(150) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `unit` */
+
+insert  into `unit`(`id`,`name`) values 
+(1,'UNIT'),
+(2,'PCS'),
+(3,'DUS'),
+(4,'PAKET');
 
 /*Table structure for table `user` */
 
@@ -8182,30 +8289,32 @@ CREATE TABLE `user` (
   `create_at` date NOT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
 /*Data for the table `user` */
 
 insert  into `user`(`id`,`name`,`username`,`password`,`group_id`,`status`,`create_at`,`update_at`) values 
-(20,'superadmin','superadmin','$2a$08$StFwtkJWEwtEgmzF4Q8j/.Ddz2iGnFzipQtrsYe4rrSGjTB4PBF3G',1,1,'2020-04-01','2020-04-01 10:36:41'),
-(21,'YAKIN','YAKIN','$2a$08$b1JaowPFp2BU46e3zxOIIOCkzi414.IS8Y2z0RBJZoFvJznfhIS9O',2,1,'2020-04-02','2020-04-02 08:22:20'),
-(22,'ERNI','ERNI','$2a$08$fg14dtvalrtuLDqoTULOJeJQUZCi6EUPmEtFTolp7x4wvc0EU8XqO',2,1,'2020-04-02','2020-04-02 08:33:23'),
-(23,'ANI','ANI','$2a$08$e1fttKvzQDnuDAHiOS756e3wnzlgZk/D1/.OREY6i5ZwMjE/mXPX2',2,1,'2020-04-02','2020-04-02 08:33:45'),
-(24,'NINGSIH','NINGSIH','$2a$08$Folb2Ge77KXOMDBC20UKOepkgiUtgrmf.WfDiRVqgRCvsy6V3U4Dm',2,1,'2020-04-02','2020-04-02 08:34:09'),
-(25,'EMILA','emila','$2a$08$GPkuqUiC.WS1sfB8ByAFMOtvQYgJlbDCfhQHajXr7epq6CJWpF5qa',2,1,'2020-04-23','2020-04-23 10:47:46');
+(1,'superadmin','superadmin','$2a$08$StFwtkJWEwtEgmzF4Q8j/.Ddz2iGnFzipQtrsYe4rrSGjTB4PBF3G',1,1,'2020-04-01','2020-04-01 10:36:41'),
+(2,'YAKIN','YAKIN','$2a$08$b1JaowPFp2BU46e3zxOIIOCkzi414.IS8Y2z0RBJZoFvJznfhIS9O',2,1,'2020-04-02','2020-04-02 08:22:20'),
+(3,'ERNI','ERNI','$2a$08$fg14dtvalrtuLDqoTULOJeJQUZCi6EUPmEtFTolp7x4wvc0EU8XqO',2,1,'2020-04-02','2020-04-02 08:33:23'),
+(4,'ANI','ANI','$2a$08$e1fttKvzQDnuDAHiOS756e3wnzlgZk/D1/.OREY6i5ZwMjE/mXPX2',2,1,'2020-04-02','2020-04-02 08:33:45'),
+(5,'NINGSIH','NINGSIH','$2a$08$Folb2Ge77KXOMDBC20UKOepkgiUtgrmf.WfDiRVqgRCvsy6V3U4Dm',2,1,'2020-04-02','2020-04-02 08:34:09'),
+(6,'EMILA','emila','$2a$08$GPkuqUiC.WS1sfB8ByAFMOtvQYgJlbDCfhQHajXr7epq6CJWpF5qa',2,1,'2020-04-23','2020-04-23 10:47:46'),
+(7,'Test','test','$2a$08$.pKtYcStvIE5SCj4zXJIrOgQSCSAuYv8n8ZdecuaJcU89S5tomoEO',2,1,'2020-06-04','2020-06-29 09:06:39'),
+(8,'ARISNA','arisna','$2y$12$aRypAYDoCc4rmyK1Gme8buRPr3d.tepNqszOIR5d6m7NSVA0sVnFS',2,1,'2020-06-20','2020-06-20 08:51:57');
 
 /*Table structure for table `villages` */
 
 DROP TABLE IF EXISTS `villages`;
 
 CREATE TABLE `villages` (
-  `id` char(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `district_id` char(7) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `id` char(10) NOT NULL,
+  `district_id` char(7) NOT NULL,
+  `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `villages_district_id_index` (`district_id`),
-  CONSTRAINT `villages_district_id_foreign` FOREIGN KEY (`district_id`) REFERENCES `districts` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `district_id` (`district_id`),
+  CONSTRAINT `villages_ibfk_1` FOREIGN KEY (`district_id`) REFERENCES `districts` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `villages` */
 
@@ -88656,14 +88765,15 @@ CREATE TABLE `warehouse` (
   `create_at` date DEFAULT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `warehouse` */
 
 insert  into `warehouse`(`id`,`name`,`alamat`,`create_at`,`update_at`) values 
-(4,'GDG POH GADING','Gang Poh Gading','2020-04-01','2020-04-01 14:38:14'),
-(5,'RUTENG','Jalan Wae Ces 18','2020-04-01','2020-04-02 08:49:25'),
-(6,'PT MPM','SURABAYA','2020-04-23','2020-04-23 10:51:38');
+(1,'GDG POH GADING','Gang Poh Gading','2020-04-01','2020-06-09 14:38:32'),
+(2,'RUTENG','Jalan Wae Ces 18','2020-04-01','2020-06-09 14:38:33'),
+(3,'PT MPM','SURABAYA','2020-04-23','2020-06-09 14:38:34'),
+(4,'LABUAN BAJO','JL. Simpang Pede, Komodo, 86554, Goron Talo, Komodo, Kabupaten Manggarai Barat, Nusa Tenggara Tim.','2020-06-18','2020-06-18 14:38:52');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
