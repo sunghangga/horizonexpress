@@ -232,7 +232,7 @@ class Delivery extends CI_Controller
             'kode_month'=>date('m', strtotime($row->create_at)),
             'kode_year'=>date('Y', strtotime($row->create_at)),
             'update_at' => $row->update_at,
-            'get_delivery_detail_by_id' => $this->Delivery_model->get_delivery_detail_by_id($id),
+            'get_delivery_detail_by_id' => $this->Delivery_model->get_delivery_detail_barcode_id($id),
             'get_delivery_detail_motor'=> $this->Delivery_model->get_delivery_detail_motor($id),
            
 
@@ -463,6 +463,7 @@ class Delivery extends CI_Controller
             $itemprice = $this->input->post('price_item');
             $bike_id = $this->input->post('bike_id_item');
             $itemdata = array();
+            $itemdata_barcode = array();
             //$pending_update= array();
 
             
@@ -514,10 +515,17 @@ class Delivery extends CI_Controller
                   'bike_id'=>$bike_id[$index],
                 ));
 
+
                 /*array_push($pending_update, array(
                   'bike_id'=>$bike_id[$index],
                   'status' => 'booked',
                 ));*/
+
+                array_push($itemdata_barcode, array(
+                  'id'=>$lastId,
+                  'kode'=>$kode,
+                  'barcode'=>$image_name
+                ));
                 
                 $index++;
               }
@@ -566,7 +574,12 @@ class Delivery extends CI_Controller
                   'barcode'=>$image_name,
                   'bike_id'=>$bike_id[$index],
                 ));
-                
+                array_push($itemdata_barcode, array(
+                  'id'=>$lastId,
+                  'kode'=>$kode,
+                  'barcode'=>$image_name
+                ));
+
                 $index++;
               }
               
@@ -575,15 +588,20 @@ class Delivery extends CI_Controller
             
             
             $this->Delivery_model->insert_batch($itemdata); 
+            
+            if(!empty($itemdata_barcode)){
+            $this->Delivery_model->insert_batch_barcode($itemdata_barcode); 
+            }
             //$this->Pending_bike_model->update_batch($pending_update); 
             $this->Pending_bike_model->change_bike_status($kode,'booked');
 
 
             $kelengkapanname = $this->input->post('name_kelengkapan'); // Ambil data nis dan masukkan ke variabel item
-            $kelengkapanqyt = $this->input->post('qty_kelengkapan'); // Ambil data nama dan masukkan ke variabel qyt
+            $kelengkapanqty = $this->input->post('qty_kelengkapan'); // Ambil data nama dan masukkan ke variabel qyt
             $kelengkapanunit = $this->input->post('unit_kelengkapan'); // Ambil data telp dan masukkan ke variabel satuan
             $kelengkapanprice = $this->input->post('price_kelengkapan');
             $kelengkapandata = array();
+            $kelengkapandata_barcode = array();
             $lastprimary=$this->Delivery_model->get_delivery_detail_last_id();
             $lastId=$lastprimary->id;
             $index = 0; // Set index array awal dengan 0
@@ -592,33 +610,47 @@ class Delivery extends CI_Controller
 
               $this->load->library('zend');
               $this->zend->load('Zend/Barcode');
-              $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$lastId), array())->draw();
-              $image_name     = $kode.$lastId.'.jpg';
-              $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
-              imagejpeg($image_resource, $image_dir.$image_name); 
 
               array_push($kelengkapandata, array(
                 'id'=>$lastId,
                 'kode'=>$kode,
                 'category'=>'2',
                 'name'=>$kelengkapannames,
-                'qty'=>$kelengkapanqyt[$index],  // Ambil dan set data nama sesuai index array dari $index
+                'qty'=>$kelengkapanqty[$index],  // Ambil dan set data nama sesuai index array dari $index
                 'price'=>$kelengkapanprice[$index], 
                 'unit'=>$kelengkapanunit[$index],  // Ambil dan set data telepon sesuai index array dari $index
-                'barcode'=>$image_name
+                'barcode'=>"default.jpg"
               ));
               
+
+              for ($jml_kelengkapan = 1; $jml_kelengkapan <= $kelengkapanqty[$index]; $jml_kelengkapan++){
+                $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$lastId.$jml_kelengkapan), array())->draw();
+                $image_name     = $kode.$lastId.$jml_kelengkapan.'.jpg';
+                $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                imagejpeg($image_resource, $image_dir.$image_name); 
+                  array_push($kelengkapandata_barcode, array(
+                  'id'=>$lastId,
+                  'kode'=>$kode,
+                  'barcode'=>$image_name
+                ));
+              }
+
+
               $index++;
             }
             
             $this->Delivery_model->insert_batch($kelengkapandata); 
+            
+            if(!empty($kelengkapandata_barcode)){
+            $this->Delivery_model->insert_batch_barcode($kelengkapandata_barcode); 
+            }
 
             $othername = $this->input->post('name_other'); // Ambil data nis dan masukkan ke variabel item
-            $otherqyt = $this->input->post('qty_other'); // Ambil data nama dan masukkan ke variabel qty
+            $otherqty = $this->input->post('qty_other'); // Ambil data nama dan masukkan ke variabel qty
             $otherunit = $this->input->post('unit_other'); // Ambil data telp dan masukkan ke variabel satuan
             $otherprice = $this->input->post('price_other'); 
             $otherdata = array();
-            
+            $otherdata_barcode = array();
             
             $index = 0; // Set index array awal dengan 0
             foreach($othername as $othernames){ // Kita buat perulangan berdasarkan nis sampai data terakhir
@@ -636,17 +668,32 @@ class Delivery extends CI_Controller
                 'kode'=>$kode,
                 'category'=>'0',
                 'name'=>$othernames,
-                'qty'=>$otherqyt[$index],  // Ambil dan set data nama sesuai index array dari $index
+                'qty'=>$otherqty[$index],  // Ambil dan set data nama sesuai index array dari $index
                 'price'=>$otherprice[$index],
                 'unit'=>$otherunit[$index],  // Ambil dan set data telepon sesuai index array dari $index
                 'barcode'=>$image_name
               ));
+
+              for ($jml_other = 1; $jml_other <= $otherqty[$index]; $jml_other++){
+                  $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$lastId.$jml_other), array())->draw();
+                  $image_name     = $kode.$lastId.$jml_other.'.jpg';
+                  $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                  imagejpeg($image_resource, $image_dir.$image_name); 
+                    array_push($otherdata_barcode, array(
+                    'id'=>$lastId,
+                    'kode'=>$kode,
+                    'barcode'=>$image_name
+                  ));
+                }
               
               $index++;
             }
             
             $this->Delivery_model->insert_batch($otherdata);
-
+            
+            if(!empty($otherdata_barcode)){
+             $this->Delivery_model->insert_batch_barcode($otherdata_barcode);
+            }
             $this->session->set_flashdata('message', 'Create Record Success');
             redirect(site_url('index.php/delivery'));
         }
@@ -726,6 +773,7 @@ class Delivery extends CI_Controller
         }
         $this->Delivery_model->delete($this->input->post('kode', TRUE));
         $this->Delivery_model->deleteDetail($this->input->post('kode', TRUE));
+        $this->Delivery_model->deleteDetailBarcode($this->input->post('kode', TRUE));
 
 
         
@@ -818,7 +866,9 @@ class Delivery extends CI_Controller
             $itemid = $this->input->post('id_item');
             $bike_id = $this->input->post('bike_id_item');
             $itemdata = array();
+            $itemdata_barcode = array();
             $itemdata_new = array();
+            $itemdata_barcode_new = array();
             //$pending_update= array();
             
             $index = 0; // Set index array awal dengan 0
@@ -865,13 +915,20 @@ class Delivery extends CI_Controller
                   'barcode'=>$image_name,
                   'bike_id'=>$bike_id[$index],
                 ));
+
+                array_push($itemdata_barcode, array(
+                  'id'=>$itemid[$index],
+                  'kode'=>$kode,
+                  'barcode'=>$image_name
+                ));
                 
               }
                              
               $index++;
             }
             //$this->Pending_bike_model->update_batch($pending_update); 
-            $this->Delivery_model->insert_batch($itemdata); 
+            $this->Delivery_model->insert_batch($itemdata);
+            $this->Delivery_model->insert_batch_barcode($itemdata_barcode); 
             $this->Pending_bike_model->change_bike_status($kode,'booked');
 
 
@@ -881,71 +938,105 @@ class Delivery extends CI_Controller
 
             $kelengkapanname = $this->input->post('name_kelengkapan'); // Ambil data nis dan masukkan ke variabel item
             $kelengkapanid = $this->input->post('id_kelengkapan');
-            $kelengkapanqyt = $this->input->post('qty_kelengkapan'); // Ambil data nama dan masukkan ke variabel qyt
+            $kelengkapanqty = $this->input->post('qty_kelengkapan'); // Ambil data nama dan masukkan ke variabel qyt
             $kelengkapanunit = $this->input->post('unit_kelengkapan'); // Ambil data telp dan masukkan ke variabel satuan
             $kelengkapanprice = $this->input->post('price_kelengkapan');
             $kelengkapandata = array();
             $kelengkapandata_new = array();
+            $kelengkapandata_barcode = array();
+            $kelengkapandata_barcode_new = array();
  
 
             $index = 0; // Set index array awal dengan 0
             foreach($kelengkapanname as $kelengkapannames){ // Kita buat perulangan berdasarkan nis sampai data terakhir
 
               if($kelengkapanid[$index]!=0){
+               
                 $this->load->library('zend');
                 $this->zend->load('Zend/Barcode');
-                $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$kelengkapanid[$index]), array())->draw();
-                $image_name     = $kode.$kelengkapanid[$index].'.jpg';
-                $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
-                imagejpeg($image_resource, $image_dir.$image_name); 
+               
 
                 array_push($kelengkapandata, array(
                   'id'=>$kelengkapanid[$index],
                   'kode'=>$kode,
                   'category'=>'2',
                   'name'=>$kelengkapannames,
-                  'qty'=>$kelengkapanqyt[$index], 
+                  'qty'=>$kelengkapanqty[$index], 
                   'price'=>$kelengkapanprice[$index], 
                   'unit'=>$kelengkapanunit[$index],  
-                  'barcode'=>$image_name
+                  'barcode'=>"default.jpg"
                 ));
+                
+               for ($jml_kelengkapan = 1; $jml_kelengkapan <= $kelengkapanqty[$index]; $jml_kelengkapan++){
+                  $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$kelengkapanid[$index].$jml_kelengkapan), array())->draw();
+                  $image_name     = $kode.$kelengkapanid[$index].$jml_kelengkapan.'.jpg';
+                  $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                  imagejpeg($image_resource, $image_dir.$image_name); 
+                    array_push($kelengkapandata_barcode, array(
+                    'id'=>$kelengkapanid[$index],
+                    'kode'=>$kode,
+                    'barcode'=>$image_name
+                  ));
+                }
+
               }
               $index++;
             }
+
             
             $this->Delivery_model->insert_batch($kelengkapandata);
+            if(!empty($kelengkapandata_barcode)){
+            $this->Delivery_model->insert_batch_barcode($kelengkapandata_barcode);
+            }
 
             $othername = $this->input->post('name_other'); // Ambil data nis dan masukkan ke variabel item
             $otherid = $this->input->post('id_other');
-            $otherqyt = $this->input->post('qty_other'); // Ambil data nama dan masukkan ke variabel qty
+            $otherqty = $this->input->post('qty_other'); // Ambil data nama dan masukkan ke variabel qty
             $otherunit = $this->input->post('unit_other'); // Ambil data telp dan masukkan ke variabel satuan
             $otherprice = $this->input->post('price_other'); 
             $otherdata = array();
             $otherdata_new = array();
+            $otherdata_barcode = array();
+            $otherdata_barcode_new = array();
             
             $index = 0; // Set index array awal dengan 0
             foreach($othername as $othernames){ // Kita buat perulangan berdasarkan nis sampai data terakhir
               if($otherid[$index]!=0){
                 $this->load->library('zend');
                 $this->zend->load('Zend/Barcode');
-                $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$otherid[$index]), array())->draw();
-                $image_name     = $kode.$otherid[$index].'.jpg';
-                $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                
                 imagejpeg($image_resource, $image_dir.$image_name); 
                 array_push($otherdata, array(
                   'id'=>$otherid[$index],
                   'kode'=>$kode,
                   'category'=>'0',
                   'name'=>$othernames,
-                  'qty'=>$otherqyt[$index],  // Ambil dan set data nama sesuai index array dari $index
+                  'qty'=>$otherqty[$index],  // Ambil dan set data nama sesuai index array dari $index
                   'price'=>$otherprice[$index],
                   'unit'=>$otherunit[$index],  // Ambil dan set data telepon sesuai index array dari $index
                   'barcode'=>$image_name
                 ));
+
+                for ($jml_other = 1; $jml_other <= $otherqty[$index]; $jml_other++){
+                  $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$otherid[$index].$jml_other), array())->draw();
+                  $image_name     = $kode.$otherid[$index].$jml_other.'.jpg';
+                  $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                  imagejpeg($image_resource, $image_dir.$image_name); 
+                    array_push($otherdata_barcode, array(
+                    'id'=>$otherid[$index],
+                    'kode'=>$kode,
+                    'barcode'=>$image_name
+                  ));
+                }
               }
               $index++;
             }
               $this->Delivery_model->insert_batch($otherdata);
+              if(!empty($otherdata_barcode)){
+               $this->Delivery_model->insert_batch_barcode($otherdata_barcode);
+              }
+              
+
 
 
 
@@ -981,14 +1072,23 @@ class Delivery extends CI_Controller
                   'barcode'=>$image_name,
                   'bike_id'=>$bike_id[$index],
                 ));
+
+                array_push($itemdata_barcode_new, array(
+                  'id'=>$lastId,
+                  'kode'=>$kode,
+                  'barcode'=>$image_name
+                ));
               }
 
               $index++;
             }
             if(!empty($itemdata_new)){
-              $this->Delivery_model->insert_batch($itemdata_new);
+              $this->Delivery_model->insert_batch($itemdata_new);       
             }
-
+            if(!empty($itemdata_barcode_new)){
+              $this->Delivery_model->insert_batch_barcode($itemdata_barcode_new);  
+            }
+            
 
             $lastprimary=$this->Delivery_model->get_delivery_detail_last_id();
             $lastId=$lastprimary->id;
@@ -1002,28 +1102,40 @@ class Delivery extends CI_Controller
 
                 $this->load->library('zend');
                 $this->zend->load('Zend/Barcode');
-                $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$lastId), array())->draw();
-                $image_name     = $kode.$lastId.'.jpg';
-                $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
-                imagejpeg($image_resource, $image_dir.$image_name); 
+ 
 
                 array_push($kelengkapandata_new, array(
                   'id'=>$lastId,
                   'kode'=>$kode,
                   'category'=>'2',
                   'name'=>$kelengkapannames,
-                  'qty'=>$kelengkapanqyt[$index], 
+                  'qty'=>$kelengkapanqty[$index], 
                   'price'=>$kelengkapanprice[$index], 
                   'unit'=>$kelengkapanunit[$index],  
-                  'barcode'=>$image_name
+                  'barcode'=>"default.jpg"
                 ));
+
+                for ($jml_kelengkapan = 1; $jml_kelengkapan <= $kelengkapanqty[$index]; $jml_kelengkapan++){
+                  $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$lastId.$jml_kelengkapan), array())->draw();
+                  $image_name     = $kode.$lastId.$jml_kelengkapan.'.jpg';
+                  $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                  imagejpeg($image_resource, $image_dir.$image_name); 
+                    array_push($kelengkapandata_barcode_new, array(
+                    'id'=>$lastId,
+                    'kode'=>$kode,
+                    'barcode'=>$image_name
+                  ));
+                }
               }
 
               $index++;
             }
 
             if(!empty($kelengkapandata_new)){
-              $this->Delivery_model->insert_batch($kelengkapandata_new);
+              $this->Delivery_model->insert_batch($kelengkapandata_new);               
+            }
+            if(!empty($kelengkapandata_barcode_new)){
+             $this->Delivery_model->insert_batch_barcode($kelengkapandata_barcode_new); 
             }
 
             
@@ -1046,17 +1158,32 @@ class Delivery extends CI_Controller
                   'kode'=>$kode,
                   'category'=>'0',
                   'name'=>$othernames,
-                  'qty'=>$otherqyt[$index],  // Ambil dan set data nama sesuai index array dari $index
+                  'qty'=>$otherqty[$index],  // Ambil dan set data nama sesuai index array dari $index
                   'price'=>$otherprice[$index],
                   'unit'=>$otherunit[$index],  // Ambil dan set data telepon sesuai index array dari $index
                   'barcode'=>$image_name
                 ));
+
+                for ($jml_other = 1; $jml_other <= $otherqty[$index]; $jml_other++){
+                  $image_resource = Zend_Barcode::factory('code128', 'image', array('text'=>$kode.$lastId.$jml_other), array())->draw();
+                  $image_name     = $kode.$lastId.$jml_other.'.jpg';
+                  $image_dir      = './assets/img/barcode/'; // penyimpanan file barcode
+                  imagejpeg($image_resource, $image_dir.$image_name); 
+                    array_push($otherdata_barcode_new, array(
+                    'id'=>$lastId,
+                    'kode'=>$kode,
+                    'barcode'=>$image_name
+                  ));
+                }
               }
               $index++;
             }
             
             if(!empty($otherdata_new)){
-              $this->Delivery_model->insert_batch($otherdata_new);
+              $this->Delivery_model->insert_batch($otherdata_new);   
+            }
+            if(!empty($otherdata_barcode_new)){
+             $this->Delivery_model->insert_batch_barcode($otherdata_barcode_new);
             }
 
             $this->session->set_flashdata('message', 'Create Record Success');
@@ -1090,6 +1217,7 @@ class Delivery extends CI_Controller
             }
           $this->Delivery_model->delete($id);
           }
+          $this->Delivery_model->deleteDetailBarcode($id);
           $this->Delivery_model->deleteDetail($id);
           $this->Delivery_model->deleteReceive($id);
           $this->Delivery_model->deleteReceiveItem($id);

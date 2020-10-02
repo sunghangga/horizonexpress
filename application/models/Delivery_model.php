@@ -191,12 +191,27 @@ class Delivery_model extends CI_Model
         return $this->db->get('delivery_detail')->result();
     }
 
+
+    function get_delivery_detail_barcode_id($id)
+    {   
+        $this->db->select("
+          delivery_detail.id,delivery_detail.kode,delivery_detail.category,delivery_detail.name,
+          delivery_detail.no_mesin,delivery_detail.no_rangka,delivery_detail.qty,delivery_detail.price,
+          delivery_detail.unit,`delivery_detail_barcode`.barcode,delivery_detail.faktur,delivery_detail.bike_id
+          ");        
+        $this->db->from("delivery_detail");
+        $this->db->join('delivery_detail_barcode','delivery_detail.id=delivery_detail_barcode.id', 'LEFT');
+        $this->db->where('delivery_detail.kode', $id);
+        $this->db->order_by('delivery_detail.kode', 'ASC');
+        return $this->db->get()->result();
+    }
+
     function get_delivery_detail_barcode($id)
     {
         $this->db->select('barcode');
-        $this->db->where('delivery_detail.kode', $id);
+        $this->db->where('delivery_detail_barcode.kode', $id);
         $this->db->order_by('kode', 'ASC');
-        return $this->db->get('delivery_detail')->result();
+        return $this->db->get('delivery_detail_barcode')->result();
     }
 
 
@@ -452,6 +467,9 @@ class Delivery_model extends CI_Model
     public function insert_batch($data){
       return $this->db->insert_batch('delivery_detail', $data);
     }
+    public function insert_batch_barcode($data){
+      return $this->db->insert_batch('delivery_detail_barcode', $data);
+    }
 
     // update data
     function update($id, $data)
@@ -496,6 +514,11 @@ class Delivery_model extends CI_Model
     function deleteDetail($id){
       $this->db->where('kode', $id);
       $this->db->delete('delivery_detail');
+    }
+    
+    function deleteDetailBarcode($id){
+      $this->db->where('kode', $id);
+      $this->db->delete('delivery_detail_barcode');
     }
 
     function deleteReceive($id){

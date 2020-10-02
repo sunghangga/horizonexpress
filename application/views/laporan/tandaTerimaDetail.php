@@ -85,7 +85,7 @@
     </div>
     <div class="item-detail-content">
       Jumlah:
-      <p><?php echo $row->qty?></p>
+      <p><?php echo $row->qty/$row->qty?></p>
     </div>
     <div class="item-detail-content">
       Satuan:
@@ -138,7 +138,7 @@
     </div>
     <div class="item-detail-content">
       Jumlah:
-      <p><?php echo $row->qty?></p>
+      <p><?php echo $row->qty/$row->qty?></p>
     </div>
     <div class="item-detail-content">
       Satuan:
